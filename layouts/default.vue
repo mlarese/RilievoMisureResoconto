@@ -65,6 +65,9 @@
 </template>
 
 <script>
+import devxCSS1 from 'devextreme/dist/css/dx.common.css'
+import devxCSS2 from 'devextreme/dist/css/dx.light.css'
+
 export default {
   data() {
     return {
@@ -81,6 +84,11 @@ export default {
           icon: 'mdi-chart-bubble',
           title: 'Inspire',
           to: '/inspire'
+        },
+        {
+          icon: 'mdi-chart-bubble',
+          title: 'Gestione lavori',
+          to: '/GestioneLavori/GestioneLavoro'
         }
       ],
       miniVariant: false,
@@ -88,6 +96,11 @@ export default {
       rightDrawer: false,
       title: 'Vuetify.js'
     }
+  },
+    computed: {
+      styles() {
+        return { devxCSS1, devxCSS2 }
+      }
   }
 }
 </script>
