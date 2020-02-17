@@ -33,9 +33,10 @@ var Module = {
 				// let res2 = fn2()
 				// console.dir(res2)
 
-				// let fn3 = Module.mono_bind_static_method("[GestSerNetStandard_DLL] GestSerNetStandard.ICT_GestioneRilievoMisure.DemoMacroComandiRilievoMisure:DoDemoTest2")
-				// let res3 = fn3();
-				// console.dir(res3)
+				let fn4 = Module.mono_bind_static_method("[ICT_GestioneSerramenti] ICT_GestioneSerramenti.Tester:getComandiImmagine")
+				window.GestoreImmagini.getDrawingCommands = fn4;
+				// let jsonData = fn4();
+				// console.dir(jsonData)
 
 			}
 		)

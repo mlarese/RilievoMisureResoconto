@@ -57,6 +57,8 @@ config = {
     "Mono.WebAssembly.Interop.dll",
     "WebAssembly.Bindings.dll",
     "WebAssembly.Net.Http.dll",
-    "WebAssembly.Net.WebSockets.dll"
+    "WebAssembly.Net.WebSockets.dll",
+    "ICT_GestioneSerramenti.dll",
+    "Newtonsoft.Json.dll"
 	]
 }
