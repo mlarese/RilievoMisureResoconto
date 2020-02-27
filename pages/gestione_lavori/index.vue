@@ -8,7 +8,6 @@
 import List from '../../components/GestioneLavori/List'
 
 export default {
-  layout: 'devex',
   components: {
     List
   }
