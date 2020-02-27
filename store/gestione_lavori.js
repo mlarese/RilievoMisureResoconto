@@ -1,6 +1,5 @@
 import _clone from 'lodash/clone'
 
-export const strict = false
 const root = { root: true }
 export const state = () => {
   return {

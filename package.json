@@ -1,7 +1,7 @@
 {
   "name": "rilievomisure",
   "version": "1.0.0",
-  "description": "rilievo misure",
+  "description": "Rilievo Misure",
   "author": "GiorgioV",
   "private": true,
   "scripts": {
@@ -12,6 +12,7 @@
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore ."
   },
   "dependencies": {
+    "@mdi/font": "^4.9.95",
     "@nuxtjs/axios": "^5.3.6",
     "@nuxtjs/pwa": "^3.0.0-0",
     "devextreme": "19.2.6",
@@ -20,6 +21,9 @@
     "pouchdb": "^7.1.1"
   },
   "devDependencies": {
+    "@iconify/icons-mdi": "^1.0.73",
+    "@iconify/react": "^1.1.2",
+    "@mdi/js": "^4.9.95",
     "@nuxtjs/eslint-config": "^1.0.1",
     "@nuxtjs/eslint-module": "^1.0.0",
     "@nuxtjs/vuetify": "^1.0.0",
