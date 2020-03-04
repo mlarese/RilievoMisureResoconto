@@ -1,19 +1,7 @@
 <template>
   <v-layout column justify-center align-center>
     <v-flex xs12 sm8 md6>
-      <div class="text-center">
-        <logo />
-        <vuetify-logo />
-      </div>
-      <v-card>
-        <v-card-title class="headline">aa</v-card-title>
-        <v-card-text></v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="primary" nuxt to="/inspire">Continue</v-btn>
-          <DxButton @click="sayHelloWorld" text="incrementa di 10" />
-        </v-card-actions>
-      </v-card>
+
     </v-flex>
   </v-layout>
 </template>
@@ -25,14 +13,6 @@ import DxButton from 'devextreme-vue/button'
 
 export default {
   components: {
-    Logo,
-    VuetifyLogo,
-    DxButton
-  },
-  methods: {
-    sayHelloWorld() {
-      alert(window.GestoreImmagini.incrementa(10))
-    }
   }
 }
 </script>

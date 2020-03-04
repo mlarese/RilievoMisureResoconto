@@ -4,6 +4,8 @@
       id="xdgvElencoLavori"
       :data-source="list"
       :show-borders="true"
+      :columnAutoWidth="true"
+      noDataText="Nessun lavoro trovato"
     >
       <DxColumn data-field="GL_Committente" caption="Committente" />
       <DxColumn  data-field="GL_Descrizione"  caption="Descrizione"  />

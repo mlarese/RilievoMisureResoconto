@@ -1,7 +1,17 @@
 import colors from 'vuetify/es5/util/colors'
 
+let routerBase = '/'
+if (process.env.NODE_ENV === 'production') {
+  routerBase = '/'
+}
+
 export default {
   mode: 'spa',
+  router: {
+    mode: 'hash',
+    base: routerBase,
+    middleware: ['acl']//['acl', 'auth']
+  },
   /*
    ** Headers of the page
    */
@@ -35,7 +45,57 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: [],
+  plugins: [
+    '@/plugins/startup'
+  ],
+  __auth: {
+    redirect: {
+      logout: '/login',
+      callback: '/callback'
+    },
+    resetOnError: true,
+    strategies: {
+      dev: {
+        _scheme: 'local',
+        endpoints: {
+          login: { baseURL: 'http://89.46.65.174:1001', url: '/auth/login', method: 'post', propertyName: 'token' },
+          logout: {baseURL: 'http://89.46.65.174:1001', url: '/auth/logout', method: 'post' },
+          user: {baseURL: 'http://89.46.65.174:1001', url: '/auth/user', method: 'get', propertyName: 'user' }
+        },
+        tokenRequired: true,
+        tokenType: 'bearer'
+      },
+      devip: {
+        _scheme: 'local',
+        endpoints: {
+          login: { baseURL: 'http://89.46.65.174:1001', url: '/auth/login', method: 'post', propertyName: 'token' },
+          logout: {baseURL: 'http://89.46.65.174:1001', url: '/auth/logout', method: 'post' },
+          user: {baseURL: 'http://89.46.65.174:1001', url: '/auth/user', method: 'get', propertyName: 'user' }
+        },
+        tokenRequired: true,
+        tokenType: 'bearer'
+      },
+      prod: {
+        _scheme: 'local',
+        endpoints: {
+          login: { baseURL: 'http://89.46.65.174:1001', url: '/auth/login', method: 'post', propertyName: 'token' },
+          logout: {baseURL: 'http://89.46.65.174:1001', url: '/auth/logout', method: 'post' },
+          user: {baseURL: 'http://89.46.65.174:1001', url: '/auth/user', method: 'get', propertyName: 'user' }
+        },
+        tokenRequired: true,
+        tokenType: 'bearer'
+      },
+      local: {
+        endpoints: {
+          login: { baseURL: 'http://89.46.65.174:1001', url: '/auth/login', method: 'post', propertyName: 'token' },
+          logout: {baseURL: 'http://89.46.65.174:1001', url: '/auth/logout', method: 'post' },
+          user: {baseURL: 'http://89.46.65.174:1001', url: '/auth/user', method: 'get', propertyName: 'user' }
+        },
+        tokenRequired: true,
+        tokenType: 'bearer'
+      }
+    }
+  },
   /*
    ** Nuxt.js dev-modules
    */
@@ -50,6 +110,7 @@ export default {
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
+    //'@nuxtjs/auth',
     '@nuxtjs/pwa'
   ],
   /*
