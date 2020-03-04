@@ -22,14 +22,10 @@ export const mutations = {
 
 export const actions = {
   doLogin ({commit, dispatch}, data) {
-    //data=JSON.stringify(data)
-    data = qs.stringify(data);
-    console.dir(data)
+    data=JSON.stringify(data)
     const options = {
       headers: {
-        //'Content-Type': 'application/x-www-form-urlencoded',
-        'Content-Type': 'text/plain'
-        //'Accept': '*/*'
+        'Content-Type': 'application/json'
       }
     }
     dispatch('api/post', {url: '/auth/login', data, options}, {root: true})
