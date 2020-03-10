@@ -26,7 +26,7 @@ const instance = axios.create({
   baseURL,
   timeout: 90000,
   headers: {'Content-Type': 'application/json'},
-  withCredentials: true
+  withCredentials: false
 })
 
 export const actions = {
@@ -34,10 +34,13 @@ export const actions = {
     commit('error')
     commit('hasError')
   },
-  get ({commit, getters, state}, {url, options = {}, debug = false}) {
+  get ({commit, getters, state, rootState}, {url, options = {}, debug = false}) {
     commit('isAjax', true)
     commit('error')
     commit('hasError')
+
+    if (!options.headers) options.headers = {}
+    if(rootState.auth.token) options.headers['Authorization'] = rootState.auth.token
 
     return instance.get(url, options)
       .then(res => {
@@ -55,18 +58,14 @@ export const actions = {
         return Promise.reject(err)
       })
   },
-  post ({commit, getters, state}, {url, data = {}, options = {}}) {
+  post ({commit, getters, state, rootState}, {url, data = {}, options = {}}) {
     commit('isAjax', true)
     commit('error')
     commit('hasError')
     //console.log('---- post', url, data, options)
 
-    if (!options.headers) {
-      options.headers = {}
-    }
-
-    if(state.token)
-      options.headers['Authorization'] = state.token
+    if (!options.headers) options.headers = {}
+    if(rootState.auth.token) options.headers['Authorization'] = rootState.auth.token
 
     return instance.post(url, data, options)
       .then(res => {
@@ -83,16 +82,13 @@ export const actions = {
         return Promise.reject(err)
       })
   },
-  put ({commit, getters, state}, {url, data, options = {}}) {
+  put ({commit, getters, state, rootState}, {url, data, options = {}}) {
     commit('isAjax', true)
     commit('error')
     commit('hasError')
 
-    if (!options.headers) {
-      options.headers = {}
-    }
-
-    options.headers['Authorization'] = state.token
+    if (!options.headers) options.headers = {}
+    if(rootState.auth.token) options.headers['Authorization'] = rootState.auth.token
 
     return instance.put(url, data, options)
       .then(res => {
@@ -108,17 +104,14 @@ export const actions = {
         return Promise.reject(err)
       })
   },
-  delete ({commit, getters, state}, {url, options = {}}) {
+  delete ({commit, getters, state, rootState}, {url, options = {}}) {
     commit('isAjax', true)
     commit('error')
     commit('hasError')
     console.log(url)
 
-    if (!options.headers) {
-      options.headers = {}
-    }
-
-    options.headers['Authorization'] = state.token
+    if (!options.headers) options.headers = {}
+    if(rootState.auth.token) options.headers['Authorization'] = rootState.auth.token
 
     return instance.delete(url, options)
       .then(res => {

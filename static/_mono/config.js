@@ -2,7 +2,8 @@ config = {
  	vfs_prefix: "managed",
  	deploy_prefix: "managed",
  	enable_debugging: 0,
- 	file_list: [
+ 	file_list: [],
+ 	file_list_: [
 		"ClassLibrary.dll",
 		"ClassLibraryDraw.dll",
 		"TestClassLibrary.dll",

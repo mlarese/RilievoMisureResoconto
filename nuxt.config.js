@@ -46,7 +46,8 @@ export default {
    ** Plugins to load before mounting the App
    */
   plugins: [
-    '@/plugins/startup'
+    '@/plugins/startup',
+    { src: '@/plugins/vuex-persist', ssr: false }
   ],
   __auth: {
     redirect: {

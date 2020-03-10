@@ -12,7 +12,8 @@ import VuetifyLogo from '~/components/VuetifyLogo.vue'
 import DxButton from 'devextreme-vue/button'
 
 export default {
-  components: {
+  fetch ({store}) {
+    store.dispatch('sync/importLavori',{}, {root: true})
   }
 }
 </script>

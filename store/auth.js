@@ -20,19 +20,60 @@ export const mutations = {
   }
 }
 
+const AUTH_RECORD_ID = 'auth_record_id'
+const authRecord = (token, user) => ({token, user, _id: AUTH_RECORD_ID})
+const table = 'auth'
+
+const setAuth = (commit, dispatch, token, user) => {
+  commit('setToken', token)
+  const data = authRecord(token, user)
+  const id = AUTH_RECORD_ID
+
+  return dispatch('db/selectById',{table, id}, {root: true} )
+    .then(res => {
+      console.log('found login')
+    })
+    .catch(e => {
+      console.log('selectById', e)
+      if(e.status && e.status===404) {
+        console.log('--- adding auth record')
+        return dispatch('db/insertInto',{table: 'auth', data}, {root: true})
+          .then(res1 => {
+            commit('setLoggedIn', true)
+          })
+      }
+
+    })
+}
+
 export const actions = {
+  async persistentUser ({commit, dispatch, rootState}) {
+    const id = AUTH_RECORD_ID
+    return await dispatch('db/selectById',{table, id}, {root: true} )
+      .then(res => {
+        console.log('found login', res)
+        commit('setUser', res.user)
+        commit('setToken', res.token)
+        commit('setLoggedIn', true)
+        return res
+      })
+      .catch(e => {
+        console.log('selectById', e)
+      })
+  },
   doLogin ({commit, dispatch}, data) {
-    data=JSON.stringify(data)
     const options = {
       headers: {
         'Content-Type': 'application/json'
       }
     }
-    dispatch('api/post', {url: '/auth/login', data, options}, {root: true})
-      .then(res => commit('setToken', 'YWRtaW4tQURNSU4yOS8wMi8yMDIwIDAwOjAwOjAw'))
+    return dispatch('api/post', {url: '/auth/login', data, options}, {root: true})
+      .then(res => {
+        return setAuth(commit, dispatch, res.data, data.username)
+      })
       .catch(e => {
-        commit('setToken', 'YWRtaW4tQURNSU4yOS8wMi8yMDIwIDAwOjAwOjAw')
-        commit('setLoggedIn', true)
+        console.dir('post /auth/login', e)
+
       })
   }
 }
