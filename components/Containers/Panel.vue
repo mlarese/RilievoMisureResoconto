@@ -1,7 +1,7 @@
 <!--eslint-disable-->
 <template>
     <div>
-        <v-toolbar class="elevation-1" v-if="title !== ''" dense color="info" dark>
+        <v-toolbar class="elevation-1" v-if="title !== ''" dense style="background: #f5f5f5" >
             <v-toolbar-title>
                 {{title}}
             </v-toolbar-title>
