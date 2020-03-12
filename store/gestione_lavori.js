@@ -1,6 +1,14 @@
 import _clone from 'lodash/clone'
+import uuid from 'uuid/v1'
 
 const root = { root: true }
+const emptyRecord = () =>({
+  uid: uuid(),
+  committenteDesc: null,
+  descrizione: null,
+  luogo: null
+})
+
 export const state = () => {
   return {
     list: {},
@@ -9,7 +17,8 @@ export const state = () => {
     dbName: 'lavori',
     modalita: 'FIND',
     ui: {
-      title: 'lavori',
+      title: 'Gestione Lavori',
+      formTitleSuffix: 'Lavoro',
       filter: {}
     }
   }
@@ -41,6 +50,7 @@ export const actions = {
     if (isInsert) {
       actionName = 'db/insertInto'
     }
+
     return dispatch(actionName, { table, data: rec }, root)
       .then(() => {
         return dispatch('load')
@@ -74,13 +84,17 @@ export const actions = {
     })
   },
   impostaModalitaVisualizzazione({ dispatch, commit, state }, modalita) {
-    commit('setRecord', modalita)
+    commit('setModalita', modalita)
   }
 }
 
 export const mutations = {
   setList(state, payload = {}) {
     state.list = payload
+  },
+  resetRecord(state) {
+    state.record = emptyRecord()
+    state.$record = emptyRecord()
   },
   setRecord(state, payload = {}) {
     state.record = payload
@@ -92,4 +106,8 @@ export const mutations = {
 }
 
 export const getters = {
+  isEdit: (s) => s.modalita === 'EDIT',
+  isAdd: (s) => s.modalita === 'ADD',
+  formTitle: (s, g) => (g.isEdit)?`Modifica ${s.ui.formTitleSuffix}`:`Aggiungi ${s.ui.formTitleSuffix}`,
+  buttonAddTitle: (s) => `Aggiungi ${s.ui.formTitleSuffix}`
 }

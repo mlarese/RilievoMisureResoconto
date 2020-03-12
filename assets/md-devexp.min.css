@@ -9,3 +9,16 @@
     transform: translateY(-24px) scale(0.75);
 }
 
+td .dx-button-has-icon .dx-button-content {
+    padding: 2px 3px 3px 3px !important;
+
+}
+
+td .dx-button {
+    border:0;
+    position: relative;
+    top: -1px;
+}
+
+.align-right{  text-align:right; }
+.align-center{  text-align:center; }

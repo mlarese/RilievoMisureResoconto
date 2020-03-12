@@ -49,54 +49,6 @@ export default {
     '@/plugins/startup',
     { src: '@/plugins/vuex-persist', ssr: false }
   ],
-  __auth: {
-    redirect: {
-      logout: '/login',
-      callback: '/callback'
-    },
-    resetOnError: true,
-    strategies: {
-      dev: {
-        _scheme: 'local',
-        endpoints: {
-          login: { baseURL: 'http://89.46.65.174:1001', url: '/auth/login', method: 'post', propertyName: 'token' },
-          logout: {baseURL: 'http://89.46.65.174:1001', url: '/auth/logout', method: 'post' },
-          user: {baseURL: 'http://89.46.65.174:1001', url: '/auth/user', method: 'get', propertyName: 'user' }
-        },
-        tokenRequired: true,
-        tokenType: 'bearer'
-      },
-      devip: {
-        _scheme: 'local',
-        endpoints: {
-          login: { baseURL: 'http://89.46.65.174:1001', url: '/auth/login', method: 'post', propertyName: 'token' },
-          logout: {baseURL: 'http://89.46.65.174:1001', url: '/auth/logout', method: 'post' },
-          user: {baseURL: 'http://89.46.65.174:1001', url: '/auth/user', method: 'get', propertyName: 'user' }
-        },
-        tokenRequired: true,
-        tokenType: 'bearer'
-      },
-      prod: {
-        _scheme: 'local',
-        endpoints: {
-          login: { baseURL: 'http://89.46.65.174:1001', url: '/auth/login', method: 'post', propertyName: 'token' },
-          logout: {baseURL: 'http://89.46.65.174:1001', url: '/auth/logout', method: 'post' },
-          user: {baseURL: 'http://89.46.65.174:1001', url: '/auth/user', method: 'get', propertyName: 'user' }
-        },
-        tokenRequired: true,
-        tokenType: 'bearer'
-      },
-      local: {
-        endpoints: {
-          login: { baseURL: 'http://89.46.65.174:1001', url: '/auth/login', method: 'post', propertyName: 'token' },
-          logout: {baseURL: 'http://89.46.65.174:1001', url: '/auth/logout', method: 'post' },
-          user: {baseURL: 'http://89.46.65.174:1001', url: '/auth/user', method: 'get', propertyName: 'user' }
-        },
-        tokenRequired: true,
-        tokenType: 'bearer'
-      }
-    }
-  },
   /*
    ** Nuxt.js dev-modules
    */

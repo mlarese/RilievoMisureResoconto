@@ -1,30 +1,70 @@
 <template>
-  <DxForm>
-    <DxGroupItem :col-count="1" css-class="second-group">
+  <Panel :title="formTitle">
+      {{$record.__status}}
+    <DxForm :form-data.sync="$record" :col-count="1">
       <DxGroupItem>
-        <DxSimpleItem data-field="GL_Descrizione" />
-        <DxSimpleItem data-field="GL_Committente" />
-        <DxSimpleItem data-field="GL_Indirizzo" />
+          <DxSimpleItem data-field="committenteDesc" />
+          <DxSimpleItem data-field="descrizione" />
+          <DxSimpleItem data-field="luogo" />
       </DxGroupItem>
-    </DxGroupItem>
-  </DxForm>
+    </DxForm>
+
+    <v-layout rows wrap class=" mt-4">
+        <v-flex xs12 class="align-right">
+            <DxButton icon="undo" text="Annulla" @click="onCancel"/>
+            <DxButton icon="save" text="Salva" @click="onSave" :disabled="!canSave" />
+        </v-flex>
+    </v-layout>
+
+  </Panel>
 </template>
 
 <script>
-
+import {mapState, mapGetters, mapActions} from 'vuex'
+import Panel from '../Containers/Panel'
+import DxButton from 'devextreme-vue/button';
 import {
   DxForm,
   DxSimpleItem,
   DxGroupItem,
-  DxLabel
-} from 'devextreme-vue/form';
+  DxLabel,
+  DxButtonItem
+} from 'devextreme-vue/form'
+
+const storeName = 'gestione_lavori'
 
 export default {
   components: {
     DxForm,
     DxSimpleItem,
     DxGroupItem,
-    DxLabel
+    DxLabel,
+    Panel,
+    DxButtonItem,
+    DxButton
+  },
+  methods: {
+    exit () {
+      this.$router.replace(`/${storeName}`)
+    },
+    onCancel () {
+      if(!confirm('Confermi?')) return
+      this.exit()
+    },
+    onSave () {
+      this.save()
+        .then(this.exit)
+    },
+    ...mapActions(storeName, ['save'])
+  },
+  computed: {
+    ...mapState(storeName, ['$record']),
+    ...mapGetters(storeName, ['formTitle']),
+    canSave () {
+      if(!this.$record.committenteDesc) return false
+      if(!this.$record.descrizione) return false
+      return true
+    }
   }
 }
 

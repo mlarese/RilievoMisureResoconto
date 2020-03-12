@@ -42,6 +42,12 @@ export const actions = {
   },
 
   async update({ commit, dispatch }, { table, data, options = { force: true }, callback = emptyFn }) {
+    if(!data.__status)
+      data.__status = "updated"
+    const db = dbList[table]
+    return db.put(data, options);
+  },
+  async update_({ commit, dispatch }, { table, data, options = { force: true }, callback = emptyFn }) {
     const db = dbList[table]
     db.get(data._id).then(function (doc) {
       const result = {};
@@ -62,6 +68,7 @@ export const actions = {
     return db.bulkDocs(data)
   },
   async insertInto({ commit, dispatch }, { table, data, options = null, callback = emptyFn }) {
+    data.__status = "added"
     const db = dbList[table]
     return db.post(data, options, callback)
   },
