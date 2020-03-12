@@ -1,11 +1,11 @@
 import PouchDb from 'pouchdb'
 import _map from 'lodash/map'
-const dbList = {
+
+export const dbList = {
   'lavori': new PouchDb('lavori'),
   'auth': new PouchDb('auth')
 }
 
-console.log('db inited')
 export const state = () => {
   return {
 
@@ -57,6 +57,10 @@ export const actions = {
       console.log(err);
     });
   },
+  async bulkInsertInto({ commit, dispatch }, { table, data}) {
+    const db = dbList[table]
+    return db.bulkDocs(data)
+  },
   async insertInto({ commit, dispatch }, { table, data, options = null, callback = emptyFn }) {
     const db = dbList[table]
     return db.post(data, options, callback)
@@ -64,7 +68,13 @@ export const actions = {
   async delete({ commit, dispatch }, { table, data, options = null, callback = emptyFn }) {
     const db = dbList[table]
     return db.remove(data, options, callback)
+  },
+  async dbInfo ({ commit, dispatch }, table) {
+    const db = dbList[table]
+    var result = await db.info()
+    return result
   }
+
 }
 
 export const mutations = {

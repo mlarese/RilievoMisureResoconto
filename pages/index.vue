@@ -1,19 +1,19 @@
 <template>
-  <v-layout column justify-center align-center>
-    <v-flex xs12 sm8 md6>
-
+  <v-layout rows wrap>
+    <v-flex>
+      <DbMonitor/>
     </v-flex>
   </v-layout>
 </template>
 
 <script>
-import Logo from '~/components/Logo.vue'
-import VuetifyLogo from '~/components/VuetifyLogo.vue'
-import DxButton from 'devextreme-vue/button'
+import DbMonitor from '../components/Db/DbMonitor'
 
 export default {
+  components: {DbMonitor},
   fetch ({store}) {
-    store.dispatch('sync/importLavori',{}, {root: true})
+    //store.dispatch('sync/importLavori',{}, {root: true})
+    store.dispatch('sync/updateStatus',{}, {root: true})
   }
 }
 </script>

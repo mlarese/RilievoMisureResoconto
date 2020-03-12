@@ -51,7 +51,7 @@ export const actions = {
     const id = AUTH_RECORD_ID
     return await dispatch('db/selectById',{table, id}, {root: true} )
       .then(res => {
-        console.log('found login', res)
+        //console.log('found login', res)
         commit('setUser', res.user)
         commit('setToken', res.token)
         commit('setLoggedIn', true)

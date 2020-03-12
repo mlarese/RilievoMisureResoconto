@@ -18,6 +18,7 @@
     "@nuxtjs/pwa": "^3.0.0-0",
     "devextreme": "19.2.6",
     "devextreme-vue": "19.2.6",
+    "lodash": "^4.17.15",
     "logrocket": "^1.0.6",
     "nuxt": "^2.0.0",
     "pouchdb": "^7.1.1",
