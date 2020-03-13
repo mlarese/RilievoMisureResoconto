@@ -98,7 +98,7 @@ export const actions = {
   impostaModalitaVisualizzazione({ dispatch, commit, state }, modalita) {
     commit('setModalita', modalita)
   }
-} 
+}
 
 export const mutations = {
   setList(state, payload = []) {

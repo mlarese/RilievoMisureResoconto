@@ -12,13 +12,16 @@
 td .dx-button-has-icon .dx-button-content {
     padding: 2px 3px 3px 3px !important;
 
+
 }
 
 td .dx-button {
     border:0;
     position: relative;
     top: -1px;
+    background: transparent !important;
 }
 
 .align-right{  text-align:right; }
 .align-center{  text-align:center; }
+tr.dx-data-row {cursor: pointer}

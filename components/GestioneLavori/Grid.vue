@@ -5,9 +5,13 @@
           id="xdgvElencoLavori"
           :data-source="noDeletedList"
           :show-borders="true"
+          :show-column-lines="true"
+          :show-row-lines="true"
+          :row-alternation-enabled="true"
           keyExpr="uid"
           :columnAutoWidth="true"
           noDataText="Nessun lavoro trovato"
+          @row-dbl-click="onRowDblClick"
         >
 
           <DxFilterRow :visible="true"/>
@@ -69,9 +73,15 @@ export default {
       const {data} = cell.data
       this.safeDelete(data)
     },
+    onRowDblClick ({data}) {
+      this.openEditForm(data._id)
+    },
     onEdit (cell) {
       const {_id} = cell.data.data
-      this.$router.push(`/gestione_lavori/${_id}`)
+      this.openEditForm(_id)
+    },
+    openEditForm (id) {
+      this.$router.push(`/gestione_lavori/${id}`)
     },
     onAdd () {
       this.$router.push(`/gestione_lavori/add`)
