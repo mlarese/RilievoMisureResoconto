@@ -1,6 +1,5 @@
 <template>
   <Panel :title="formTitle">
-      {{$record.__status}}
     <DxForm :form-data.sync="$record" :col-count="1">
       <DxGroupItem>
           <DxSimpleItem data-field="committenteDesc" />
@@ -16,13 +15,19 @@
         </v-flex>
     </v-layout>
 
+      <DxSpeedDialAction
+              :on-click="onShowAttachments"
+              :index="1"
+              icon="folder"
+              label="Allegati"
+      />
   </Panel>
 </template>
 
 <script>
 import {mapState, mapGetters, mapActions} from 'vuex'
 import Panel from '../Containers/Panel'
-import DxButton from 'devextreme-vue/button';
+import { DxButton, DxSpeedDialAction } from 'devextreme-vue'
 import {
   DxForm,
   DxSimpleItem,
@@ -41,9 +46,13 @@ export default {
     DxLabel,
     Panel,
     DxButtonItem,
+    DxSpeedDialAction,
     DxButton
   },
   methods: {
+    onShowAttachments () {
+
+    },
     exit () {
       this.$router.replace(`/${storeName}`)
     },

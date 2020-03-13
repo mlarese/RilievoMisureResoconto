@@ -1,8 +1,10 @@
 import PouchDb from 'pouchdb'
 import _map from 'lodash/map'
+import Vue from 'vue'
 
 export const dbList = {
   'lavori': new PouchDb('lavori'),
+  'allegati': new PouchDb('allegati'),
   'auth': new PouchDb('auth')
 }
 
@@ -10,6 +12,14 @@ export const state = () => {
   return {
 
   }
+}
+
+export const visibleRecord = (o) => {
+  if(!o.internalStatus) return true
+  if(o.internalStatus === 'updated') return true
+  if(o.internalStatus === 'added') return true
+  if(o.internalStatus === 'added-deleted') return false
+  return true
 }
 
 const emptyFn = function () {}
@@ -42,8 +52,8 @@ export const actions = {
   },
 
   async update({ commit, dispatch }, { table, data, options = { force: true }, callback = emptyFn }) {
-    if(!data.__status)
-      data.__status = "updated"
+    if(!data.internalStatus)
+      Vue.set(data, 'internalStatus', 'updated')
     const db = dbList[table]
     return db.put(data, options);
   },
@@ -68,9 +78,18 @@ export const actions = {
     return db.bulkDocs(data)
   },
   async insertInto({ commit, dispatch }, { table, data, options = null, callback = emptyFn }) {
-    data.__status = "added"
+    Vue.set(data, 'internalStatus', 'added')
     const db = dbList[table]
+    console.log(data)
     return db.post(data, options, callback)
+  },
+  async safeDelete({ commit, dispatch }, { table, data }) {
+    const db = dbList[table]
+    if(data.internalStatus === 'updated')
+      Vue.set(data, 'internalStatus', 'deleted')
+    else
+      Vue.set(data, 'internalStatus', 'added-deleted')
+      return db.put(data);
   },
   async delete({ commit, dispatch }, { table, data, options = null, callback = emptyFn }) {
     const db = dbList[table]

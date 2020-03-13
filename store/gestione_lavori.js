@@ -1,5 +1,6 @@
 import _clone from 'lodash/clone'
 import uuid from 'uuid/v1'
+import {visibleRecord} from './db'
 
 const root = { root: true }
 const emptyRecord = () =>({
@@ -11,7 +12,7 @@ const emptyRecord = () =>({
 
 export const state = () => {
   return {
-    list: {},
+    list: [],
     $record: {},
     record: {},
     dbName: 'lavori',
@@ -60,6 +61,17 @@ export const actions = {
         return e
       })
   },
+  safeDelete({ dispatch, commit, state }, rec) {
+    const table = state.dbName
+    return dispatch('db/safeDelete', { table, data: rec }, root)
+      .then(() => {
+        return dispatch('load')
+      })
+      .catch(e => {
+        console.log(e)
+        return e
+      })
+  },
   deleteByID({ dispatch, commit, state }, id) {
     console.log('start deleting' + id)
     const table = state.dbName
@@ -89,7 +101,7 @@ export const actions = {
 }
 
 export const mutations = {
-  setList(state, payload = {}) {
+  setList(state, payload = []) {
     state.list = payload
   },
   resetRecord(state) {
@@ -105,7 +117,9 @@ export const mutations = {
   }
 }
 
+
 export const getters = {
+  noDeletedList: s => s.list.filter(visibleRecord),
   isEdit: (s) => s.modalita === 'EDIT',
   isAdd: (s) => s.modalita === 'ADD',
   formTitle: (s, g) => (g.isEdit)?`Modifica ${s.ui.formTitleSuffix}`:`Aggiungi ${s.ui.formTitleSuffix}`,

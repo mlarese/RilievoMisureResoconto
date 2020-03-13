@@ -1,42 +1,47 @@
 <template>
 
-    <DxDataGrid
-      id="xdgvElencoLavori"
-      :data-source="list"
-      :show-borders="true"
-      keyExpr="uid"
-      :focusedRowEnabled="true"
-      :columnAutoWidth="true"
-      noDataText="Nessun lavoro trovato"
-    >
+    <div>
+        <DxDataGrid
+          id="xdgvElencoLavori"
+          :data-source="noDeletedList"
+          :show-borders="true"
+          keyExpr="uid"
+          :columnAutoWidth="true"
+          noDataText="Nessun lavoro trovato"
+        >
 
-      <DxFilterRow :visible="true"/>
-      <DxColumn data-field="committenteDesc" caption="Committente" />
-      <DxColumn  data-field="descrizione"  caption="Descrizione"  />
-      <DxColumn data-field="luogo"   caption="Indirizzo"   />
+          <DxFilterRow :visible="true"/>
+            <DxColumn :width="80"  :allow-sorting="false"  cell-template="commandsTemplate"/>
 
-        <DxColumn
-                :width="40"
-                :allow-sorting="false"
-                cell-template="commandsTemplate"
-        />
+            <DxColumn data-field="committenteDesc" caption="Committente" />
+            <DxColumn  data-field="descrizione"  caption="Descrizione"  />
+            <DxColumn data-field="luogo"   caption="Indirizzo"   />
 
-        <template #commandsTemplate="cell">
-            <DxButton
-                    @click="onEdit(cell)"
-                    icon="edit"
-                    hint="Modifica lavoro"
+
+            <template #commandsTemplate="cell">
+                <div>
+                    <DxButton
+                            @click="onEdit(cell)"
+                            icon="edit"
+                            hint="Modifica lavoro"
+                    />
+                    <DxButton
+                            @click="onDelete(cell)"
+                            icon="trash"
+                            hint="Cancella lavoro"
+                    />
+                </div>
+
+            </template>
+
+            <DxSpeedDialAction
+                    :on-click="onAdd"
+                    :index="1"
+                    icon="add"
+                    :label="buttonAddTitle"
             />
-        </template>
-
-        <DxSpeedDialAction
-                :on-click="onAdd"
-                :index="1"
-                icon="add"
-                :label="buttonAddTitle"
-        />
-    </DxDataGrid>
-
+        </DxDataGrid>
+    </div>
 </template>
 
 <script>
@@ -55,10 +60,15 @@ export default {
   },
   computed: {
     ...mapState('gestione_lavori', ['list']),
-    ...mapGetters('gestione_lavori', ['modeTitle', 'buttonAddTitle'])
+    ...mapGetters('gestione_lavori', ['modeTitle', 'buttonAddTitle', 'noDeletedList'])
   },
   methods: {
-    ...mapMutations('gestione_lavori', ['']),
+    ...mapActions('gestione_lavori', ['safeDelete']),
+    onDelete (cell) {
+      if(!confirm('Confermi la cancellazione?')) return
+      const {data} = cell.data
+      this.safeDelete(data)
+    },
     onEdit (cell) {
       const {_id} = cell.data.data
       this.$router.push(`/gestione_lavori/${_id}`)

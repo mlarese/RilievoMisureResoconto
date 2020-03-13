@@ -2,15 +2,13 @@
     <Panel title="Sincronizzazione">
         <v-layout rows wrap class="pt-2">
             <v-flex x12 class="text-xs-center">
-                <v-layout style="min-height: 300px">
-                    <div v-for="(db, key, index) in dbStatus">
-                        <span v-if="key!='auth'" >
+                <v-layout rows wrap>
+                    <v-flex class="pa-0 ma-0" xs12 v-if="key!='auth'" v-for="(db, key, index) in dbStatus" :key="key">
                             <v-icon>mdi-dns</v-icon>    {{key}}: {{db.doc_count}} records
-                        </span>
-                    </div>
+                    </v-flex>
                 </v-layout>
             </v-flex>
-            <v-flex xs12 class="dx-toolbar-center">
+            <v-flex xs12 class="dx-toolbar-center mt-5">
                 <div>
                     <v-alert :value="synchronized"  type="success"  >
                         Gli archivi sono sincronizzati
