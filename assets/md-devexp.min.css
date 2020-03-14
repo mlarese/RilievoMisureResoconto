@@ -10,7 +10,7 @@
 }
 
 td .dx-button-has-icon .dx-button-content {
-    padding: 2px 3px 3px 3px !important;
+    padding: 3px 6px 3px 6px !important;
 
 
 }
@@ -18,10 +18,17 @@ td .dx-button-has-icon .dx-button-content {
 td .dx-button {
     border:0;
     position: relative;
-    top: -1px;
+    top: -5px;
     background: transparent !important;
 }
 
 .align-right{  text-align:right; }
 .align-center{  text-align:center; }
 tr.dx-data-row {cursor: pointer}
+
+.dx-datagrid .dx-row > td {
+    padding: 15px 0 7px 8px;
+}
+
+.border-bottom { border-bottom:1px solid silver !important}
+.v-toolbar__content{padding: 0 0 0 8px !important;}

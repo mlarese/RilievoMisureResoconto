@@ -14,6 +14,9 @@ export default {
   fetch ({store}) {
     //store.dispatch('sync/importLavori',{}, {root: true})
     store.dispatch('sync/updateStatus',{}, {root: true})
+  },
+  created () {
+
   }
 }
 </script>

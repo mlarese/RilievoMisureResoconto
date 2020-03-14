@@ -16,6 +16,7 @@
     "@nuxtjs/auth": "^4.8.5",
     "@nuxtjs/axios": "^5.9.5",
     "@nuxtjs/pwa": "^3.0.0-0",
+    "browserfs": "^1.4.3",
     "devextreme": "19.2.6",
     "devextreme-vue": "19.2.6",
     "lodash": "^4.17.15",

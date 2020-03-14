@@ -4,62 +4,56 @@
         <DxDataGrid
           id="xdgvElencoLavori"
           :data-source="noDeletedList"
-          :show-borders="true"
-          :show-column-lines="true"
+          :show-borders="false"
+          :show-column-lines="false"
           :show-row-lines="true"
           :row-alternation-enabled="true"
           keyExpr="uid"
           :columnAutoWidth="true"
+          :column-hiding-enabled="false"
           noDataText="Nessun lavoro trovato"
           @row-dbl-click="onRowDblClick"
+          @cell-click="onCellClick"
         >
 
-          <DxFilterRow :visible="true"/>
             <DxColumn :width="80"  :allow-sorting="false"  cell-template="commandsTemplate"/>
 
             <DxColumn data-field="committenteDesc" caption="Committente" />
-            <DxColumn  data-field="descrizione"  caption="Descrizione"  />
+            <DxColumn data-field="descrizione"  caption="Descrizione"  />
             <DxColumn data-field="luogo"   caption="Indirizzo"   />
-
 
             <template #commandsTemplate="cell">
                 <div>
-                    <DxButton
-                            @click="onEdit(cell)"
-                            icon="edit"
-                            hint="Modifica lavoro"
-                    />
-                    <DxButton
-                            @click="onDelete(cell)"
-                            icon="trash"
-                            hint="Cancella lavoro"
-                    />
+                    <DxButton @click="onEdit(cell)" icon="edit" hint="Modifica lavoro" />
+                    <DxButton @click="onDelete(cell)" icon="trash" hint="Cancella lavoro" />
                 </div>
-
             </template>
 
-            <DxSpeedDialAction
-                    :on-click="onAdd"
-                    :index="1"
-                    icon="add"
-                    :label="buttonAddTitle"
-            />
+            <DxPaging :enabled="false"/>
+            <DxScrolling column-rendering-mode="virtual"/>
+
+            <DxFilterRow :visible="showFilter" />
         </DxDataGrid>
     </div>
 </template>
 
 <script>
 import { mapState, mapActions, mapMutations, mapGetters } from 'vuex'
-import { DxDataGrid, DxColumn, DxEditing, DxFilterRow } from 'devextreme-vue/data-grid'
+import { DxDataGrid, DxColumn, DxEditing, DxFilterRow, DxPaging, DxScrolling } from 'devextreme-vue/data-grid'
 import { DxButton, DxSpeedDialAction } from 'devextreme-vue'
 
 export default {
+  props: {
+    showFilter: {default: true}
+  },
   components: {
     DxDataGrid,
     DxFilterRow,
     DxColumn,
     DxEditing,
     DxButton,
+    DxPaging,
+    DxScrolling,
     DxSpeedDialAction
   },
   computed: {
@@ -73,8 +67,14 @@ export default {
       const {data} = cell.data
       this.safeDelete(data)
     },
-    onRowDblClick ({data}) {
-      this.openEditForm(data._id)
+    onRowDblClick (event) {
+      this.openEditForm(event.data._id)
+    },
+    onCellClick (event) {
+      if(event.columnIndex === 0) return
+      if(!event.data || !event.data._id) return
+
+      this.openEditForm(event.data._id)
     },
     onEdit (cell) {
       const {_id} = cell.data.data

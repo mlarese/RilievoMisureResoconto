@@ -21,6 +21,7 @@ export const notifyError = (err, translate = null) => {
 }
 
 export const notifySuccess = ({title, text}) => ({title, text, type: 'success'})
+
 export const baseURL = 'http://89.46.65.174:1001';
 const instance = axios.create({
   baseURL,

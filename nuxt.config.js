@@ -37,16 +37,31 @@ export default {
   /*
    ** Customize the progress-bar color
    */
-  loading: { color: '#fff' },
+  loading: { color: 'red' },
   /*
    ** Global CSS
    */
   css: [],
+  pwa: {
+    workbox: {
+      dev: false
+    },
+    manifest: {
+      display: 'fullscreen',
+      name: 'Rilievo Misure',
+      lang: 'it',
+      permissions: {
+        unlimitedStorage: true
+      },
+      unlimitedStorage: true
+    }
+  },
   /*
    ** Plugins to load before mounting the App
    */
   plugins: [
     '@/plugins/startup',
+    '@/plugins/filesystem',
     { src: '@/plugins/vuex-persist', ssr: false }
   ],
   /*

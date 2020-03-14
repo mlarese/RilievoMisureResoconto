@@ -54,7 +54,7 @@ export const actions = {
     return dispatch('api/get', {url}, {root: true})
       .then(res => {
         const {data} = res
-        dispatch('db/bulkInsertInto', {table: 'lavori', data}, {root: true})
+        return dispatch('db/bulkInsertInto', {table: 'lavori', data}, {root: true})
       })
   }
 }

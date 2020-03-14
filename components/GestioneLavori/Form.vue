@@ -1,6 +1,6 @@
 <template>
   <Panel :title="formTitle">
-    <DxForm :form-data.sync="$record" :col-count="1">
+    <DxForm :form-data.sync="$record" :col-count="1" label-location="top">
       <DxGroupItem>
           <DxSimpleItem data-field="committenteDesc" />
           <DxSimpleItem data-field="descrizione" />

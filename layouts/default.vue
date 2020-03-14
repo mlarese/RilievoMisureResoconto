@@ -1,7 +1,7 @@
 <template>
   <v-app dark>
+    <notifications position="top right" style="margin-top:50px"/>
     <v-navigation-drawer clipped v-model="drawer" fixed app  >
-
       <v-list>
         <v-list-item v-for="(item, i) in menuItems"   :key="i" :to="item.to" router exact >
           <v-list-item-action>
@@ -45,7 +45,13 @@ export default {
       drawer: (this.$vuetify.breakpoint.name==='lg' || this.$vuetify.breakpoint.name==='xl' ),
     }
   },
+  watch: {
+    'notification.id' (val) {
+      this.$notify(this.notification)
+    }
+  },
   computed: {
+    ...mapState('api', ['notification']),
     ...mapState('app', ['title', 'menuItems'])
   }
 }

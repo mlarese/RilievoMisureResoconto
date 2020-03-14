@@ -75,6 +75,10 @@ export const actions = {
   },
   async bulkInsertInto({ commit, dispatch }, { table, data}) {
     const db = dbList[table]
+    for(let doc of data) {
+      delete doc._ID
+      doc['_id'] = doc.uid
+    }
     return db.bulkDocs(data)
   },
   async insertInto({ commit, dispatch }, { table, data, options = null, callback = emptyFn }) {
