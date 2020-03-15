@@ -1,9 +1,11 @@
 <template>
-  <v-layout rows wrap>
-    <v-flex>
-      <DbMonitor/>
-    </v-flex>
-  </v-layout>
+  <div>
+    <v-layout rows wrap>
+      <v-flex>
+        <DbMonitor/>
+      </v-flex>
+    </v-layout>
+  </div>
 </template>
 
 <script>

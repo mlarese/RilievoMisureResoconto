@@ -32,3 +32,9 @@ tr.dx-data-row {cursor: pointer}
 
 .border-bottom { border-bottom:1px solid silver !important}
 .v-toolbar__content{padding: 0 0 0 8px !important;}
+
+.v-btn:not(.v-btn--round).v-size--default {
+    height: 58px;
+    min-width: 64px;
+    padding: 0 16px;
+}

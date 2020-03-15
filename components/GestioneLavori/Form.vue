@@ -8,19 +8,33 @@
       </DxGroupItem>
     </DxForm>
 
-    <v-layout rows wrap class=" mt-4">
+    <!-- v-layout rows wrap class=" mt-4">
         <v-flex xs12 class="align-right">
             <DxButton icon="undo" text="Annulla" @click="onCancel"/>
             <DxButton icon="save" text="Salva" @click="onSave" :disabled="!canSave" />
-        </v-flex>
-    </v-layout>
+         </v-flex>
+    </v-layout -->
 
-      <DxSpeedDialAction
-              :on-click="onShowAttachments"
-              :index="1"
-              icon="folder"
-              label="Allegati"
-      />
+
+      <v-bottom-navigation app>
+          <v-btn value="save" @click="onSave" :disabled="!canSave">
+              <span>Salva</span>
+              <v-icon>mdi-content-save-edit</v-icon>
+          </v-btn>
+
+          <v-btn value="cancel" @click="onCancel">
+              <span>Annulla</span>
+              <v-icon>mdi-undo</v-icon>
+          </v-btn>
+
+          <v-spacer></v-spacer>
+
+          <v-btn value="allegati" class="">
+              <span>Allegati</span>
+              <v-icon>mdi-attachment</v-icon>
+          </v-btn>
+      </v-bottom-navigation>
+
   </Panel>
 </template>
 

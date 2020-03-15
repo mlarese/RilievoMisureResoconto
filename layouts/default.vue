@@ -26,22 +26,20 @@
       </v-container>
     </v-content>
 
-
-    <v-footer fixed app>
-      <span>&copy; 2019</span>
-    </v-footer>
+    <!-- v-footer fixed app> </v-footer -->
   </v-app>
 </template>
 
 <script>
-import 'devextreme/dist/css/dx.common.css'
-import  'devextreme/dist/css/dx.light.css'
-import '../assets/md-devexp.min.css'
-import {mapState} from 'vuex'
+  import 'devextreme/dist/css/dx.common.css'
+  import 'devextreme/dist/css/dx.light.css'
+  import '../assets/md-devexp.min.css'
+  import {mapState} from 'vuex'
 
-export default {
+  export default {
   data() {
     return {
+      bottomNavActiveItem: '/',
       drawer: (this.$vuetify.breakpoint.name==='lg' || this.$vuetify.breakpoint.name==='xl' ),
     }
   },

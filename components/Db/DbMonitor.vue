@@ -10,22 +10,24 @@
             </v-flex>
             <v-flex xs12 class="dx-toolbar-center mt-5">
                 <div>
-                    <v-alert :value="synchronized"  type="success"  >
+                    <!-- v-alert dense :value="synchronized"  type="success"  >
                         Gli archivi sono sincronizzati
-                    </v-alert>
+                    </v-alert -->
 
-                    <v-alert :value="!synchronized"  type="warning"  >
-                        E' necessario effettuare la sincronizzazione
+                    <v-alert dense :value="!synchronized"  type="warning"  >
+                        Sincronizzare gli archivi
                     </v-alert>
 
                 </div>
 
-                <v-btn class="mt-2" @click="importAll" color="success" v-if="syncBtnVisible" :loading="synchronizing">
-                    Sincronizza archivi
-                </v-btn>
-
             </v-flex>
         </v-layout>
+        <BottomNavigation>
+            <v-btn slot="right" @click="importAll"  :disabled="!syncBtnVisible" :loading="synchronizing">
+                <span>Sincronizza</span>
+                <v-icon>mdi-sync</v-icon>
+            </v-btn>
+        </BottomNavigation>
     </Panel>
 </template>
 
