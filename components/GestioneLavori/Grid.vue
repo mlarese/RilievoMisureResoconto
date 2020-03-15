@@ -13,7 +13,7 @@
           :column-hiding-enabled="false"
           noDataText="Nessun lavoro trovato"
           @row-dbl-click="onRowDblClick"
-          @cell-click="onCellClick"
+          _cell-click="onCellClick"
         >
 
             <DxColumn :width="80"  :allow-sorting="false"  cell-template="commandsTemplate"/>

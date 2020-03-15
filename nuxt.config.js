@@ -2,7 +2,7 @@ import colors from 'vuetify/es5/util/colors'
 
 let routerBase = '/'
 if (process.env.NODE_ENV === 'production') {
-  routerBase = '/'
+  routerBase = '/rilievomisure'
 }
 
 export default {
