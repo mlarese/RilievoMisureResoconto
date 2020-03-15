@@ -1,10 +1,12 @@
 <template>
     <Panel title="Sincronizzazione">
-        <v-layout rows wrap class="pt-2">
-            <v-flex x12 class="text-xs-center">
-                <v-layout rows wrap>
-                    <v-flex class="pa-0 ma-0" xs12 v-if="key!='auth'" v-for="(db, key, index) in dbStatus" :key="key">
-                            <v-icon>mdi-dns</v-icon>    {{key}}: {{db.doc_count}} records
+        <v-layout rows wrap class="py-0">
+            <v-flex x12 class="text-xs-center py-0">
+                <v-layout rows wrap class="">
+                    <v-flex class="py-0 px-2 ma-0" xs12 v-if="key!='auth'" v-for="(db, key, index) in dbStatus" :key="key">
+                            <v-icon v-if="synchronized">mdi-database-check</v-icon>
+                            <v-icon v-else>mdi-database-remove</v-icon>
+                            {{key}}
                     </v-flex>
                 </v-layout>
             </v-flex>
@@ -25,7 +27,7 @@
         <BottomNavigation>
             <v-btn slot="right" @click="importAll"  :disabled="!syncBtnVisible" :loading="synchronizing">
                 <span>Sincronizza</span>
-                <v-icon>mdi-sync</v-icon>
+                <v-icon>mdi-database-sync</v-icon>
             </v-btn>
         </BottomNavigation>
     </Panel>

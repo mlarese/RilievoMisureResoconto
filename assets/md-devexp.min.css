@@ -38,3 +38,12 @@ tr.dx-data-row {cursor: pointer}
     min-width: 64px;
     padding: 0 16px;
 }
+
+.container {padding:6px}
+
+.subtitle-1 {
+    line-height: 1rem  !important;
+}
+
+.dx-filemanager-general-toolbar{display: none}
+.dx-filemanager-breadcrumbs{display: none}

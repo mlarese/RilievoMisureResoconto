@@ -1,6 +1,6 @@
 <template>
-  <Panel :title="formTitle">
-    <DxForm :form-data.sync="$record" :col-count="1" label-location="top">
+  <Panel :title="tmpFormTitle" :subtitle="isAdd?'':$record.committenteDesc + ': ' + $record.descrizione">
+    <DxForm :form-data.sync="$record" :col-count="1" label-location="top" v-if="!isFileManagerVisible">
       <DxGroupItem>
           <DxSimpleItem data-field="committenteDesc" />
           <DxSimpleItem data-field="descrizione" />
@@ -8,30 +8,31 @@
       </DxGroupItem>
     </DxForm>
 
-    <!-- v-layout rows wrap class=" mt-4">
-        <v-flex xs12 class="align-right">
-            <DxButton icon="undo" text="Annulla" @click="onCancel"/>
-            <DxButton icon="save" text="Salva" @click="onSave" :disabled="!canSave" />
-         </v-flex>
-    </v-layout -->
+    <FileManager v-if="isFileManagerVisible" />
 
 
       <v-bottom-navigation app>
-          <v-btn value="save" @click="onSave" :disabled="!canSave">
-              <span>Salva</span>
-              <v-icon>mdi-content-save-edit</v-icon>
-          </v-btn>
+          <div v-if="!isFileManagerVisible">
+              <v-btn value="save" @click="onSave" :disabled="!canSave">
+                  <span>Salva</span>
+                  <v-icon>mdi-content-save-edit</v-icon>
+              </v-btn>
 
-          <v-btn value="cancel" @click="onCancel">
-              <span>Annulla</span>
-              <v-icon>mdi-undo</v-icon>
-          </v-btn>
+              <v-btn value="cancel" @click="onCancel">
+                  <span>Annulla</span>
+                  <v-icon>mdi-undo</v-icon>
+              </v-btn>
+          </div>
 
           <v-spacer></v-spacer>
 
-          <v-btn value="allegati" class="">
-              <span>Allegati</span>
-              <v-icon>mdi-attachment</v-icon>
+          <v-btn v-if="isEdit" value="allegati" class="clos" @click="isFileManagerVisible=!isFileManagerVisible">
+              <span v-if="!isFileManagerVisible">Allegati</span>
+              <v-icon v-if="!isFileManagerVisible">mdi-file-cabinet</v-icon>
+
+
+              <span v-if="isFileManagerVisible">Chiudi</span>
+              <v-icon v-if="isFileManagerVisible">mdi-close</v-icon>
           </v-btn>
       </v-bottom-navigation>
 
@@ -41,6 +42,7 @@
 <script>
 import {mapState, mapGetters, mapActions} from 'vuex'
 import Panel from '../Containers/Panel'
+import FileManager from '../FileManager/FileManager'
 import { DxButton, DxSpeedDialAction } from 'devextreme-vue'
 import {
   DxForm,
@@ -54,6 +56,7 @@ const storeName = 'gestione_lavori'
 
 export default {
   components: {
+    FileManager,
     DxForm,
     DxSimpleItem,
     DxGroupItem,
@@ -63,10 +66,10 @@ export default {
     DxSpeedDialAction,
     DxButton
   },
+  data () {
+    return {isFileManagerVisible: false}
+  },
   methods: {
-    onShowAttachments () {
-
-    },
     exit () {
       this.$router.replace(`/${storeName}`)
     },
@@ -82,7 +85,11 @@ export default {
   },
   computed: {
     ...mapState(storeName, ['$record']),
-    ...mapGetters(storeName, ['formTitle']),
+    ...mapGetters(storeName, ['formTitle', 'isEdit', 'isAdd']),
+    tmpFormTitle () {
+      if(this.isFileManagerVisible) return `${this.formTitle} - Allegati`
+      return this.formTitle
+    },
     canSave () {
       if(!this.$record.committenteDesc) return false
       if(!this.$record.descrizione) return false

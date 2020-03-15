@@ -2,8 +2,9 @@
 <template>
     <div>
         <v-toolbar class="elevation-0" v-if="title !== ''" dense style="background: white" >
-            <v-toolbar-title class="subtitle-1">
-                <b>{{title}}</b>
+            <v-toolbar-title >
+                <div class="subtitle-1"><b>{{title}}</b></div>
+                <div class="caption">{{subtitle}}</div>
             </v-toolbar-title>
 
         </v-toolbar>
@@ -21,7 +22,8 @@
   export default {
     name: 'CardPanel',
     props: {
-      title: {type: String, default: ''}
+      title: {type: String, default: ''},
+      subtitle: {type: String, default: ''},
     }
   }
 </script>
