@@ -28,6 +28,7 @@ export default {
       }
     ],
     script: [
+      { src: 'js/browserfs.min.js' },
       { src: '_mono/config.js' },
       { src: '_mono/runtime.js' },
       { src: '_mono/mono.js', async: true }
