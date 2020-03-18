@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-layout rows wrap>
-      <v-flex>
+      <v-flex s12>
         <DbMonitor/>
       </v-flex>
     </v-layout>
@@ -13,11 +13,15 @@ import DbMonitor from '../components/Db/DbMonitor'
 
 export default {
   components: {DbMonitor},
+  data () {
+    return {}
+  },
   fetch ({store}) {
     //store.dispatch('sync/importLavori',{}, {root: true})
     store.dispatch('sync/updateStatus',{}, {root: true})
   },
   created () {
+    return
     BrowserFS.configure({
       fs: 'HTML5FS',
       options: {

@@ -1,6 +1,6 @@
 <template>
   <Panel :title="tmpFormTitle" :subtitle="isAdd?'':$record.committenteDesc + ': ' + $record.descrizione">
-    <DxForm :form-data.sync="$record" :col-count="1" label-location="top" v-if="!isFileManagerVisible">
+    <DxForm :form-data.sync="$record" :col-count="1" label-location="top" v-if="isFormVisible">
       <DxGroupItem>
           <DxSimpleItem data-field="committenteDesc" />
           <DxSimpleItem data-field="descrizione" />
@@ -11,8 +11,10 @@
     <FileManager v-if="isFileManagerVisible" />
 
 
-      <v-bottom-navigation app>
-          <div v-if="!isFileManagerVisible">
+    <PhotoCamera v-if="isEdit && isCameraVisible" @snap-photo="onSnapPhoto" class="mt-2" />
+
+    <v-bottom-navigation app>
+          <div v-if="isFormVisible">
               <v-btn value="save" @click="onSave" :disabled="!canSave">
                   <span>Salva</span>
                   <v-icon>mdi-content-save-edit</v-icon>
@@ -24,17 +26,33 @@
               </v-btn>
           </div>
 
+           <div v-if="isCameraVisible">
+               <v-btn value="save" @click="onSave" :disabled="isSalvaImmagineDisabled">
+                   <span>Salva Immagine</span>
+                   <v-icon>mdi-content-save-edit</v-icon>
+               </v-btn>
+           </div>
+
           <v-spacer></v-spacer>
 
-          <v-btn v-if="isEdit" value="allegati" class="clos" @click="isFileManagerVisible=!isFileManagerVisible">
-              <span v-if="!isFileManagerVisible">Allegati</span>
-              <v-icon v-if="!isFileManagerVisible">mdi-file-cabinet</v-icon>
+            <v-btn v-if="isEdit && isFormVisible" value="fotocamera" @click="setVisible('isCameraVisible')">
+                <span>Fotocamera</span>
+                <v-icon>mdi-camera</v-icon>
+            </v-btn>
 
-
-              <span v-if="isFileManagerVisible">Chiudi</span>
-              <v-icon v-if="isFileManagerVisible">mdi-close</v-icon>
+          <v-btn v-if="isEdit && isFormVisible" value="allegati" @click="setVisible('isFileManagerVisible')">
+              <span>Allegati</span>
+              <v-icon>mdi-file-cabinet</v-icon>
           </v-btn>
-      </v-bottom-navigation>
+
+
+          <v-btn v-if="!isFormVisible" value="chiudi" @click="setVisible('isFormVisible')">
+                <span>Chiudi</span>
+                <v-icon>mdi-close</v-icon>
+          </v-btn>
+
+
+     </v-bottom-navigation>
 
   </Panel>
 </template>
@@ -42,6 +60,7 @@
 <script>
 import {mapState, mapGetters, mapActions} from 'vuex'
 import Panel from '../Containers/Panel'
+import PhotoCamera from '../Photo/PhotoCamera'
 import FileManager from '../FileManager/FileManager'
 import { DxButton, DxSpeedDialAction } from 'devextreme-vue'
 import {
@@ -56,6 +75,7 @@ const storeName = 'gestione_lavori'
 
 export default {
   components: {
+    PhotoCamera,
     FileManager,
     DxForm,
     DxSimpleItem,
@@ -67,9 +87,25 @@ export default {
     DxButton
   },
   data () {
-    return {isFileManagerVisible: false}
+    return {
+      isFileManagerVisible: false,
+      isCameraVisible: false,
+      isFormVisible: true,
+      takenImage: null
+    }
   },
   methods: {
+    onSnapPhoto (file) {
+      this.takenImage = file
+    },
+    setVisible (flag) {
+        this.isFileManagerVisible = false
+        this.isCameraVisible = false
+        this.isFormVisible = false
+
+        this[flag] = true
+
+    },
     exit () {
       this.$router.replace(`/${storeName}`)
     },
@@ -86,6 +122,9 @@ export default {
   computed: {
     ...mapState(storeName, ['$record']),
     ...mapGetters(storeName, ['formTitle', 'isEdit', 'isAdd']),
+    isSalvaImmagineDisabled() {
+      return this.takenImage === null
+    },
     tmpFormTitle () {
       if(this.isFileManagerVisible) return `${this.formTitle} - Allegati`
       return this.formTitle

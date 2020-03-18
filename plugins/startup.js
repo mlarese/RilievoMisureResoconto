@@ -5,6 +5,10 @@ import { locale, loadMessages, formatMessage } from 'devextreme/localization';
 // import { DxDataGrid, DxColumn, DxEditing, DxFilterRow, DxPaging, DxScrolling } from 'devextreme-vue/data-grid'
 import { DxButton, DxButtonGroup } from 'devextreme-vue'
 import BottomNavigation from '../layouts/BottomNavigation'
+import { defineCustomElements } from '@ionic/pwa-elements/loader';
+// import LogRocket from 'logrocket'
+//LogRocket.init('v3fwnz/rilievomisure')
+
 locale('it')
 loadMessages(itMessages)
 Vue.use(Notifications)
@@ -19,5 +23,8 @@ Vue.component('DxButtonGroup', DxButtonGroup)
 Vue.component('BottomNavigation', BottomNavigation)
 
 export default async ({ app }) => {
-  return await app.store.dispatch('auth/persistentUser', {}, {root: true})
+  defineCustomElements(window);
+
+
+  return app.store.dispatch('auth/persistentUser', {}, {root: true})
 }
