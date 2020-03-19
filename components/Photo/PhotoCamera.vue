@@ -1,5 +1,6 @@
 <template>
     <div style="text-align: center">
+
         <div>Aggiungi Foto</div>
         <v-layout rows wrap>
             <v-flex s12>
@@ -21,6 +22,7 @@
                 </v-btn>
             </v-flex>
         </v-layout>
+
     </div>
 </template>
 
