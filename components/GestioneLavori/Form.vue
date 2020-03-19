@@ -10,7 +10,6 @@
 
     <FileManager v-if="isFileManagerVisible" />
 
-
     <PhotoCamera v-if="isEdit && isCameraVisible" @snap-photo="onSnapPhoto" class="mt-2" />
 
     <v-bottom-navigation app>
