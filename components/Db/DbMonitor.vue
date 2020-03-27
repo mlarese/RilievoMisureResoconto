@@ -16,7 +16,7 @@
                         Gli archivi sono sincronizzati
                     </v-alert -->
 
-                    <v-alert dense :value="!synchronized"  type="warning"  >
+                    <v-alert dense :value="!synchronized && !synchronizing"  type="warning"  >
                         Sincronizzare gli archivi
                     </v-alert>
 

@@ -47,3 +47,7 @@ tr.dx-data-row {cursor: pointer}
 
 .dx-filemanager-general-toolbar{display: none}
 .dx-filemanager-breadcrumbs{display: none}
+
+.back-city{
+    background-image: url(images/splash.jpg) !important;  background-position: center;
+}

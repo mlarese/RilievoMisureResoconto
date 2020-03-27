@@ -19,7 +19,7 @@
     "@nuxtjs/auth": "^4.8.5",
     "@nuxtjs/axios": "^5.9.5",
     "@nuxtjs/pwa": "^3.0.0-0",
-    "browserfs": "^1.4.3",
+    "bluebird": "^3.7.2",
     "capacitor": "^0.5.5",
     "devextreme": "19.2.6",
     "devextreme-vue": "19.2.6",

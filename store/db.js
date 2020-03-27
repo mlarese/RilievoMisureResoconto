@@ -84,7 +84,6 @@ export const actions = {
   async insertInto({ commit, dispatch }, { table, data, options = null, callback = emptyFn }) {
     Vue.set(data, 'internalStatus', 'added')
     const db = dbList[table]
-    console.log(data)
     return db.post(data, options, callback)
   },
   async safeDelete({ commit, dispatch }, { table, data }) {

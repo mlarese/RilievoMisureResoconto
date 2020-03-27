@@ -30,10 +30,3 @@
     }
   }
 </script>
-
-<style>
-  .back-city{
-    background-image: url(/images/splash.jpg) !important;
-    background-position: center;
-  }
-</style>

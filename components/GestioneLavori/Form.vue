@@ -8,7 +8,7 @@
       </DxGroupItem>
     </DxForm>
 
-    <FileManager v-if="isFileManagerVisible" />
+    <FileManager :preview-visible="isPreviewVisible" @on-preview-file="onPreviewFile" v-if="isFileManagerVisible" />
 
     <PhotoCamera v-if="isEdit && isCameraVisible" @snap-photo="onSnapPhoto" class="mt-2" />
 
@@ -26,7 +26,7 @@
           </div>
 
            <div v-if="isCameraVisible">
-               <v-btn value="save" @click="onSave" :disabled="isSalvaImmagineDisabled">
+               <v-btn value="save" @click="onSaveImg" :disabled="isSalvaImmagineDisabled">
                    <span>Salva Immagine</span>
                    <v-icon>mdi-content-save-edit</v-icon>
                </v-btn>
@@ -45,7 +45,8 @@
           </v-btn>
 
 
-          <v-btn v-if="!isFormVisible" value="chiudi" @click="setVisible('isFormVisible')">
+          <v-btn v-if="!isFormVisible" value="chiudi"
+                 @click="onClose">
                 <span>Chiudi</span>
                 <v-icon>mdi-close</v-icon>
           </v-btn>
@@ -58,6 +59,8 @@
 
 <script>
 import {mapState, mapGetters, mapActions} from 'vuex'
+import {saveFile} from '../../assets/allegati'
+import {fs, appDirImages} from '../../assets/filesystem'
 import Panel from '../Containers/Panel'
 import PhotoCamera from '../Photo/PhotoCamera'
 import FileManager from '../FileManager/FileManager'
@@ -87,6 +90,7 @@ export default {
   },
   data () {
     return {
+      isPreviewVisible: false,
       isFileManagerVisible: false,
       isCameraVisible: false,
       isFormVisible: true,
@@ -94,6 +98,9 @@ export default {
     }
   },
   methods: {
+    onPreviewFile (file) {
+      this.isPreviewVisible = true
+    },
     onSnapPhoto (file) {
       this.takenImage = file
     },
@@ -103,7 +110,6 @@ export default {
         this.isFormVisible = false
 
         this[flag] = true
-
     },
     exit () {
       this.$router.replace(`/${storeName}`)
@@ -111,6 +117,16 @@ export default {
     onCancel () {
       if(!confirm('Confermi?')) return
       this.exit()
+    },
+    onSaveImg () {
+        saveFile(this.takenImage, appDirImages, fs)
+        this.setVisible('isFileManagerVisible')
+    },
+    onClose () {
+      if(!this.isPreviewVisible)
+        this.setVisible('isFormVisible')
+      else
+        this.isPreviewVisible = false
     },
     onSave () {
       this.save()

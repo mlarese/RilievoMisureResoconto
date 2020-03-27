@@ -9,9 +9,19 @@ export const fileManagerColumns = (columns) => {
     if(column.dataField === 'name') column.caption = 'Nome'
     if(column.dataField === 'size') column.visible = false
     if(column.dataField === 'dateModified') column.visible = false
-    console.log(column.dataField)
   }
-  console.log(columns)
   return columns
+}
+
+export const saveFile = (file, path, fs) => {
+  let reader = new FileReader();
+  reader.readAsBinaryString(file)
+  reader.onload = (data) => {
+    let fileBlob = data.currentTarget.result
+    let curFileName = prompt('Nome immagine', file.name)
+    curFileName = `${path}/${curFileName}`
+    fs.writeFile(curFileName, fileBlob, (res) => {})
+  }
+
 }
 

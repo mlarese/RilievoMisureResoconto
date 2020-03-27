@@ -27,6 +27,7 @@
 </template>
 
 <script>
+  import {mapState} from 'vuex'
   export default {
     created () {
       this.$emit('snap-photo', null)
@@ -37,15 +38,16 @@
         imgUrl: null
       }
     },
+    computed: {
+
+    },
     methods: {
       displayAsImage(file) {
         this.imgUrl = URL.createObjectURL(file)
         let img = this.$refs.camimg
-
         img.onload = function() {
           URL.revokeObjectURL(this.imgUrl);
         };
-
         img.src = this.imgUrl;
       },
       onImgLoaded (event) {

@@ -23,8 +23,6 @@ Vue.component('DxButtonGroup', DxButtonGroup)
 Vue.component('BottomNavigation', BottomNavigation)
 
 export default async ({ app }) => {
-  defineCustomElements(window);
-
-
+  defineCustomElements(window)
   return app.store.dispatch('auth/persistentUser', {}, {root: true})
 }
