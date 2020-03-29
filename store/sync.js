@@ -15,6 +15,8 @@ export const state = () => {
 export const actions = {
   async updateStatus ({commit, dispatch}) {
     commit('setUpdatingStatus', true)
+    commit('setSynchronizing', false)
+    commit('setSynchronizing', false)
 
     let dbStatus = {}
     let synchronized = false
@@ -29,6 +31,7 @@ export const actions = {
         }
       }
     }
+
 
     commit('setSynchronized', synchronized)
     commit('setDbStatus', dbStatus)

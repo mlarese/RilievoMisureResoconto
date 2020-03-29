@@ -1,4 +1,4 @@
-import {walkFileSystem, createBaseFs} from '../assets/filesystem'
+import {walkFileSystem, createBaseFs, appDir} from '../assets/filesystem'
 
 export const state = () => {
   return {
@@ -6,9 +6,11 @@ export const state = () => {
   }
 }
 export const actions = {
-  async load ({commit}) {
-    await createBaseFs()
-    const files = await walkFileSystem()
+  async load ({commit}, id) {
+    const entryPoint = id
+
+    await createBaseFs(entryPoint)
+    const files = await walkFileSystem(`${appDir}/${id}`)
     commit('setFileItems', files)
   }
 }

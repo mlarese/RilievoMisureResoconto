@@ -3,8 +3,9 @@
     <v-layout rows wrap>
       <v-flex s12>
         <DbMonitor/>
-        <!-- v-btn @click="readFs">read</v-btn>
-        <img ref="previewImg" :src="null" -->
+        <pre v-if="false">
+           {{errors}}
+        </pre>
       </v-flex>
     </v-layout>
   </div>
@@ -13,17 +14,16 @@
 <script>
 import DbMonitor from '../components/Db/DbMonitor'
 import {fs, previewFile} from '../assets/filesystem'
-
+import {mapState} from 'vuex'
 export default {
   components: {DbMonitor},
   methods: {
-    async readFs () {
-      let f = '/apps/rilievomisure/Immagini/chri.png'
-      previewFile(f, this.$refs['previewImg'])
-    }
   },
   data () {
     return {}
+  },
+  computed: {
+    ...mapState('app', ['errors'])
   },
   fetch ({store}) {
     //store.dispatch('sync/importLavori',{}, {root: true})

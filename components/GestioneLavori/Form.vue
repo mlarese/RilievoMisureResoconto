@@ -8,7 +8,7 @@
       </DxGroupItem>
     </DxForm>
 
-    <FileManager :preview-visible="isPreviewVisible" @on-preview-file="onPreviewFile" v-if="isFileManagerVisible" />
+    <FileManager :entry-point="$record._id" :preview-visible="isPreviewVisible" @on-preview-file="onPreviewFile" v-if="isFileManagerVisible" />
 
     <PhotoCamera v-if="isEdit && isCameraVisible" @snap-photo="onSnapPhoto" class="mt-2" />
 
@@ -20,7 +20,7 @@
               </v-btn>
 
               <v-btn value="cancel" @click="onCancel">
-                  <span>Annulla</span>
+                  <span>Esci</span>
                   <v-icon>mdi-undo</v-icon>
               </v-btn>
           </div>
@@ -60,7 +60,7 @@
 <script>
 import {mapState, mapGetters, mapActions} from 'vuex'
 import {saveFile} from '../../assets/allegati'
-import {fs, appDirImages} from '../../assets/filesystem'
+import {appDirImages, fs} from '../../assets/filesystem'
 import Panel from '../Containers/Panel'
 import PhotoCamera from '../Photo/PhotoCamera'
 import FileManager from '../FileManager/FileManager'
@@ -119,7 +119,8 @@ export default {
       this.exit()
     },
     onSaveImg () {
-        saveFile(this.takenImage, appDirImages, fs)
+        const {_id} = this.$record
+        saveFile(this.takenImage, appDirImages(_id), fs, this.$store)
         this.setVisible('isFileManagerVisible')
     },
     onClose () {

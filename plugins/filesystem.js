@@ -1,3 +1,3 @@
-import {initFs} from '../assets/filesystem'
+// import {initFs} from '../assets/filesystem'
 export default async ({ app }) => {
 }

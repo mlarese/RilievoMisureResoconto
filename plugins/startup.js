@@ -6,8 +6,15 @@ import { locale, loadMessages, formatMessage } from 'devextreme/localization';
 import { DxButton, DxButtonGroup } from 'devextreme-vue'
 import BottomNavigation from '../layouts/BottomNavigation'
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
+import {dmy, time, truncate,number} from '../assets/filters'
+
 // import LogRocket from 'logrocket'
 //LogRocket.init('v3fwnz/rilievomisure')
+
+Vue.filter('number', number)
+Vue.filter('dmy', dmy)
+Vue.filter('time', time)
+Vue.filter('truncate', truncate)
 
 locale('it')
 loadMessages(itMessages)
