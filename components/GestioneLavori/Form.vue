@@ -1,5 +1,5 @@
 <template>
-  <Panel :title="tmpFormTitle" :subtitle="isAdd?'':$record.committenteDesc + ': ' + $record.descrizione">
+  <Panel :title="tmpFormTitle" :subtitle="isAdd?'':$record.committenteDesc + ': ' + $record.descrizione" >
     <DxForm :form-data.sync="$record" :col-count="1" label-location="top" v-if="isFormVisible">
       <DxGroupItem>
           <DxSimpleItem data-field="committenteDesc" />
@@ -12,7 +12,7 @@
 
     <PhotoCamera v-if="isEdit && isCameraVisible" @snap-photo="onSnapPhoto" class="mt-2" />
 
-    <v-bottom-navigation app>
+    <v-bottom-navigation app :dark="dark">
           <div v-if="isFormVisible">
               <v-btn value="save" @click="onSave" :disabled="!canSave">
                   <span>Salva</span>
@@ -136,6 +136,7 @@ export default {
     ...mapActions(storeName, ['save'])
   },
   computed: {
+    ...mapState('app', ['dark']),
     ...mapState(storeName, ['$record']),
     ...mapGetters(storeName, ['formTitle', 'isEdit', 'isAdd']),
     isSalvaImmagineDisabled() {

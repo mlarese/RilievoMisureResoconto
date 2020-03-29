@@ -1,5 +1,5 @@
 <template>
-  <v-app dark>
+  <v-app :dark="dark">
     <notifications position="top right" style="margin-top:50px"/>
     <v-navigation-drawer clipped v-model="drawer" fixed app  >
       <v-list>
@@ -15,13 +15,13 @@
 
     </v-navigation-drawer>
 
-    <v-app-bar :clipped-left="true" fixed app class="elevation-0">
+    <v-app-bar :dark="dark" :clipped-left="true" fixed app class="elevation-0">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title v-text="title" />
     </v-app-bar>
 
     <v-content>
-      <v-container fluid>
+      <v-container fluid :dark="dark">
         <nuxt />
       </v-container>
     </v-content>
@@ -50,7 +50,7 @@
   },
   computed: {
     ...mapState('api', ['notification']),
-    ...mapState('app', ['title', 'menuItems'])
+    ...mapState('app', ['title', 'menuItems', 'dark'])
   }
 }
 </script>

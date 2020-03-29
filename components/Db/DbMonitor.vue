@@ -1,8 +1,8 @@
 <template>
     <Panel title="Sincronizzazione">
-        <v-layout rows wrap class="py-0">
+        <v-layout rows wrap class="py-0" >
             <v-flex x12 class="text-xs-center py-0">
-                <v-layout rows wrap class="">
+                <v-layout rows wrap >
                     <v-flex class="py-0 px-2 ma-0" xs12 v-if="key!='auth'" v-for="(db, key, index) in dbStatus" :key="key">
                             <v-icon v-if="synchronized">mdi-database-check</v-icon>
                             <v-icon v-else>mdi-database-remove</v-icon>

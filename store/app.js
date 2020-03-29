@@ -4,6 +4,7 @@ export const state = () => ({
     { icon: 'mdi-home', title: 'Home', to: '/'  },
     { icon: 'mdi-folder-edit', title: 'Gestione lavori', to: '/gestione_lavori'  } // , { icon: 'mdi-monitor-eye', title: 'monitor', to: '/monitor'  },
   ],
+  dark: true,
   title: 'Rilievo Misure'
 })
 

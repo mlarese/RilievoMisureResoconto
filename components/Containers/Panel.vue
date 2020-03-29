@@ -1,6 +1,6 @@
 <!--eslint-disable-->
 <template>
-    <div>
+    <v-layout>
         <v-toolbar class="elevation-0" v-if="title !== ''" dense style="background: white" >
             <v-toolbar-title >
                 <div class="subtitle-1"><b>{{title}}</b></div>
@@ -9,14 +9,14 @@
 
         </v-toolbar>
 
-        <v-card slot="container-top" class="elevation-0 pa-0" style="min-height:100px">
-            <v-container grid-list-md  fluid>
+        <v-card  slot="container-top" class="elevation-0 pa-0" style="min-height:100px">
+            <v-container grid-list-md  fluid >
             <slot>
 
             </slot>
             </v-container>
         </v-card>
-    </div>
+    </v-layout>
 </template>
 <script>
   export default {

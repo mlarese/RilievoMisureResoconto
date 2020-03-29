@@ -1,5 +1,5 @@
 <template>
-    <v-bottom-navigation app>
+    <v-bottom-navigation :dark="dark" app>
         <v-btn  v-if="$router.currentRoute.path!=item.to" v-for="(item, i) in menuItems" :key="i" :value="item.to" :to="item.to">
             <span>{{item.title}}</span>
             <v-icon>{{item.icon}}</v-icon>
@@ -13,7 +13,7 @@
   export default {
     name: 'BottomNavigation',
     computed: {
-      ...mapState('app', ['menuItems'])
+      ...mapState('app', ['menuItems', 'dark'])
     }
   }
 </script>
