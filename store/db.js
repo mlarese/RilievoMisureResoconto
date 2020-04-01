@@ -5,7 +5,10 @@ import Vue from 'vue'
 export const dbList = {
   'lavori': new PouchDb('lavori'),
   'allegati': new PouchDb('allegati'),
-  'auth': new PouchDb('auth')
+  'auth': new PouchDb('auth'),
+  'rilievi': new PouchDb('rilievi'),
+  'rilievoDet': new PouchDb('rilievoDet'),
+  'rilievoPos': new PouchDb('rilievoPos')
 }
 
 export const state = () => {
@@ -32,6 +35,12 @@ export const actions = {
   async selectAll({ commit, dispatch }, { table, options = { include_docs: true }, callback = emptyFn }) {
     const db = dbList[table]
     const res = db.allDocs(options)
+    return res
+      .then(records => _map(records.rows, 'doc'))
+  },
+  async query({ commit, dispatch }, { table, mapFunction, reduceFunction, callback = emptyFn }) {
+    const db = dbList[table]
+    const res = db.query(mapFunction, reduceFunction)
     return res
       .then(records => _map(records.rows, 'doc'))
   },
