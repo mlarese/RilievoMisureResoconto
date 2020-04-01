@@ -1,8 +1,8 @@
 <!--eslint-disable-->
 <template>
     <v-layout align-center justify-center class="login mt-5" >
-        <v-flex xs12 sm8 md4>
-            <v-card class="elevation-6 pt-0 px-3 opacity70" style="border-radius: 8px">
+        <v-flex xs12 sm8 md5 class="pa-3">
+            <v-card class="elevation-6 pt-0 px-3 mx-5 opacity70" style="border-radius: 8px">
                 <v-card-text>
 
                     <div class="text-xs-center mb-4">
@@ -15,7 +15,7 @@
                 </v-card-text>
                 <v-card-actions class="pb-4">
                     <v-spacer></v-spacer>
-                    <v-btn dark _loading="loading" class="mr-2" :disabled="!canLogin" color="green" @click="login" @keyup.enter="login" medium>
+                    <v-btn small text style="whidth:80px" dark _loading="loading" class="mr-2 px-5" :disabled="!canLogin" color="" @click="login" @keyup.enter="login" medium>
                         Login
 
                     </v-btn>

@@ -12,6 +12,10 @@ export default {
     base: routerBase,
     middleware: ['acl']//['acl', 'auth']
   },
+  server: {
+    port: 3000, // default: 3000
+    host: '192.168.1.54' // default: localhost
+  },
   /*
    ** Headers of the page
    */
@@ -28,7 +32,7 @@ export default {
       }
     ],
     script: [
-      { src: 'js/browserfs.min.js' },
+      { src: 'js/browserfs.js' },
       { src: '_mono/config.js' },
       { src: '_mono/runtime.js' },
       { src: '_mono/mono.js', async: true }
@@ -92,7 +96,10 @@ export default {
    */
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
-    treeShake: true,
+    treeShake: {
+      directives: ['Touch']
+    },
+
     theme: {
       dark: false,
       themes: {
