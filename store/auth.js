@@ -67,13 +67,12 @@ export const actions = {
         'Content-Type': 'application/json'
       }
     }
-    return dispatch('api/post', {url: '/auth/login', data, options}, {root: true})
+    return dispatch('api/post', {url: '/api/Users/authenticate', data, options}, {root: true})
       .then(res => {
         return setAuth(commit, dispatch, res.data, data.username)
       })
       .catch(e => {
-        console.dir('post /auth/login', e)
-
+        console.dir('post /api/Users/authenticate', e)
       })
   }
 }

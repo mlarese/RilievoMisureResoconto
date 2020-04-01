@@ -41,7 +41,7 @@ export const actions = {
     commit('hasError')
 
     if (!options.headers) options.headers = {}
-    if(rootState.auth.token) options.headers['Authorization'] = rootState.auth.token
+    if(rootState.auth.token) options.headers['authorization'] = rootState.auth.token
 
     return instance.get(url, options)
       .then(res => {
@@ -66,7 +66,7 @@ export const actions = {
     //console.log('---- post', url, data, options)
 
     if (!options.headers) options.headers = {}
-    if(rootState.auth.token) options.headers['Authorization'] = rootState.auth.token
+    if(rootState.auth.token) options.headers['authorization'] = rootState.auth.token
 
     return instance.post(url, data, options)
       .then(res => {
@@ -89,7 +89,7 @@ export const actions = {
     commit('hasError')
 
     if (!options.headers) options.headers = {}
-    if(rootState.auth.token) options.headers['Authorization'] = rootState.auth.token
+    if(rootState.auth.token) options.headers['authorization'] = rootState.auth.token
 
     return instance.put(url, data, options)
       .then(res => {
@@ -112,7 +112,7 @@ export const actions = {
     console.log(url)
 
     if (!options.headers) options.headers = {}
-    if(rootState.auth.token) options.headers['Authorization'] = rootState.auth.token
+    if(rootState.auth.token) options.headers['authorization'] = rootState.auth.token
 
     return instance.delete(url, options)
       .then(res => {

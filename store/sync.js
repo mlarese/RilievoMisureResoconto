@@ -53,7 +53,7 @@ export const actions = {
 
   },
   importLavori ({commit, dispatch}) {
-    const url = '/lavori/getall'
+    const url = '/api/Lavori'
     return dispatch('api/get', {url}, {root: true})
       .then(res => {
         const {data} = res
