@@ -8,7 +8,7 @@
           :show-column-lines="false"
           :show-row-lines="true"
           :row-alternation-enabled="true"
-          keyExpr="uid"
+          keyExpr="_id"
           :columnAutoWidth="true"
           :column-hiding-enabled="false"
           noDataText="Nessun lavoro trovato"

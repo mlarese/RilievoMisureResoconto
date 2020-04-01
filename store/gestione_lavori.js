@@ -4,7 +4,6 @@ import {visibleRecord} from './db'
 
 const root = { root: true }
 const emptyRecord = () =>({
-  uid: uuid(),
   committenteDesc: null,
   descrizione: null,
   luogo: null
