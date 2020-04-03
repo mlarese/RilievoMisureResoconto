@@ -9,7 +9,10 @@ export const state = () => {
     listaSchedeGenerali: {},
     $record: {},
     record: {},
-    dbName: 'rilievi'
+    dbName: 'rilievi',
+    ui: {
+      title: 'Rilievo'
+    }
   }
 }
 

@@ -9,35 +9,22 @@ var Module = {
 			function () {
 				// Module.mono_bindings_init("[WebAssembly.Bindings]WebAssembly.Runtime")
 				// BINDING.call_static_method("[ClassLibrary] ClassLibrary.Class1:somma", []);
+			
+				// let fn1 = Module.mono_bind_static_method("[ICT_GestioneSerramenti] ICT_GestioneSerramenti.Tester:getComandiImmagine")
+				// window.GestoreImmagini.getDrawingCommands = fn1;
 
-				let fn = Module.mono_bind_static_method("[ClassLibrary] ClassLibrary.Class1:somma")
-				let res = fn(10, 20)
+				// let fn4 = Module.mono_bind_static_method("[ICT_GestioneSerramenti] ICT_GestioneSerramenti.Tester:getComandiImmagine")
+				// window.GestoreImmagini.getDrawingCommands = fn4;
 
-				window.GestoreImmagini.somma = fn;
+				let fn1 = Module.mono_bind_static_method("[ICT_GestoreSerramenti_STD] ICT_GestoreSerramenti_STD.GestorePWApp:AddJSCatalogo")
+				window.GestoreImmagini.AddJSCatalogo = fn1;
 
-				console.dir(res)
+				let fn2 = Module.mono_bind_static_method("[ICT_GestoreSerramenti_STD] ICT_GestoreSerramenti_STD.GestorePWApp:GetListaArticoli_as_JSON")
+				window.GestoreImmagini.GetListaArticoli = fn2;
 
-				let fn2 = Module.mono_bind_static_method("[ClassLibrary] ClassLibrary.Class1:incrementa")
-				window.GestoreImmagini.incrementa = fn2;
-
-				fn2(10)
-				let res2 = fn2(11)
-				console.dir(res2)
-
-				let fn3 = Module.mono_bind_static_method("[TestClassLibrary] TestClassLibrary.Class1:getIMG")
-				window.GestoreImmagini.getImmagine = fn3;
-				// let res3 = fn3()
-				//console.dir(res3)
-
-				// let fn2 = Module.mono_bind_static_method("[ClassLibraryDraw] ClassLibraryDraw.Class1:getIMG")
-				// let res2 = fn2()
-				// console.dir(res2)
-
-				let fn4 = Module.mono_bind_static_method("[ICT_GestioneSerramenti] ICT_GestioneSerramenti.Tester:getComandiImmagine")
-				window.GestoreImmagini.getDrawingCommands = fn4;
-				// let jsonData = fn4();
-				// console.dir(jsonData)
-
+				let fn3 = Module.mono_bind_static_method("[ICT_GestoreSerramenti_STD] ICT_GestoreSerramenti_STD.GestorePWApp:getComandiImmagine")
+				window.GestoreImmagini.getComandiImmagine = fn3;
+				
 			}
 		)
 	},

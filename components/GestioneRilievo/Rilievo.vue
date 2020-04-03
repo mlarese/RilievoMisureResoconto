@@ -1,170 +1,233 @@
 <template>
   <div>
-    <div>
-      <DxDataGrid
-        id="gridRilievo"
-        :data-source="listaPosizioni"
-        :show-borders="true"
-        :repaint-changes-only="true"
-        :remoteOperations="false"
-        ref="dataGridRefKey"
-        @row-prepared="onCellPrepared"
-        @row-inserted="insertRow"
-        @row-updated="updateRow"
-        @row-removed="removeRow"
-      >
-        <DxEditing
-          :allow-updating="true"
-          :allow-deleting="true"
-          :allow-adding="true"
-          mode="popup"
-        >
-          <DxPopup
-            :show-title="false"
-            :width="500"
-            :height="300"
-          >
-            <DxPosition my="top" at="top" of="window" />
-          </DxPopup>
-          <DxForm>
-            <DxItem :col-count="2" :col-span="2" item-type="group">
-              <DxItem :col-span="2" caption="Posizione" data-field="posizioneDesc" />
-              <DxItem :col-span="2" caption="Quantità" data-field="PosQta" editor-type="dxNumberBox" />
-            </DxItem>
-          </DxForm>
-        </DxEditing>
+    <v-row v-for="pos in listaPosizioni" :key="pos._id">
+      <v-col cols="12" sm="6" offset-sm="3">
+        <v-card>
+          <v-card-title class="blue white--text">
+            <span class="headline">Posizione: {{ pos.posizioneDesc }}</span>
 
-        <!-- <DxColumn
-          :width="80"
-          :allow-sorting="false"
-          cell-template="commandsTemplate"
-        /> -->
-        <DxColumn caption="Posizione" data-field="posizioneDesc" width="300" />
-        <DxColumn caption="Quantità" data-field="PosQta" />
-        <DxColumn caption="Quantità" data-field="_id" />
+            <v-spacer></v-spacer>
 
-        <template #commandsTemplate="cell">
-          <div>
-            <DxButton
-              @click="onPosEdit(cell)"
-              icon="edit"
-              hint="Modifica posizione"
-            />
-            <DxButton
-              @click="onPosDelete(cell)"
-              icon="trash"
-              hint="Elimina posizione"
-            />
+            <v-menu bottom left>
+              <template v-slot:activator="{ on }">
+                <v-btn dark icon v-on="on">
+                  <v-icon>mdi-dots-vertical</v-icon>
+                </v-btn>
+              </template>
+
+              <v-list>
+                <v-list-item>
+                  <v-list-item-title>Modifica</v-list-item-title>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-title>Duplica</v-list-item-title>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-title>Elimina</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </v-card-title>
+
+          <div v-for="det in listaDettagli" :key="det._id">
+            <v-touch @tap="apriDettaglio(det._id)">
+              <v-col v-if="det.RifPosID == pos._id" cols="12">
+                <v-card>
+                  <div class="d-flex flex-no-wrap ">
+                    <v-avatar class="ma-3" size="125" tile>
+                      <v-img :src="getIMG_base64(det.drawingCMD)"></v-img>
+                    </v-avatar>
+                    <div>
+                      <v-card-title class="headline" v-text="det.Descrizione">
+                        <v-spacer></v-spacer>
+
+                        <v-menu bottom left>
+                          <template v-slot:activator="{ on }">
+                            <v-btn dark icon v-on="on">
+                              <v-icon>mdi-dots-vertical</v-icon>
+                            </v-btn>
+                          </template>
+
+                          <v-list>
+                            <v-list-item>
+                              <v-list-item-title>Modifica</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item>
+                              <v-list-item-title>Duplica</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item>
+                              <v-list-item-title>Elimina</v-list-item-title>
+                            </v-list-item>
+                          </v-list>
+                        </v-menu>
+                      </v-card-title>
+
+                      <v-card-subtitle
+                        v-text="det.Descrizione"
+                      ></v-card-subtitle>
+                    </div>
+                  </div>
+                </v-card>
+              </v-col>
+            </v-touch>
           </div>
-        </template>
-
-        <DxSearchPanel :visible="true" />
-
-        <DxMasterDetail
-          :enabled="true"
-          template="masterDetailTemplate"
-          :autoExpandAll="true"
-        />
-        <template #masterDetailTemplate="rowDettaglio">
-          <ucGridDettaglio :templateData="rowDettaglio.data" />
-        </template>
-      </DxDataGrid>
-    </div>
+          <v-col>
+            <DxButton
+              @click="addDettaglio(pos._id)"
+              icon="plus"
+              text="Aggiungi articolo"
+            />
+          </v-col>
+        </v-card>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
 <script>
 import { mapState, mapActions, mapMutations, mapGetters } from 'vuex'
-import {
-  DxMasterDetail,
-  DetailTemplate,
-  DxDataGrid,
-  DxColumn,
-  DxEditing,
-  DxFilterRow,
-  DxSelection,
-  DxHeaderFilter,
-  DxSearchPanel,
-  DxPopup,
-  DxForm,
-  DxPosition
-} from 'devextreme-vue/data-grid'
-import { DxItem } from 'devextreme-vue/form';
 import { DxButton } from 'devextreme-vue'
-import CustomStore from 'devextreme/data/custom_store'
-import ucGridDettaglio from '~/components/GestioneRilievo/ucGridDettaglio'
 
 export default {
   components: {
-    DxDataGrid,
-    DxColumn,
-    DxEditing,
-    DxFilterRow,
-    DxSelection,
-    DxHeaderFilter,
-    DxSearchPanel,
-    DxButton,
-    DxMasterDetail,
-    DetailTemplate,
-    ucGridDettaglio,
-    DxPopup,
-    DxForm,
-    DxItem,
-    DxPosition
+    DxButton
   },
   props: [],
   computed: {
     ...mapState('rilievoPos', ['listaPosizioni']),
-    dataGrid: function() {
-      return this.$refs['dataGridRefKey'].instance
-    }
+    ...mapState('rilievoDet', ['listaDettagli']),
+    ...mapState('rilievo', { rilievo: 'record' })
   },
   data() {
-    return {
-      posizioniDataSource: new CustomStore({
-        key: '_id',
-        load: () => this.getListaPos(),
-        insert: (value) => this.insertRow(value),
-        update: (key, value) => this.updateRow(key, value),
-        remove: (key) => this.deleteRow(key)
-      })
-    }
+    return {}
   },
   methods: {
-    ...mapActions('rilievoPos', ['load']),
-    ...mapMutations('rilievoPos', ['setRecord']),
-    ...mapActions('rilievoPos', {
-      saveRow: 'save',
-      deleteRow: 'deleteByID'
-    }),
-    insertRow({ data }) {
-      delete data.__KEY__
-      console.log(data)
-      this.setRecord(data)
-      this.saveRow()
+    getIMG_base64(rowData) {
+      if (rowData) {
+        return generaIMG(rowData)
+      }
     },
-    updateRow({ data }) {
-      console.log(data)
-      this.setRecord(data)
-      this.saveRow()
+    ...mapMutations('rilievoDet', ['setRiferimentoAPosizione']),
+    addDettaglio(posID) {
+      this.setRiferimentoAPosizione(posID)
+      this.$router.push(`/dettaglio/add`)
     },
-    removeRow({ data }) {
-      console.log(data._id)
-      this.deleteRow(data._id)
-    },
-    getListaPos() {
-      return Promise.resolve(this.listaPosizioni).then(function(value) {
-        return { data: value }
-      })
-    },
-    onAddPosClick() {
-      this.dataGrid.refresh()
-    },
-    onCellPrepared(e) {
-      // if (e.rowElement.rowIndex > 0){
-      //   e.rowElement.style.backgroundColor = '#8bc34a'
-      // }
+    apriDettaglio(id) {
+      this.$router.push(`/dettaglio/${id}`)
     }
   }
+}
+
+function generaIMG(jsonData) {
+  let c = document.createElement('canvas')
+  c.width = 200
+  c.height = 200
+
+  // let c = document.getElementById('canvas')
+
+  //console.log(jsonData)
+  // Tipo di disegno
+  // DL=DrawLine; DR=DrawRectangle; DS=DrawString; DI=DrawImage; DP=FillPolygon;
+
+  let ctx = c.getContext('2d')
+  ctx.clearRect(0, 0, c.width, c.height)
+
+  for (let indx in jsonData.PIMElements) {
+    let element = jsonData.PIMElements[indx]
+    let elencoCMD = element.DrawingCommands
+    let penWidth = element.PenWidth
+    let penColor = element.ForeColor
+    let backColor = element.BackColor
+    let objType = element.ObjType
+
+    if (objType == 'Divisore') {
+      let a = 1
+    }
+
+    for (let i in elencoCMD) {
+      let DrawCommand = elencoCMD[i]
+
+      let punti = DrawCommand.Points
+
+      if (!punti) {
+        continue
+      }
+
+      let startPoint = punti[0]
+      let endPoint = punti[punti.length - 1]
+
+      ctx = c.getContext('2d')
+
+      switch (DrawCommand.DrawType) {
+        case 'DL':
+          // DL=DrawLine
+          if (penWidth > 0) {
+            ctx.lineWidth = penWidth
+            ctx.strokeStyle = toColor(penColor)
+            ctx.moveTo(startPoint.X, startPoint.Y)
+            ctx.lineTo(endPoint.X, endPoint.Y)
+            ctx.stroke()
+          }
+
+          break
+        case 'DR':
+          // DrawRectangle
+
+          // console.log(DrawCommand)
+          ctx.beginPath()
+          ctx.fillStyle = toColor(backColor)
+          ctx.fillRect(
+            startPoint.X,
+            startPoint.Y,
+            endPoint.X - startPoint.X,
+            endPoint.Y - startPoint.Y
+          )
+          ctx.stroke()
+
+          break
+        case 'DS':
+          // DrawString
+          break
+        case 'DI':
+          // DrawImage
+          break
+        case 'DP':
+          // FillPolygon
+
+          let region = new Path2D()
+          ctx.lineWidth = penWidth
+          ctx.strokeStyle = toColor(penColor)
+          region.moveTo(startPoint.X, startPoint.Y)
+
+          let index
+          for (index = 1; index < punti.length; index++) {
+            region.lineTo(punti[index].X, punti[index].Y)
+          }
+
+          region.closePath()
+
+          // Fill path
+          ctx.fillStyle = toColor(backColor)
+          ctx.fill(region, 'evenodd')
+
+          break
+        default:
+          null
+      }
+    }
+    // console.log('finito')
+  }
+  let img = c.toDataURL()
+  // console.log(img)
+  return img
+}
+
+function toColor(num) {
+  num >>>= 0
+  var b = num & 0xff,
+    g = (num & 0xff00) >>> 8,
+    r = (num & 0xff0000) >>> 16,
+    a = ((num & 0xff000000) >>> 24) / 255
+  return 'rgba(' + [r, g, b, a].join(',') + ')'
 }
 </script>

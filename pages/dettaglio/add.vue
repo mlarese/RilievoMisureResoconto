@@ -1,17 +1,24 @@
 <template>
-  <DxBox direction="row" width="100%">
+  <!-- <DxBox direction="row" width="100%">
     <DxItem :ratio="2">
       <template #default>
-        <DxButton @click="salva()" text="salva" />
-        <!-- <ucProprieta :elencoProprieta="$record.props"></ucProprieta> -->
+        <div>
+          <DxTextArea
+            :height="90"
+            :read-only="false"
+            :value.sync="$record.Descrizione"
+          />
+          <DxButton @click="salva()" text="salva" />
+        </div>
+        <ucProprieta :elencoProprieta="$record.props"></ucProprieta>
       </template>
     </DxItem>
     <DxItem :ratio="2">
       <template #default>
+      </template>
+    </DxItem>
+  </DxBox> -->
         <ucImmagine></ucImmagine>
-      </template>
-    </DxItem>
-  </DxBox>
 </template>
 
 <script>
@@ -22,41 +29,41 @@ import ucImmagine from '~/components/GestioneRilievo/ucImmagine'
 import ucProprieta from '~/components/GestioneRilievo/ucProprieta'
 import { DxBox, DxItem } from 'devextreme-vue/box'
 
-const storeName = 'articoli'
 export default {
   components: {
     ucProprieta,
     ucImmagine,
     DxBox,
     DxItem,
-    DxButton
+    DxButton,
+    DxTextArea
     // },
     // fetch ({store, params}) {
     //   store.dispatch('articoli/getById', 'demo',  {root: true})
-    // },
-    // computed: {
-    //   ...mapState(storeName, ['$record']),
+  },
+  computed: {
+    ...mapState('rilievoDet', ['$record'])
   },
   methods: {
     ...mapActions('rilievoDet', ['save']),
     ...mapMutations('rilievoDet', ['setRecord']),
     salva: function() {
-      let record = {}
-      record.RifPosID = '44a75306-ef40-45af-a1d5-cdacfd71e987'
-      record.rilievoID = '72ef1dbd-b946-4873-bd43-50bb0a425155'
-      record.Descrizione = 'terza posizione aaaa'
+      // let record = {}
+      // record.RifPosID = '4f0db092-fedc-4e97-a607-323f143cd3ad'
+      // record.rilievoID = '59818e70-71b0-4aa6-b4a7-a6d9ff2cddab'
+      // record.Descrizione = 'sec posizione aaa'
 
-      let jsonDataString = window.GestoreImmagini.getDrawingCommands(
-        'MACRO:DEMO1',
-        200,
-        200,
-        -1,
-        -1
-      )
-      let jsonData = JSON.parse(jsonDataString)
+      // let jsonDataString = window.GestoreImmagini.getDrawingCommands(
+      //   'MACRO:DEMO1',
+      //   200,
+      //   200,
+      //   -1,
+      //   -1
+      // )
+      // let jsonData = JSON.parse(jsonDataString)
 
-      record.drawingCMD = jsonData
-      this.setRecord(record)
+      // record.drawingCMD = jsonData
+      // this.setRecord(record)
       this.save()
     }
   }

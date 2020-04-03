@@ -4,6 +4,7 @@ const root = { root: true }
 export const state = () => {
   return {
     rilievoID: 0,
+    RifPosID: 0,
     listaDettagli: [],
     $record: {},
     record: {},
@@ -43,6 +44,8 @@ export const actions = {
   },
   save({ dispatch, commit, state }) {
     const rec = state.$record
+    rec.RifPosID = state.RifPosID
+    rec.rilievoID = state.rilievoID
     const table = state.dbName
     const isInsert = !rec._id
     let actionName = 'db/update'
@@ -86,6 +89,14 @@ export const actions = {
 export const mutations = {
   setRiferimentoARilievo(state, payload = {}) {
     state.rilievoID = payload
+    state.$record.rilievoID = payload
+  },
+  setRiferimentoAPosizione(state, payload = {}) {
+    state.RifPosID = payload
+    state.$record.RifPosID = payload
+  },
+  setDrawingCommands(state, payload = {}){
+    state.$record.drawingCMD = payload
   },
   setList(state, payload = {}) {
     state.listaDettagli = payload

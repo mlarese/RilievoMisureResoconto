@@ -9,8 +9,8 @@
       <canvas
         @click="selezionaOggetto"
         id="myCanvas"
-        width="200"
-        height="200"
+        width="1000"
+        height="1000"
         style="border:1px solid #000000;"
       ></canvas>
     </div>
@@ -19,6 +19,7 @@
 
 <script>
 import { DxButton, DxTextArea } from 'devextreme-vue'
+import { mapState, mapMutations, mapActions } from 'vuex'
 
 export default {
   components: {
@@ -31,6 +32,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations('rilievoDet', ['setDrawingCommands']),
     cleanIMG: function(event) {
       let c = document.getElementById('myCanvas')
       let ctx = c.getContext('2d')
@@ -38,15 +40,22 @@ export default {
     },
     applicaMC: function(evet) {
       let c = document.getElementById('myCanvas')
-      let jsonDataString = window.GestoreImmagini.getDrawingCommands(
-        this.macroComando,
-        c.width,
-        c.height,
-        -1,
-        -1
-      )
-      let jsonData = JSON.parse(jsonDataString)
-      this.generaIMG(jsonData)
+      try {
+        let jsonDataString = window.GestoreImmagini.getDrawingCommands(
+          this.macroComando.replace('<br>',/(?:\r\n|\r|\n)/g),
+          c.width,
+          c.height,
+          -1,
+          -1
+        )
+
+        let jsonData = JSON.parse(jsonDataString)
+        this.setDrawingCommands(jsonData)
+        this.generaIMG(jsonData)
+
+      } catch (e) {
+        console.log(e)
+      }
     },
     selezionaOggetto: function(evt) {
       let c = document.getElementById('myCanvas')
@@ -82,7 +91,7 @@ export default {
         let backColor = element.BackColor
         let objType = element.ObjType
 
-        if (objType == 'Divisore'){
+        if (objType == 'Divisore') {
           let a = 1
         }
 
@@ -116,10 +125,15 @@ export default {
               // DrawRectangle
 
               console.log(DrawCommand)
-              ctx.beginPath();
+              ctx.beginPath()
               ctx.fillStyle = this.toColor(backColor)
-              ctx.fillRect(startPoint.X, startPoint.Y, endPoint.X - startPoint.X, endPoint.Y - startPoint.Y);
-              ctx.stroke();
+              ctx.fillRect(
+                startPoint.X,
+                startPoint.Y,
+                endPoint.X - startPoint.X,
+                endPoint.Y - startPoint.Y
+              )
+              ctx.stroke()
 
               break
             case 'DS':
