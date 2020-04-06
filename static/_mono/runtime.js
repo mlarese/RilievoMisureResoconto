@@ -23,7 +23,13 @@ var Module = {
 				window.GestoreImmagini.GetListaArticoli = fn2;
 
 				let fn3 = Module.mono_bind_static_method("[ICT_GestoreSerramenti_STD] ICT_GestoreSerramenti_STD.GestorePWApp:getComandiImmagine")
-				window.GestoreImmagini.getComandiImmagine = fn3;
+				window.GestoreImmagini.getDrawingCommands = fn3;
+
+				let fn4 = Module.mono_bind_static_method("[ICT_GestoreSerramenti_STD] ICT_GestoreSerramenti_STD.GestorePWApp:resetStrutturaSerramento")
+				window.GestoreImmagini.resetStrutturaSerramento = fn4;
+
+				let fn5 = Module.mono_bind_static_method("[ICT_GestoreSerramenti_STD] ICT_GestoreSerramenti_STD.GestorePWApp:getMacroComandi")
+				window.GestoreImmagini.getMacroComandi = fn5;
 				
 			}
 		)

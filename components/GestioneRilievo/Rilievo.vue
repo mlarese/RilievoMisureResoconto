@@ -35,7 +35,8 @@
                 <v-card>
                   <div class="d-flex flex-no-wrap ">
                     <v-avatar class="ma-3" size="125" tile>
-                      <v-img :src="getIMG_base64(det.drawingCMD)"></v-img>
+                      <!-- <v-img :src="getIMG_base64(det.macroComandi)"></v-img> -->
+                      <ImmagineDet :macroComandi="det.macroComandi"></ImmagineDet>
                     </v-avatar>
                     <div>
                       <v-card-title class="headline" v-text="det.Descrizione">
@@ -47,7 +48,6 @@
                               <v-icon>mdi-dots-vertical</v-icon>
                             </v-btn>
                           </template>
-
                           <v-list>
                             <v-list-item>
                               <v-list-item-title>Modifica</v-list-item-title>
@@ -86,30 +86,34 @@
 
 <script>
 import { mapState, mapActions, mapMutations, mapGetters } from 'vuex'
-import { DxButton } from 'devextreme-vue'
+import ImmagineDet from '~/components/GestioneRilievo/ImmagineDet'
 
 export default {
   components: {
-    DxButton
+    ImmagineDet
   },
   props: [],
   computed: {
-    ...mapState('rilievoPos', ['listaPosizioni']),
-    ...mapState('rilievoDet', ['listaDettagli']),
+    ...mapState('rilievo', ['listaPosizioni']),
+    ...mapState('rilievo', ['listaDettagli']),
     ...mapState('rilievo', { rilievo: 'record' })
   },
   data() {
     return {}
   },
   methods: {
-    getIMG_base64(rowData) {
-      if (rowData) {
-        return generaIMG(rowData)
+    getIMG_base64(mc) {
+      if (mc) {
+        return generaIMG(mc)
       }
     },
-    ...mapMutations('rilievoDet', ['setRiferimentoAPosizione']),
+    ...mapMutations('rilievoDet', {setRecordRilievoDet: 'setRecord'}),
     addDettaglio(posID) {
-      this.setRiferimentoAPosizione(posID)
+      let newDettaglio = {
+        rilievoID: this.rilievo._id,
+        RifPosID: posID
+      }
+      this.setRecordRilievoDet(newDettaglio)
       this.$router.push(`/dettaglio/add`)
     },
     apriDettaglio(id) {
@@ -118,10 +122,36 @@ export default {
   }
 }
 
-function generaIMG(jsonData) {
+function generaIMG(mc) {
   let c = document.createElement('canvas')
   c.width = 200
   c.height = 200
+  let jsonData = {}
+  try {
+    window.GestoreImmagini.resetStrutturaSerramento()
+    let jsonDataString = window.GestoreImmagini.getDrawingCommands(
+      mc,
+      c.width,
+      c.width
+    )
+
+    let jsonDataObj = JSON.parse(jsonDataString)
+
+    if (jsonDataObj.state) {
+      jsonData = JSON.parse(jsonDataObj.data)
+
+      //this.generaIMG(pmiEl)
+    } else {
+      throw jsonDataObj.data
+    }
+  } catch (e) {
+    console.log(e)
+  }
+
+  if (!jsonData){
+    return
+  }
+
 
   // let c = document.getElementById('canvas')
 

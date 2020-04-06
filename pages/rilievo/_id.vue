@@ -38,7 +38,7 @@ export default {
   methods: {
     apriNuovaPosizione() {
       this.$refs.popupPosEdit
-        .open('Inserire una nuova posizione')
+        .open('Inserire una nuova posizione', '', 1)
         .then((data) => {
           if (data) {
             this.insertRow(data)

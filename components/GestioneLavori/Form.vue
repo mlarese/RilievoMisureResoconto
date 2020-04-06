@@ -39,6 +39,11 @@
                 <v-icon>mdi-camera</v-icon>
             </v-btn>
 
+            <v-btn v-if="isEdit && isFormVisible" value="fotocamera" @click="apriRilievo()">
+                <span>rilievo</span>
+                <v-icon>mdi-camera</v-icon>
+            </v-btn>
+
           <v-btn v-if="isEdit && isFormVisible" value="allegati" @click="setVisible('isFileManagerVisible')">
               <span>Allegati</span>
               <v-icon>mdi-file-cabinet</v-icon>
@@ -98,6 +103,10 @@ export default {
     }
   },
   methods: {
+    apriRilievo(){
+      const {_id} = this.$record
+      this.$router.push(`/rilievo/${_id}`)
+    },
     onPreviewFile (file) {
       this.isPreviewVisible = true
     },

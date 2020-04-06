@@ -1,11 +1,11 @@
 import _clone from 'lodash/clone'
-import { v1 as uuid } from 'uuid'
 
 const root = { root: true }
 export const state = () => {
   return {
     lavoroID: 0,
-    listaPosizioni: {},
+    listaPosizioni: [],
+    listaDettagli: [],
     listaSchedeGenerali: {},
     $record: {},
     record: {},
@@ -16,21 +16,30 @@ export const state = () => {
   }
 }
 
-function mapFunction(doc) {
-  emit(doc.lavoroID)
-}
-
 export const actions = {
   load({ commit, dispatch, state }) {
     const table = state.dbName
 
-    let reduceFunction = {
+    function mapFunctionRilievo(doc) {
+      emit(doc.lavoroID)
+    }
+
+    let reduceFunctionRilievo = {
       key: state.lavoroID,
       include_docs: true,
       limit: 1
     }
+
     // Carica il rilievo
-    dispatch('db/query', { table, mapFunction, reduceFunction }, root)
+    dispatch(
+      'db/query',
+      {
+        table,
+        mapFunction: mapFunctionRilievo,
+        reduceFunction: reduceFunctionRilievo
+      },
+      root
+    )
       .then((rilievo) => {
         if (Object.keys(rilievo).length === 0) {
           console.log('nessun rilievo, provvede a crearne uno provvisorio')
@@ -38,43 +47,67 @@ export const actions = {
           dispatch('save')
         } else {
           commit('setRecord', rilievo[0])
-          commit('rilievoPos/setRiferimentoARilievo', rilievo[0]._id, root)
-          commit('rilievoDet/setRiferimentoARilievo', rilievo[0]._id, root)
-          
-          // carica le posizioni
-          dispatch('rilievoPos/load', {}, root)
-            .then((posizioni) => {
-              commit('setPosizioni', posizioni)
-              // carica i dettagli
-              dispatch('rilievoDet/load', {}, root)
-                .then((dettagli) => {
-                  commit('setDettagli', dettagli)
-                  return rilievo
-                })
-                .catch((e) => {
-                  console.log(e)
-                  return e
-                })
-            })
-            .catch((e) => {
-              console.log(e)
-              return e
-            })
+
+          dispatch('loadPosizioni').catch((e) => {
+            console.log(e)
+          })
+
+          dispatch('loadDettagli').catch((e) => {
+            console.log(e)
+          })
         }
       })
       .catch((e) => {
         console.log(e)
-        return e
+      })
+  },
+  loadDettagli({ commit, dispatch, state }) {
+    const table = 'rilievoDet'
+
+    function mapFunctionDet(doc) {
+      emit(doc.rilievoID)
+    }
+
+    let reduceFunctionDet = {
+      key: state.record._id,
+      include_docs: true
+    }
+
+    dispatch(
+      'db/query',
+      { table, mapFunction: mapFunctionDet, reduceFunction: reduceFunctionDet },
+      root
+    )
+      .then((res) => {
+        commit('setDettagli', res)
+      })
+      .catch((e) => {
+        console.log(e)
       })
   },
   loadPosizioni({ dispatch, commit, state }) {
-    // carica le posizioni
-    // dispatch('', {}, root)
-    // .then(() => {
-    //   return state.listaPosizioni    
-    // })
-    return state.listaPosizioni    
+    const table = 'rilievoPos'
 
+    function mapFunctionPos(doc) {
+      emit(doc.rilievoID)
+    }
+
+    let reduceFunctionPos = {
+      key: state.record._id,
+      include_docs: true
+    }
+
+    dispatch(
+      'db/query',
+      { table, mapFunction: mapFunctionPos, reduceFunction: reduceFunctionPos },
+      root
+    )
+      .then((res) => {
+        commit('setPosizioni', res)
+      })
+      .catch((e) => {
+        console.log(e)
+      })
   },
   save({ dispatch, commit, state }) {
     const rec = state.$record
@@ -122,6 +155,4 @@ export const mutations = {
     state.modalita = payload
   }
 }
-// export const getters = {
-//   listaPosizioni: s => s.listaPosizioni
-// }
+

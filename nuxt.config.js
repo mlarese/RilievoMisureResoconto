@@ -1,9 +1,9 @@
 import colors from 'vuetify/es5/util/colors'
 
 let routerBase = '/'
-if (process.env.NODE_ENV === 'production') {
-  routerBase = '/rilievomisure'
-}
+// if (process.env.NODE_ENV === 'production') {
+//   routerBase = '/rilievomisure'
+// }
 
 export default {
   mode: 'spa',
@@ -42,7 +42,7 @@ export default {
   /*
    ** Customize the progress-bar color
    */
-  loading: { color: 'red' },
+  loading: { color: 'white' },
   /*
    ** Global CSS
    */

@@ -26,7 +26,7 @@ export const state = () => {
 export const actions = {
   load({ commit, dispatch, state }) {
     const table = state.dbName
-    dispatch('db/selectAll', { table }, root)
+    return dispatch('db/selectAll', { table }, root)
       .then(res => {
         commit('setList', res)
         commit('setRecord', {})

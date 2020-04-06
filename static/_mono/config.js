@@ -15,7 +15,7 @@ config = {
     'SixLabors.Shapes.dll',
     // "System.Buffers.dll",
     //"System.Runtime.dll",
-    'Microoft.AspNetCore.Blazor.HttpClsient.dll',
+    'Microsoft.AspNetCore.Blazor.HttpClient.dll',
     'Blazor.Extensions.Canvas.dll',
     'System.Text.Json.dll',
     'System.Runtime.CompilerServices.Unsafe.dll',

@@ -3,39 +3,16 @@ import _clone from 'lodash/clone'
 const root = { root: true }
 export const state = () => {
   return {
-    rilievoID: 0,
-    RifPosID: 0,
-    listaDettagli: [],
-    $record: {},
-    record: {},
+    record: {
+      rilievoID: 0,
+      RifPosID: 0,
+      macroComandi: ''
+    },
     dbName: 'rilievoDet'
   }
 }
 
-function mapFunction(doc) {
-  emit(doc.rilievoID)
-}
-
 export const actions = {
-  load({ commit, dispatch, state }) {
-    const table = state.dbName
-
-    let reduceFunction = {
-      key: state.rilievoID,
-      include_docs: true
-    }
-
-    dispatch('db/query', { table, mapFunction, reduceFunction }, root)
-      .then((res) => {
-        commit('setList', res)
-        commit('setRecord', {})
-        return res
-      })
-      .catch((e) => {
-        console.log(e)
-        return e
-      })
-  },
   getById({ dispatch, commit, state }, id) {
     const table = state.dbName
     dispatch('db/selectById', { table, id }, root).then((rec) =>
@@ -43,9 +20,7 @@ export const actions = {
     )
   },
   save({ dispatch, commit, state }) {
-    const rec = state.$record
-    rec.RifPosID = state.RifPosID
-    rec.rilievoID = state.rilievoID
+    const rec = state.record
     const table = state.dbName
     const isInsert = !rec._id
     let actionName = 'db/update'
@@ -54,7 +29,7 @@ export const actions = {
     }
     return dispatch(actionName, { table, data: rec }, root)
       .then(() => {
-        return dispatch('load')
+        return dispatch('rilievo/loadDettagli', {}, root)
       })
       .catch((e) => {
         console.log(e)
@@ -88,23 +63,135 @@ export const actions = {
 
 export const mutations = {
   setRiferimentoARilievo(state, payload = {}) {
-    state.rilievoID = payload
-    state.$record.rilievoID = payload
+    state.record.rilievoID = payload
   },
   setRiferimentoAPosizione(state, payload = {}) {
-    state.RifPosID = payload
-    state.$record.RifPosID = payload
+    state.record.RifPosID = payload
   },
-  setDrawingCommands(state, payload = {}){
-    state.$record.drawingCMD = payload
-  },
-  setList(state, payload = {}) {
-    state.listaDettagli = payload
+  setMacroComandi(state, payload = {}) {
+    state.record.macroComandi = payload
   },
   setRecord(state, payload = {}) {
     state.record = payload
-    state.$record = _clone(payload)
   }
 }
 
-export const getters = {}
+
+
+
+export const getters = {
+  immagineProdotto: (s) => getIMG(s.$record.drawingCMD)
+}
+
+function getIMG(jsonData) {
+  if (!jsonData) {
+    return
+  }
+
+  let c = document.createElement('canvas')
+
+  //console.log(jsonData)
+  // Tipo di disegno
+  // DL=DrawLine; DR=DrawRectangle; DS=DrawString; DI=DrawImage; DP=FillPolygon;
+
+  let ctx = c.getContext('2d')
+  ctx.clearRect(0, 0, 1000, 1000)
+
+  for (let indx in jsonData.PIMElements) {
+    let element = jsonData.PIMElements[indx]
+    let elencoCMD = element.DrawingCommands
+    let penWidth = element.PenWidth
+    let penColor = element.ForeColor
+    let backColor = element.BackColor
+    let objType = element.ObjType
+
+    if (objType == 'Divisore') {
+      let a = 1
+    }
+
+    for (let i in elencoCMD) {
+      let DrawCommand = elencoCMD[i]
+
+      let punti = DrawCommand.Points
+
+      if (!punti) {
+        continue
+      }
+
+      let startPoint = punti[0]
+      let endPoint = punti[punti.length - 1]
+
+      ctx = c.getContext('2d')
+
+      switch (DrawCommand.DrawType) {
+        case 'DL':
+          // DL=DrawLine
+          if (penWidth > 0) {
+            ctx.lineWidth = penWidth
+            ctx.strokeStyle = toColor(penColor)
+            ctx.moveTo(startPoint.X, startPoint.Y)
+            ctx.lineTo(endPoint.X, endPoint.Y)
+            ctx.stroke()
+          }
+
+          break
+        case 'DR':
+          // DrawRectangle
+
+          console.log(DrawCommand)
+          ctx.beginPath()
+          ctx.fillStyle = toColor(backColor)
+          ctx.fillRect(
+            startPoint.X,
+            startPoint.Y,
+            endPoint.X - startPoint.X,
+            endPoint.Y - startPoint.Y
+          )
+          ctx.stroke()
+
+          break
+        case 'DS':
+          // DrawString
+          break
+        case 'DI':
+          // DrawImage
+          break
+        case 'DP':
+          // FillPolygon
+
+          let region = new Path2D()
+          ctx.lineWidth = penWidth
+          ctx.strokeStyle = toColor(penColor)
+          region.moveTo(startPoint.X, startPoint.Y)
+
+          let index
+          for (index = 1; index < punti.length; index++) {
+            region.lineTo(punti[index].X, punti[index].Y)
+          }
+
+          region.closePath()
+
+          // Fill path
+          ctx.fillStyle = toColor(backColor)
+          ctx.fill(region, 'evenodd')
+
+          break
+        default:
+        // null
+      }
+    }
+   
+  }
+  let img = c.toDataURL()
+  // console.log(img)
+  return img
+}
+
+function toColor(num) {
+  num >>>= 0
+  var b = num & 0xff,
+    g = (num & 0xff00) >>> 8,
+    r = (num & 0xff0000) >>> 16,
+    a = ((num & 0xff000000) >>> 24) / 255
+  return 'rgba(' + [r, g, b, a].join(',') + ')'
+}

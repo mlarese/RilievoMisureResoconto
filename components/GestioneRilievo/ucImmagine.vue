@@ -6,8 +6,9 @@
       <DxTextArea :height="90" :read-only="false" :value.sync="macroComando" />
     </div>
     <div>
+      <!-- <v-img :src="record.imgBase64" width="600" height="600" /> -->
+
       <canvas
-        @click="selezionaOggetto"
         id="myCanvas"
         width="1000"
         height="1000"
@@ -19,12 +20,16 @@
 
 <script>
 import { DxButton, DxTextArea } from 'devextreme-vue'
-import { mapState, mapMutations, mapActions } from 'vuex'
+import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 
 export default {
   components: {
     DxButton,
     DxTextArea
+  },
+  computed: {
+    ...mapGetters('rilievoDet', ['immagineProdotto']),
+    ...mapState('rilievoDet', ['record'])
   },
   data() {
     return {
@@ -32,47 +37,54 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('rilievoDet', ['setDrawingCommands']),
+    ...mapMutations('rilievoDet', ['setMacroComandi']),
     cleanIMG: function(event) {
       let c = document.getElementById('myCanvas')
       let ctx = c.getContext('2d')
       ctx.clearRect(0, 0, c.width, c.height)
     },
     applicaMC: function(evet) {
-      let c = document.getElementById('myCanvas')
       try {
         let jsonDataString = window.GestoreImmagini.getDrawingCommands(
-          this.macroComando.replace('<br>',/(?:\r\n|\r|\n)/g),
-          c.width,
-          c.height,
+          this.macroComando.replace('<br>', '||'),
+          600,
+          600,
           -1,
           -1
         )
 
-        let jsonData = JSON.parse(jsonDataString)
-        this.setDrawingCommands(jsonData)
-        this.generaIMG(jsonData)
+        let jsonDataObj = JSON.parse(jsonDataString)
 
+        if (jsonDataObj.state) {
+          let pmiEl = JSON.parse(jsonDataObj.data)
+
+          let newMC = JSON.parse(window.GestoreImmagini.getMacroComandi())
+
+          this.setMacroComandi(newMC.data)
+          this.generaIMG(pmiEl)
+        } else {
+          throw jsonDataObj.data
+        }
       } catch (e) {
         console.log(e)
       }
     },
-    selezionaOggetto: function(evt) {
-      let c = document.getElementById('myCanvas')
-      var rect = c.getBoundingClientRect()
+    // selezionaOggetto: function(evt) {
+    //   let c = document.getElementById('myCanvas')
+    //   var rect = c.getBoundingClientRect()
 
-      let x = evt.clientX - rect.left
-      let y = evt.clientY - rect.top
-      let jsonDataString = window.GestoreImmagini.getDrawingCommands(
-        '',
-        c.width,
-        c.height,
-        x,
-        y
-      )
-      let jsonData = JSON.parse(jsonDataString)
-      this.generaIMG(jsonData)
-    },
+    //   let x = evt.clientX - rect.left
+    //   let y = evt.clientY - rect.top
+    //   let jsonDataString = window.GestoreImmagini.getDrawingCommands(
+    //     '',
+    //     c.width,
+    //     c.height,
+    //     x,
+    //     y
+    //   )
+    //   let jsonData = JSON.parse(jsonDataString)
+    //   this.generaIMG(jsonData)
+    // },
     generaIMG: function(jsonData) {
       let c = document.getElementById('myCanvas')
 

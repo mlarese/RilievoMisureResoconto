@@ -3,39 +3,14 @@ import _clone from 'lodash/clone'
 const root = { root: true }
 export const state = () => {
   return {
-    rilievoID: 0,
-    listaPosizioni: [],
+    // rilievoID: 0,
     $record: {},
     record: {},
     dbName: 'rilievoPos'
   }
 }
 
-function mapFunction(doc) {
-  emit(doc.rilievoID)
-}
-
 export const actions = {
-  load({ commit, dispatch, state }) {
-    const table = state.dbName
-
-    let reduceFunction = {
-      key: state.rilievoID,
-      include_docs: true
-    }
-
-    dispatch('db/query', { table, mapFunction, reduceFunction }, root)
-      .then((res) => {
-        commit('setList', res)
-        console.log(res)
-        commit('setRecord', {})
-        return res
-      })
-      .catch((e) => {
-        console.log(e)
-        return e
-      })
-  },
   getById({ dispatch, commit, state }, id) {
     const table = state.dbName
     dispatch('db/selectById', { table, id }, root).then((rec) =>
@@ -49,11 +24,11 @@ export const actions = {
     let actionName = 'db/update'
     if (isInsert) {
       actionName = 'db/insertInto'
-      rec.rilievoID = state.rilievoID
+      // rec.rilievoID = state.rilievoID
     }
     return dispatch(actionName, { table, data: rec }, root)
       .then(() => {
-        return dispatch('load')
+        return dispatch('rilievo/loadPosizioni', {}, root)
       })
       .catch((e) => {
         console.log(e)
@@ -86,12 +61,9 @@ export const actions = {
 }
 
 export const mutations = {
-  setRiferimentoARilievo(state, payload = {}) {
-    state.rilievoID = payload
-  },
-  setList(state, payload = []) {
-    state.listaPosizioni = payload
-  },
+  // setRiferimentoARilievo(state, payload = {}) {
+  //   state.rilievoID = payload
+  // },
   setRecord(state, payload = {}) {
     state.record = payload
     state.$record = _clone(payload)
