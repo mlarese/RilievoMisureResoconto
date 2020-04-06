@@ -5,9 +5,9 @@ config = {
   file_list_: [],
   file_list: [
     'ICT_GestoreSerramenti_STD.dll',
-    'ClassLibrary.dll',
-    'ClassLibraryDraw.dll',
-    'TestClassLibrary.dll',
+    // 'ClassLibrary.dll',
+    // 'ClassLibraryDraw.dll',
+    // 'TestClassLibrary.dll',
     'SixLabors.Core.dll',
     // "SixLabors.Fonts.dll",
     'SixLabors.ImageSharp.dll',

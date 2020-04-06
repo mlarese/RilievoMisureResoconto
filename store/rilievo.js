@@ -47,39 +47,15 @@ export const actions = {
           dispatch('save')
         } else {
           commit('setRecord', rilievo[0])
-
-          dispatch('loadPosizioni').catch((e) => {
-            console.log(e)
-          })
-
-          dispatch('loadDettagli').catch((e) => {
-            console.log(e)
-          })
         }
-      })
-      .catch((e) => {
-        console.log(e)
-      })
-  },
-  loadDettagli({ commit, dispatch, state }) {
-    const table = 'rilievoDet'
 
-    function mapFunctionDet(doc) {
-      emit(doc.rilievoID)
-    }
+        dispatch('loadPosizioni').catch((e) => {
+          console.log(e)
+        })
 
-    let reduceFunctionDet = {
-      key: state.record._id,
-      include_docs: true
-    }
-
-    dispatch(
-      'db/query',
-      { table, mapFunction: mapFunctionDet, reduceFunction: reduceFunctionDet },
-      root
-    )
-      .then((res) => {
-        commit('setDettagli', res)
+        dispatch('loadDettagli').catch((e) => {
+          console.log(e)
+        })
       })
       .catch((e) => {
         console.log(e)
@@ -109,6 +85,31 @@ export const actions = {
         console.log(e)
       })
   },
+  loadDettagli({ commit, dispatch, state }) {
+    const table = 'rilievoDet'
+
+    function mapFunctionDet(doc) {
+      emit(doc.rilievoID)
+    }
+
+    let reduceFunctionDet = {
+      key: state.record._id,
+      include_docs: true
+    }
+
+    dispatch(
+      'db/query',
+      { table, mapFunction: mapFunctionDet, reduceFunction: reduceFunctionDet },
+      root
+    )
+      .then((res) => {
+        commit('setDettagli', res)
+      })
+      .catch((e) => {
+        console.log(e)
+      })
+  },
+
   save({ dispatch, commit, state }) {
     const rec = state.$record
     const table = state.dbName
@@ -120,7 +121,8 @@ export const actions = {
 
     return dispatch(actionName, { table, data: rec }, root)
       .then((rec) => {
-        return rec
+        commit('setRecordID', rec.id)
+        dispatch('load')
       })
       .catch((e) => {
         console.log(e)
@@ -137,6 +139,9 @@ export const mutations = {
   },
   setDettagli(state, payload = {}) {
     state.listaDettagli = payload
+  },
+  setRecordID(state, payload) {
+    state.record._id = payload
   },
   setEmptyRecord(state) {
     state.record.lavoroID = state.lavoroID
@@ -155,4 +160,3 @@ export const mutations = {
     state.modalita = payload
   }
 }
-

@@ -1,7 +1,8 @@
 <template>
   <div>
     <div>
-      <DxButton @click="applicaMC" text="genera img" />
+      <DxButton @click="applicaMC" text="applica MC" />
+      <DxButton @click="applicaMod" text="applica modifica" />
       <DxButton @click="cleanIMG" text="clean" />
       <DxTextArea :height="90" :read-only="false" :value.sync="macroComando" />
     </div>
@@ -43,7 +44,11 @@ export default {
       let ctx = c.getContext('2d')
       ctx.clearRect(0, 0, c.width, c.height)
     },
-    applicaMC: function(evet) {
+    applicaMC() {
+      window.GestoreImmagini.resetStrutturaSerramento()
+      this.applicaMod()
+    },
+    applicaMod() {
       try {
         let jsonDataString = window.GestoreImmagini.getDrawingCommands(
           this.macroComando.replace('<br>', '||'),
