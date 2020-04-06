@@ -7,7 +7,6 @@ export const state = () => {
     listaPosizioni: [],
     listaDettagli: [],
     listaSchedeGenerali: {},
-    $record: {},
     record: {},
     dbName: 'rilievi',
     ui: {
@@ -47,15 +46,15 @@ export const actions = {
           dispatch('save')
         } else {
           commit('setRecord', rilievo[0])
+          
+          dispatch('loadPosizioni').catch((e) => {
+            console.log(e)
+          })
+          
+          dispatch('loadDettagli').catch((e) => {
+            console.log(e)
+          })
         }
-
-        dispatch('loadPosizioni').catch((e) => {
-          console.log(e)
-        })
-
-        dispatch('loadDettagli').catch((e) => {
-          console.log(e)
-        })
       })
       .catch((e) => {
         console.log(e)
@@ -111,7 +110,7 @@ export const actions = {
   },
 
   save({ dispatch, commit, state }) {
-    const rec = state.$record
+    const rec = state.record
     const table = state.dbName
     const isInsert = !rec._id
     let actionName = 'db/update'
@@ -144,17 +143,17 @@ export const mutations = {
     state.record._id = payload
   },
   setEmptyRecord(state) {
+    state.record = {}
     state.record.lavoroID = state.lavoroID
     state.record.dataCreazione = new Date().toLocaleString()
-    state.$record = _clone(state.record)
+    state.listaPosizioni = []
+    state.loadDettagli = []
   },
   setRecord(state, payload = {}) {
     state.record = {}
     state.record.lavoroID = payload.lavoroID
     state.record.dataCreazione = payload.dataCreazione
     state.record._id = payload._id
-
-    state.$record = _clone(state.record)
   },
   setModalita(state, payload = {}) {
     state.modalita = payload

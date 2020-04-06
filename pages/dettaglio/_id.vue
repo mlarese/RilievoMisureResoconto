@@ -1,40 +1,18 @@
 <template>
- <div>
-    <div>
-      <DxButton @click="salva()" text="salva" />
-    </div>
-
-    <div>
-      <ucImmagine></ucImmagine>
-    </div>
-  </div>
+  <dettaglioEdit />
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from 'vuex'
-
-import ucImmagine from '~/components/GestioneRilievo/ucImmagine'
-import ucProprieta from '~/components/GestioneRilievo/ucProprieta'
-import { DxBox, DxItem } from 'devextreme-vue/box'
-
+import dettaglioEdit from '../../components/GestioneRilievo/dettaglioEdit'
 export default {
   components: {
-    ucProprieta,
-    ucImmagine,
-    DxBox,
-    DxItem
+    dettaglioEdit
   },
-  fetch ({store, params}) {
-    store.dispatch('rilievoDet/getById', params.id,  {root: true})
-  // },
-  // computed: {
-  //   ...mapState('rilievoDet', ['$record']),
-  },
-  methods: {
-    ...mapActions('rilievoDet', ['save']),
-    ...mapMutations('rilievoDet', ['setRecord']),
-    salva: function() {
-      this.save()
+  async fetch({ store, params }) {
+    if (params.id == 'add') {
+      
+    } else {
+      store.dispatch('rilievoDet/getById', params.id, { root: true })
     }
   }
 }

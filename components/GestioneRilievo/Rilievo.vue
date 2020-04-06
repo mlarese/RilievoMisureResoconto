@@ -36,12 +36,15 @@
                   <div class="d-flex flex-no-wrap ">
                     <v-avatar class="ma-3" size="125" tile>
                       <!-- <v-img :src="getIMG_base64(det.macroComandi)"></v-img> -->
-                      <ImmagineDet :macroComandi="det.macroComandi"></ImmagineDet>
+                      <ImmagineDet
+                        :drawingCommands="getDrawingCommands(det.macroComandi)"
+                        :imgWidth="imgWidth"
+                        :imgHeight="imgHeight"
+                      ></ImmagineDet>
                     </v-avatar>
                     <div>
-                      <v-card-title class="headline" v-text="det.Descrizione">
+                      <v-card-title v-text="det.descrizione">
                         <v-spacer></v-spacer>
-
                         <v-menu bottom left>
                           <template v-slot:activator="{ on }">
                             <v-btn dark icon v-on="on">
@@ -99,25 +102,55 @@ export default {
     ...mapState('rilievo', { rilievo: 'record' })
   },
   data() {
-    return {}
+    return {
+      imgWidth: 400,
+      imgHeight: 400
+    }
   },
   methods: {
-    // getIMG_base64(mc) {
-    //   if (mc) {
-    //     return generaIMG(mc)
-    //   }
-    // },
-    ...mapMutations('rilievoDet', {setRecordRilievoDet: 'setRecord'}),
+    ...mapMutations('rilievoDet', { setRecordRilievoDet: 'setRecord' }),
     addDettaglio(posID) {
       let newDettaglio = {
         rilievoID: this.rilievo._id,
-        RifPosID: posID
+        RifPosID: posID,
+        macroComandi: 'MACRO:DEMO1'
       }
       this.setRecordRilievoDet(newDettaglio)
       this.$router.push(`/dettaglio/add`)
     },
     apriDettaglio(id) {
       this.$router.push(`/dettaglio/${id}`)
+    },
+    getDrawingCommands(mc) {
+      // Ottiene i drawing commands
+      let drawingCommands = {}
+      try {
+        let result = {}
+        window.GPROD.resetStrutturaSerramento()
+
+        result = JSON.parse(window.GPROD.setMacroComandi(mc))
+        if (!result.state) {
+          throw result.data
+        }
+
+        let jsonDataString = window.GPROD.getDrawingCommands(
+          this.imgWidth,
+          this.imgHeight
+        )
+
+        let jsonDataObj = JSON.parse(jsonDataString)
+
+        if (jsonDataObj.state) {
+          drawingCommands = JSON.parse(jsonDataObj.data)
+        } else {
+          throw jsonDataObj.data
+        }
+
+      } catch (e) {
+        console.log(e)
+      }
+
+      return drawingCommands
     }
   }
 }
@@ -151,7 +184,6 @@ export default {
 //   if (!jsonData){
 //     return
 //   }
-
 
 //   // let c = document.getElementById('canvas')
 

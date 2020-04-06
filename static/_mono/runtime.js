@@ -1,4 +1,4 @@
-var GestoreImmagini = {}
+var GPROD = {}
 var Module = {
 	onRuntimeInitialized: function () {
 		MONO.mono_load_runtime_and_bcl(
@@ -17,19 +17,22 @@ var Module = {
 				// window.GestoreImmagini.getDrawingCommands = fn4;
 
 				let fn1 = Module.mono_bind_static_method("[ICT_GestoreSerramenti_STD] ICT_GestoreSerramenti_STD.GestorePWApp:AddJSCatalogo")
-				window.GestoreImmagini.AddJSCatalogo = fn1;
+				window.GPROD.AddJSCatalogo = fn1;
 
 				let fn2 = Module.mono_bind_static_method("[ICT_GestoreSerramenti_STD] ICT_GestoreSerramenti_STD.GestorePWApp:GetListaArticoli_as_JSON")
-				window.GestoreImmagini.GetListaArticoli = fn2;
+				window.GPROD.GetListaArticoli = fn2;
 
 				let fn3 = Module.mono_bind_static_method("[ICT_GestoreSerramenti_STD] ICT_GestoreSerramenti_STD.GestorePWApp:getComandiImmagine")
-				window.GestoreImmagini.getDrawingCommands = fn3;
+				window.GPROD.getDrawingCommands = fn3;
 
 				let fn4 = Module.mono_bind_static_method("[ICT_GestoreSerramenti_STD] ICT_GestoreSerramenti_STD.GestorePWApp:resetStrutturaSerramento")
-				window.GestoreImmagini.resetStrutturaSerramento = fn4;
+				window.GPROD.resetStrutturaSerramento = fn4;
 
-				let fn5 = Module.mono_bind_static_method("[ICT_GestoreSerramenti_STD] ICT_GestoreSerramenti_STD.GestorePWApp:getMacroComandi")
-				window.GestoreImmagini.getMacroComandi = fn5;
+				let fn5 = Module.mono_bind_static_method("[ICT_GestoreSerramenti_STD] ICT_GestoreSerramenti_STD.GestorePWApp:setMacroComandi")
+				window.GPROD.setMacroComandi = fn5;
+
+				let fn6 = Module.mono_bind_static_method("[ICT_GestoreSerramenti_STD] ICT_GestoreSerramenti_STD.GestorePWApp:getMacroComandi")
+				window.GPROD.getMacroComandi = fn6;
 				
 			}
 		)

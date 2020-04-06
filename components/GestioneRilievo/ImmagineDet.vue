@@ -1,51 +1,31 @@
 <template>
-  <v-img :src="getIMG_base64(macroComandi)" ref="ucIMG"></v-img>
+  <!-- <v-img :src="getIMG_base64(drawingCommands)" ref="ucIMG" :width="imgWidth" :height="imgHeight"></v-img> -->
+  <v-img :src="getIMG_base64(drawingCommands)" ref="ucIMG"></v-img>
 </template>
 
 <script>
 export default {
-  props: { macroComandi: { default: '' } },
+  props: {
+    drawingCommands: { default: '' },
+    imgWidth: { default: 200 },
+    imgHeight: { default: 200 }
+  },
 
   methods: {
-    getIMG_base64(mc) {
-      if (!mc) {
+    getIMG_base64(dc) {
+      if (!dc) {
         return
       }
-      
+
       let c = document.createElement('canvas')
-      c.width = 200 //this.$refs.ucIMG.width
-      c.height = 200 //this.$refs.ucIMG.height
-      let jsonData = {}
-      try {
-        window.GestoreImmagini.resetStrutturaSerramento()
-        let jsonDataString = window.GestoreImmagini.getDrawingCommands(
-          mc,
-          c.width,
-          c.width
-        )
-
-        let jsonDataObj = JSON.parse(jsonDataString)
-
-        if (jsonDataObj.state) {
-          jsonData = JSON.parse(jsonDataObj.data)
-
-          //this.generaIMG(pmiEl)
-        } else {
-          throw jsonDataObj.data
-        }
-      } catch (e) {
-        console.log(e)
-      }
-
-      if (!jsonData) {
-        return
-      }
-
+      c.width = this.imgWidth 
+      c.height = this.imgHeight 
+      
       let ctx = c.getContext('2d')
       ctx.clearRect(0, 0, c.width, c.height)
 
-      for (let indx in jsonData.PIMElements) {
-        let element = jsonData.PIMElements[indx]
+      for (let indx in dc.PIMElements) {
+        let element = dc.PIMElements[indx]
         let elencoCMD = element.DrawingCommands
         let penWidth = element.PenWidth
         let penColor = element.ForeColor

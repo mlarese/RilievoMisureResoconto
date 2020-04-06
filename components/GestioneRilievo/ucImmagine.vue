@@ -3,18 +3,19 @@
     <div>
       <DxButton @click="applicaMC" text="applica MC" />
       <DxButton @click="applicaMod" text="applica modifica" />
-      <DxButton @click="cleanIMG" text="clean" />
-      <DxTextArea :height="90" :read-only="false" :value.sync="macroComando" />
+      <DxTextArea
+        :height="90"
+        :read-only="false"
+        :value.sync="record.macroComandi"
+      />
     </div>
     <div>
-      <!-- <v-img :src="record.imgBase64" width="600" height="600" /> -->
-
-      <canvas
-        id="myCanvas"
-        width="1000"
-        height="1000"
-        style="border:1px solid #000000;"
-      ></canvas>
+      <!-- <v-img :src="imgBase64" width="600" height="600" /> -->
+      <ImmagineDet
+        :drawingCommands="getDrawingCommands(record.macroComandi)"
+        :imgWidth="imgWidth"
+        :imgHeight="imgHeight"
+      ></ImmagineDet>
     </div>
   </div>
 </template>
@@ -22,11 +23,13 @@
 <script>
 import { DxButton, DxTextArea } from 'devextreme-vue'
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
+import ImmagineDet from '~/components/GestioneRilievo/ImmagineDet'
 
 export default {
   components: {
     DxButton,
-    DxTextArea
+    DxTextArea,
+    ImmagineDet
   },
   computed: {
     ...mapGetters('rilievoDet', ['immagineProdotto']),
@@ -34,39 +37,43 @@ export default {
   },
   data() {
     return {
-      macroComando: 'MACRO:DEMO1'
+      macroComando: 'MACRO:DEMO1',
+      imgBase64: '',
+      imgWidth: 600,
+      imgHeight: 600,
+      drawingCommands: ''
     }
   },
   methods: {
     ...mapMutations('rilievoDet', ['setMacroComandi']),
-    cleanIMG: function(event) {
-      let c = document.getElementById('myCanvas')
-      let ctx = c.getContext('2d')
-      ctx.clearRect(0, 0, c.width, c.height)
-    },
     applicaMC() {
-      window.GestoreImmagini.resetStrutturaSerramento()
-      this.applicaMod()
+      window.GPROD.resetStrutturaSerramento()
+      applicaMod()
     },
     applicaMod() {
+      let result = JSON.parse(window.GPROD.setMacroComandi(this.macroComando))
+      if (result.state) {
+        this.setMacroComandi(window.GPROD.getMacroComandi())
+      } else {
+        console.log(result.data)
+      }
+    },
+    getDrawingCommands(mc) {
       try {
-        let jsonDataString = window.GestoreImmagini.getDrawingCommands(
-          this.macroComando.replace('<br>', '||'),
-          600,
-          600,
-          -1,
-          -1
+        let jsStr = window.GPROD.getDrawingCommands(
+          this.imgWidth,
+          this.imgHeight
         )
 
-        let jsonDataObj = JSON.parse(jsonDataString)
+        let jsonDataObj = JSON.parse(jsStr)
 
         if (jsonDataObj.state) {
           let pmiEl = JSON.parse(jsonDataObj.data)
+          return pmiEl
+          // let newMC = JSON.parse(window.GPROD.getMacroComandi())
 
-          let newMC = JSON.parse(window.GestoreImmagini.getMacroComandi())
-
-          this.setMacroComandi(newMC.data)
-          this.generaIMG(pmiEl)
+          // this.setMacroComandi(newMC.data)
+          // this.drawingCommands = pmiEl
         } else {
           throw jsonDataObj.data
         }
@@ -74,25 +81,11 @@ export default {
         console.log(e)
       }
     },
-    // selezionaOggetto: function(evt) {
-    //   let c = document.getElementById('myCanvas')
-    //   var rect = c.getBoundingClientRect()
 
-    //   let x = evt.clientX - rect.left
-    //   let y = evt.clientY - rect.top
-    //   let jsonDataString = window.GestoreImmagini.getDrawingCommands(
-    //     '',
-    //     c.width,
-    //     c.height,
-    //     x,
-    //     y
-    //   )
-    //   let jsonData = JSON.parse(jsonDataString)
-    //   this.generaIMG(jsonData)
-    // },
-    generaIMG: function(jsonData) {
-      let c = document.getElementById('myCanvas')
-
+    _getDrawingCommands: function(jsonData) {
+      let c = document.createElement('canvas')
+      c.width = this.imgWidth
+      c.height = this.imgHeight
       //console.log(jsonData)
       // Tipo di disegno
       // DL=DrawLine; DR=DrawRectangle; DS=DrawString; DI=DrawImage; DP=FillPolygon;
@@ -185,6 +178,7 @@ export default {
         }
         console.log('finito')
       }
+      this.imgBase64 = c.toDataURL()
     },
     toColor(num) {
       num >>>= 0
@@ -196,4 +190,21 @@ export default {
     }
   }
 }
+
+// selezionaOggetto: function(evt) {
+//   let c = document.getElementById('myCanvas')
+//   var rect = c.getBoundingClientRect()
+
+//   let x = evt.clientX - rect.left
+//   let y = evt.clientY - rect.top
+//   let jsonDataString = window.GestoreImmagini.getDrawingCommands(
+//     '',
+//     c.width,
+//     c.height,
+//     x,
+//     y
+//   )
+//   let jsonData = JSON.parse(jsonDataString)
+//   this.generaIMG(jsonData)
+// },
 </script>
