@@ -2,19 +2,19 @@
   <v-container class="grey lighten-5">
     <v-row>
       <template>
-        <v-col>
-          <v-card :md="6" :sm="12">
+        <v-col :md="6" :sm="12">
+          <v-card >
             <DxButton @click="salva()" text="salva" />
             <DxButton @click="applicaMC()" text="applica MC" />
             <DxButton @click="applicaMod()" text="applica modifica" />
           </v-card>
           <v-spacer></v-spacer>
-          <v-card :md="6" :sm="12">
+          <v-card>
             <div>
               <p>elenco delle proprieta</p>
             </div>
           </v-card>
-          <v-card :md="6" :sm="12">
+          <v-card >
             <v-textarea
               clearable
               outlined
@@ -23,7 +23,7 @@
               v-model="record.macroComandi"
             />
           </v-card>
-          <v-card :md="6" :sm="12">
+          <v-card >
             <v-textarea
               clearable
               outlined
@@ -33,10 +33,10 @@
             />
           </v-card>
         </v-col>
-        <v-col>
-          <v-card :md="6" :sm="12">
+        <v-col :md="6" :sm="12">
+          <v-card >
             <ImmagineDet
-              :drawingCommands="getDrawingCommands(record.macroComandi)"
+              :drawingCommands="record.drawingCommands"
               :imgWidth="imgWidth"
               :imgHeight="imgHeight"
             ></ImmagineDet>
@@ -77,7 +77,7 @@ export default {
   },
   methods: {
     ...mapActions('rilievoDet', ['save']),
-    ...mapMutations('rilievoDet', ['setMacroComandi']),
+    ...mapMutations('rilievoDet', ['setMacroComandi', 'setDrawingCommands']),
     salva: function() {
       this.save()
     },
@@ -91,19 +91,20 @@ export default {
       if (result.state) {
         let mcTotali = JSON.parse(window.GPROD.getMacroComandi()).data
         this.setMacroComandi(mcTotali)
+        this.loadDrawingCommands(mcTotali)
       } else {
         console.log(result.data)
       }
     },
-    getDrawingCommands(mc) {
-      if (mc) {
-        let mc = this.record.macroComandi.replace(/(?:\r\n|\r|\n)/g, '||')
-        let result = JSON.parse(window.GPROD.setMacroComandi(mc))
-        if (result.state) {          
-        } else {
-          console.log(result.data)
-        }
-      }
+    loadDrawingCommands(mc) {
+      // if (mc) {
+      //   let mc = this.record.macroComandi.replace(/(?:\r\n|\r|\n)/g, '||')
+      //   let result = JSON.parse(window.GPROD.setMacroComandi(mc))
+      //   if (result.state) {          
+      //   } else {
+      //     console.log(result.data)
+      //   }
+      // }
 
       try {
         let jsStr = window.GPROD.getDrawingCommands(
@@ -115,7 +116,7 @@ export default {
 
         if (jsonDataObj.state) {
           let pmiEl = JSON.parse(jsonDataObj.data)
-          return pmiEl
+          this.setDrawingCommands(pmiEl)
           // let newMC = JSON.parse(window.GPROD.getMacroComandi())
 
           // this.setMacroComandi(newMC.data)

@@ -18,7 +18,7 @@
     "@mdi/font": "^4.9.95",
     "@nuxtjs/auth": "^4.8.5",
     "@nuxtjs/axios": "^5.9.5",
-    "@nuxtjs/pwa": "^3.0.0-0",
+    "@nuxtjs/pwa": "^3.0.0-beta.20",
     "bluebird": "^3.7.2",
     "capacitor": "^0.5.5",
     "date-fns": "^2.11.1",

@@ -14,7 +14,7 @@ export default {
   },
   server: {
     port: 3000, // default: 3000
-    host: 'localhost' // '192.168.1.54' // default: localhost
+    host: '0.0.0.0' // '192.168.1.54' // default: localhost
   },
   /*
    ** Headers of the page
@@ -49,10 +49,11 @@ export default {
   css: [],
   pwa: {
     workbox: {
-      dev: false
+      dev: false,
+      workboxVersion: '0.0.2'
     },
     manifest: {
-      display: 'fullscreen',
+      display: 'standalone',
       name: 'Rilievo Misure',
       lang: 'it',
       permissions: {

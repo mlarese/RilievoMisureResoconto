@@ -37,7 +37,7 @@
                     <v-avatar class="ma-3" size="125" tile>
                       <!-- <v-img :src="getIMG_base64(det.macroComandi)"></v-img> -->
                       <ImmagineDet
-                        :drawingCommands="getDrawingCommands(det.macroComandi)"
+                        :drawingCommands="det.drawingCommands"
                         :imgWidth="imgWidth"
                         :imgHeight="imgHeight"
                       ></ImmagineDet>
@@ -103,8 +103,8 @@ export default {
   },
   data() {
     return {
-      imgWidth: 400,
-      imgHeight: 400
+      imgWidth: 1000,
+      imgHeight: 800
     }
   },
   methods: {
@@ -121,7 +121,7 @@ export default {
     apriDettaglio(id) {
       this.$router.push(`/dettaglio/${id}`)
     },
-    getDrawingCommands(mc) {
+    _getDrawingCommands(mc) {
       // Ottiene i drawing commands
       let drawingCommands = {}
       try {

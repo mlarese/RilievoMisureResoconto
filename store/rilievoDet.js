@@ -7,6 +7,7 @@ export const state = () => {
       rilievoID: 0,
       RifPosID: 0,
       macroComandi: '',
+      drawingCommands: '',
       descrizione: ''
     },
     dbName: 'rilievoDet'
@@ -30,7 +31,10 @@ export const actions = {
       actionName = 'db/insertInto'
     }
     return dispatch(actionName, { table, data: rec }, root)
-      .then(() => {
+      .then((result) => {
+        if (result.ok){
+          commit('setRecordID', result.id)
+        }
         return dispatch('rilievo/loadDettagli', {}, root)
       })
       .catch((e) => {
@@ -70,8 +74,14 @@ export const mutations = {
   setRiferimentoAPosizione(state, payload = {}) {
     state.record.RifPosID = payload
   },
+  setRecordID(state, payload){
+    state.record._id = payload
+  },
   setMacroComandi(state, payload = {}) {
     state.record.macroComandi = payload
+  },
+  setDrawingCommands(state, payload = {}) {
+    state.record.drawingCommands = payload
   },
   setRecord(state, payload = {}) {
     state.record = payload

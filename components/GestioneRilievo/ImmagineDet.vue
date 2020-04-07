@@ -1,6 +1,6 @@
 <template>
   <!-- <v-img :src="getIMG_base64(drawingCommands)" ref="ucIMG" :width="imgWidth" :height="imgHeight"></v-img> -->
-  <v-img :src="getIMG_base64(drawingCommands)" ref="ucIMG"></v-img>
+  <v-img :src="getIMG_base64(drawingCommands)" ref="ucIMG" contain></v-img>
 </template>
 
 <script>

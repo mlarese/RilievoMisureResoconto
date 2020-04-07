@@ -1,5 +1,7 @@
 <template>
+<div>
   <Panel :title="tmpFormTitle" :subtitle="isAdd?'':$record.committenteDesc + ': ' + $record.descrizione" >
+     </Panel>
     <DxForm :form-data.sync="$record" :col-count="1" label-location="top" v-if="isFormVisible">
       <DxGroupItem>
           <DxSimpleItem data-field="committenteDesc" />
@@ -59,7 +61,7 @@
 
      </v-bottom-navigation>
 
-  </Panel>
+ </div>
 </template>
 
 <script>
