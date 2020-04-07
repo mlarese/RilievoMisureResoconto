@@ -1,6 +1,6 @@
 <template>
   <div>
-    <List/>
+    <List />
   </div>
 </template>
 
@@ -11,8 +11,9 @@ export default {
   components: {
     List
   },
-  fetch ({store}) {
-    store.dispatch('gestione_lavori/load', {},  {root: true})
+  fetch({ store }) {
+    store.dispatch('gestione_lavori/load', {}, { root: true })
+    store.commit('app/setTitle', 'Gestione Lavori', { root: true })
   }
 }
 </script>

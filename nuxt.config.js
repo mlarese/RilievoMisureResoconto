@@ -14,7 +14,7 @@ export default {
   },
   server: {
     port: 3000, // default: 3000
-    host: 'localhost' // '192.168.1.54' // default: localhost
+    host: '0.0.0.0' // default: localhost
   },
   /*
    ** Headers of the page

@@ -11,6 +11,9 @@ export const state = () => ({
 export const mutations = {
   setError (state, payload) {
     state.errors.push(payload)
+  },
+  setTitle (state, payload) {
+    state.title = payload
   }
 }
 
