@@ -1,6 +1,6 @@
 <!--eslint-disable-->
 <template>
-    <v-layout>
+    <v-layout class="flex-column">
         <v-toolbar class="elevation-0" v-if="title !== ''" dense style="background: white" >
             <v-toolbar-title >
                 <div class="subtitle-1"><b>{{title}}</b></div>
