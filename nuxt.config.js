@@ -14,7 +14,7 @@ export default {
   },
   server: {
     port: 3000, // default: 3000
-    host: '0.0.0.0' // '192.168.1.54' // default: localhost
+    host: '0.0.0.0' // default: localhost
   },
   /*
    ** Headers of the page
@@ -42,11 +42,13 @@ export default {
   /*
    ** Customize the progress-bar color
    */
-  loading: { color: 'white' },
+  loading: { color: colors.blue.accent3 },
   /*
    ** Global CSS
    */
-  css: [],
+  css: [
+    '@/assets/main.css'
+  ],
   pwa: {
     workbox: {
       dev: false,
@@ -84,7 +86,9 @@ export default {
   modules: [
     '@nuxtjs/axios',
     //'@nuxtjs/auth',
-    '@nuxtjs/pwa'
+    '@nuxtjs/pwa',
+    '@nuxtjs/device',
+    'nuxt-material-design-icons'
   ],
   /*
    ** Axios module configuration
@@ -105,9 +109,9 @@ export default {
       dark: false,
       themes: {
         dark: {
-          primary: colors.blue.darken2,
-          accent: colors.grey.darken3,
-          secondary: colors.amber.darken3,
+          primary: colors.blue.accent3,     
+          secondary: colors.blue.accent1,
+          accent: colors.amber.base,
           info: colors.teal.lighten1,
           warning: colors.amber.base,
           error: colors.deepOrange.accent4,
