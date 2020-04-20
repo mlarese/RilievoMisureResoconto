@@ -10,9 +10,9 @@
 
     <FileManager :entry-point="$record._id" :preview-visible="isPreviewVisible" @on-preview-file="onPreviewFile" v-if="isFileManagerVisible" />
 
-    <PhotoCamera v-if="isEdit && isCameraVisible" @snap-photo="onSnapPhoto" class="mt-2" /> 
+    <PhotoCamera v-if="isEdit && isCameraVisible" @snap-photo="onSnapPhoto" class="mt-2" />
 
-     <v-bottom-navigation app :dark="dark">
+    <v-bottom-navigation app :dark="dark">
           <div v-if="isFormVisible">
               <v-btn value="save" @click="onSave" :disabled="!canSave">
                   <span>Salva</span>
@@ -52,7 +52,7 @@
           </v-btn>
 
 
-     </v-bottom-navigation> 
+     </v-bottom-navigation>
 
   </Panel>
 </template>

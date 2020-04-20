@@ -1,6 +1,12 @@
 <template>
   <div>
-    <ListLavori />
+    <v-layout rows wrap>
+      <v-flex s6>
+        <v-card>
+          <v-card-title class="headline" style>Cataloghi</v-card-title>
+        </v-card>
+      </v-flex>
+    </v-layout>
   </div>
 </template>
 

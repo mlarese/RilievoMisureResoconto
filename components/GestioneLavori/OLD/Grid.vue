@@ -1,5 +1,6 @@
 <template>
   <v-card class="px-5 py-5">
+    <v-btn small class="mt-10" style="z-index: 10;" @click="onAdd">Aggiungi Nuovo Lavoro</v-btn>
     <DxDataGrid
       id="xdgvElencoLavori"
       :data-source="noDeletedList"
@@ -51,7 +52,6 @@
       <DxScrolling column-rendering-mode="virtual" />
       <!-- <DxFilterRow :visible="showFilter" /> -->
     </DxDataGrid>
-    <v-btn small class="mt-5" @click="onAdd">Aggiungi Nuovo Lavoro</v-btn>
   </v-card>
 </template>
 

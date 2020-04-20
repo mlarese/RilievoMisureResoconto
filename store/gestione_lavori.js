@@ -1,12 +1,16 @@
 import _clone from 'lodash/clone'
+import _filter from 'lodash/filter'
 import uuid from 'uuid/v1'
-import {visibleRecord} from './db'
+import { visibleRecord } from './db'
+import Vue from 'vue'
 
 const root = { root: true }
-const emptyRecord = () =>({
+const emptyRecord = () => ({
   committenteDesc: null,
   descrizione: null,
-  luogo: null
+  luogo: null,
+  note: null,
+  isPreferito: false
 })
 
 export const state = () => {
@@ -19,7 +23,7 @@ export const state = () => {
     ui: {
       title: 'Gestione Lavori',
       formTitleSuffix: 'Lavoro',
-      filter: {}
+      filter: { preferito: false, text: "" }
     }
   }
 }
@@ -86,13 +90,13 @@ export const actions = {
     console.log('start deleting2' + rec)
     const table = state.dbName
     return dispatch(actionName, { table, data: rec }, root)
-    .then(() => {
-      return dispatch('load')
-    })
-    .catch(e => {
-      console.log(e)
-      return e
-    })
+      .then(() => {
+        return dispatch('load')
+      })
+      .catch(e => {
+        console.log(e)
+        return e
+      })
   },
   impostaModalitaVisualizzazione({ dispatch, commit, state }, modalita) {
     commit('setModalita', modalita)
@@ -111,16 +115,43 @@ export const mutations = {
     state.record = payload
     state.$record = _clone(payload)
   },
-  setModalita(state, payload = {}){
+  setModalita(state, payload = {}) {
     state.modalita = payload
+  },
+  setFiltro(state, payload = {}) {
+    state.filter = payload
   }
 }
 
-
 export const getters = {
   noDeletedList: s => s.list.filter(visibleRecord),
+
+  filteredList: s => _filter(s.list, function (o) {
+    if (s.ui.filter.preferito) {
+        /* preferiti */
+        if (s.ui.filter.text === null) {
+            return  o.isPreferito === s.ui.filter.preferito
+        } else {
+          return (o.committenteDesc.toLowerCase().includes(s.ui.filter.text.toLowerCase()) ||
+          o.descrizione.toLowerCase().includes(s.ui.filter.text.toLowerCase()) ||
+          o.luogo.toLowerCase().includes(s.ui.filter.text.toLowerCase()))
+          && (o.isPreferito === s.ui.filter.preferito)
+        }
+    } else {
+        /* tutti */
+        if (s.ui.filter.text === null) {
+          return true
+      } else {
+        return (o.committenteDesc.toLowerCase().includes(s.ui.filter.text.toLowerCase()) ||
+        o.descrizione.toLowerCase().includes(s.ui.filter.text.toLowerCase()) ||
+        o.luogo.toLowerCase().includes(s.ui.filter.text.toLowerCase()))
+      }
+    }
+  }),
+
+
   isEdit: (s) => s.modalita === 'EDIT',
   isAdd: (s) => s.modalita === 'ADD',
-  formTitle: (s, g) => (g.isEdit)?`Modifica ${s.ui.formTitleSuffix}`:`Aggiungi ${s.ui.formTitleSuffix}`,
+  formTitle: (s, g) => (g.isEdit) ? `Modifica ${s.ui.formTitleSuffix}` : `Aggiungi ${s.ui.formTitleSuffix}`,
   buttonAddTitle: (s) => `Aggiungi ${s.ui.formTitleSuffix}`
 }
