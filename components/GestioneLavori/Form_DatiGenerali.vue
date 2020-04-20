@@ -1,41 +1,32 @@
 <template>
   <v-card flat class="pa-5">
-      <v-container style="margin: 20px 0px 0px 0px;">
-        <v-row dense>
-          <v-col sm="5" style="background-color: red">
-            <v-img :src="require('../../assets/images/splash.jpg')" aspect-ratio="2"  />
-          </v-col>
-          <v-col sm="1" style="background-color: yellow" class="align-self-end">
-            <v-checkbox
-              v-model="$record.isPreferito"
-              color="primary"
-              on-icon="favorite"
-              off-icon="favorite_border"
-              
-            />
-          </v-col>
-          <v-col sm="6" style="background-color: green">
-            <v-card outlined style="border-color:#2979FF">
-              <div class="d-flex flex-no-wrap" style="padding: 0 0 0 10px">
-                <v-icon x-large color="primary">description</v-icon>
-                <div>
-                  <!-- <v-card-title class="headline">Documenti</v-card-title> -->
-                  <v-card-subtitle>documenti</v-card-subtitle>
-                </div>
+    <v-container>
+      <v-row dense>
+        <v-col class="align-self-center">
+          <v-img :src="require('../../assets/images/casa.jpg')" aspect-ratio="1.5" contain />
+        </v-col>
+        <v-col >
+          <v-card outlined style="border-color:#2979FF">
+            <div class="d-flex flex-no-wrap" style="padding: 0 0 0 10px">
+              <v-icon x-large color="primary">description</v-icon>
+              <div>
+                <!-- <v-card-title class="headline">Documenti</v-card-title> -->
+                <v-card-subtitle>documenti</v-card-subtitle>
               </div>
-            </v-card>
-            <v-card outlined style="border-color:#2979FF" class="mt-2">
-              <div class="d-flex flex-no-wrap" style="padding: 0 0 0 10px">
-                <v-icon x-large color="primary">panorama</v-icon>
-                <div>
-                  <!-- <v-card-title class="headline">Galleria</v-card-title> -->
-                  <v-card-subtitle>galleria</v-card-subtitle>
-                </div>
+            </div>
+          </v-card>
+          <v-card outlined style="border-color:#2979FF" class="mt-2">
+            <div class="d-flex flex-no-wrap" style="padding: 0 0 0 10px">
+              <v-icon x-large color="primary">panorama</v-icon>
+              <div>
+                <!-- <v-card-title class="headline">Galleria</v-card-title> -->
+                <v-card-subtitle>galleria</v-card-subtitle>
               </div>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-container>
+            </div>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
 
     <v-text-field
       v-model="$record.committenteDesc"
@@ -75,8 +66,17 @@
       clear-icon="cancel"
       style="margin-top: -12px"
     />
-    <v-btn class="mr-4" color="primary" @click="onSave()">SALVA</v-btn>
-    <v-btn>ANNULLA</v-btn>
+    <v-checkbox
+      v-model="$record.isPreferito"
+      color="primary"
+      on-icon="favorite"
+      off-icon="favorite_border"
+      label="Preferito"
+      style="margin-top: -12px"
+    />
+
+    <v-btn class="mr-4" color="primary" large @click="onSave()" style="margin-top: -12px">SALVA</v-btn>
+    <v-btn large @click="exit()" style="margin-top: -12px">ANNULLA</v-btn>
   </v-card>
 
   <!--     <v-bottom-navigation grow color="blue accent-3" fixed>
