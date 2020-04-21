@@ -2,7 +2,13 @@
   <v-app :dark="dark">
     <notifications position="top right" style="margin-top:50px" />
 
-    <v-app-bar :clipped-left="true" fixed app color="grey lighten-4" class="elevation-5 pl-1 mb-3">
+    <v-app-bar
+      :clipped-left="true"
+      fixed
+      app
+      color="grey lighten-4"
+      class="elevation-5 pl-1 mb-3"
+    >
       <slot name="header-left">
         <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
         <!--  <v-toolbar-title>
@@ -37,27 +43,48 @@
         <v-tabs v-model="tab">
           <v-tabs-slider color="accent"></v-tabs-slider>
           <v-tab v-for="(item, i) in getMenuItems_Tab" :key="i" :to="item.to">
-            <v-icon>{{item.icon}}</v-icon>
+            <v-icon>{{ item.icon }}</v-icon>
           </v-tab>
         </v-tabs>
       </template>
     </v-app-bar>
 
-    <v-tabs-items v-model="tab">
-      <v-tab-item v-for="(item, i) in getMenuItems_Tab" :key="i" :value="item.to" :touchless="true">
-         <v-content>
-          <v-container fluid> 
+    <v-tabs-items v-model="tab" @change="tabChanged">
+      <v-tab-item
+        v-for="(item, i) in getMenuItems_Tab"
+        :key="i"
+        :value="item.to"
+        :touchless="true"
+      >
+        <v-content>
+          <v-container fluid>
             <nuxt />
           </v-container>
-        </v-content> 
+        </v-content>
       </v-tab-item>
     </v-tabs-items>
 
-    <v-navigation-drawer v-model="drawer" :clipped="true" fixed app style="background: white;">
-      <v-img contain :src="require('../assets/images/logo.png')" class="mt-5 mx-5" />
+    <v-navigation-drawer
+      v-model="drawer"
+      :clipped="true"
+      fixed
+      app
+      style="background: white;"
+    >
+      <v-img
+        contain
+        :src="require('../assets/images/logo.png')"
+        class="mt-5 mx-5"
+      />
 
       <v-list dense class="mt-1">
-        <v-list-item v-for="(item, i) in getMenuItems_Drawer" :key="i" :to="item.to" router exact>
+        <v-list-item
+          v-for="(item, i) in getMenuItems_Drawer"
+          :key="i"
+          :to="item.to"
+          router
+          exact
+        >
           <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-action>
@@ -70,7 +97,6 @@
   </v-app>
 </template>
 
-
 <script>
 import 'devextreme/dist/css/dx.common.css'
 import 'devextreme/dist/css/dx.light.css'
@@ -82,7 +108,9 @@ export default {
     return {
       bottomNavActiveItem: '/',
       showMessageBadge: false,
-      drawer: this.$vuetify.breakpoint.name === 'lg' || this.$vuetify.breakpoint.name === 'xl',
+      drawer:
+        this.$vuetify.breakpoint.name === 'lg' ||
+        this.$vuetify.breakpoint.name === 'xl',
       tab: null
     }
   },
@@ -100,6 +128,9 @@ export default {
     ...mapMutations('app', { setTitlePage: 'setTitle' }),
     isBadgeMessageVisibile() {
       return countMessages > 0
+    },
+    tabChanged(e) {
+      this.$router.push(e)
     }
   }
 }
