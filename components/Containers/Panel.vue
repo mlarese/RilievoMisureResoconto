@@ -1,6 +1,6 @@
 <!--eslint-disable-->
 <template>
-    <v-layout>
+    <v-layout class="flex-column">
         <v-toolbar class="elevation-0" v-if="title !== ''" dense style="background: white" >
             <v-toolbar-title >
                 <div class="subtitle-1"><b>{{title}}</b></div>
@@ -9,7 +9,7 @@
 
         </v-toolbar>
 
-        <v-card  slot="container-top" class="elevation-0 pa-0" style="min-height:100px">
+        <v-card  slot="container-top" class="elevation-0 pa-0">
             <v-container grid-list-md  fluid >
             <slot>
 
