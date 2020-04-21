@@ -27,6 +27,19 @@
                 </v-list-item>
               </v-list>
             </v-menu>
+            <template v-slot:extension>
+              <v-btn
+                color="pink"
+                dark
+                small
+                absolute
+                bottom
+                left
+                fab
+              >
+                <v-icon>mdi-plus</v-icon>
+              </v-btn>
+            </template>
           </v-card-title>
 
           <div v-for="det in listaDettagli" :key="det._id">

@@ -50,12 +50,21 @@ export default {
   pwa: {
     workbox: {
       dev: false,
-      workboxVersion: '0.0.2'
+      workboxVersion: '0.0.2',
+      runtimeCaching: [
+        {
+          urlPattern: 'https://fonts.googleapis.com/.*',
+          handler: 'cacheFirst',
+          method: 'GET',
+          strategyOptions: { cacheableResponse: { statuses: [0, 200] } }
+        }
+      ]
     },
     manifest: {
       display: 'standalone',
       name: 'Rilievo Misure',
       lang: 'it',
+      start_utl: '/',
       permissions: {
         unlimitedStorage: true
       },

@@ -8,13 +8,14 @@ export const dbList = {
   'auth': new PouchDb('auth'),
   'rilievi': new PouchDb('rilievi'),
   'rilievoDet': new PouchDb('rilievoDet'),
-  'rilievoPos': new PouchDb('rilievoPos')
+  'rilievoPos': new PouchDb('rilievoPos'),
+  'sysResources': new PouchDb('sysResources')
 }
 
 export const state = () => {
   return {
 
-  }
+  } 
 }
 
 export const visibleRecord = (o) => {
