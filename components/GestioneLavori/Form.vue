@@ -1,7 +1,50 @@
 <template>
-<div>
-  <Panel :title="tmpFormTitle" :subtitle="isAdd?'':$record.committenteDesc + ': ' + $record.descrizione" >
-     </Panel>
+  <Panel
+    :title="isAdd?'Nuovo lavoro':$record.committenteDesc"
+    :subtitle="isAdd?'':$record.descrizione"
+  >
+    <!--   <v-card>
+    <v-toolbar flat color="blue accent-3" dense dark>
+      <div>
+        <v-btn @click="dialog=false" icon class="hidden-xs-only">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </div>
+      <v-toolbar-title>{{ $record.committenteDesc }}</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn @click="onSave" :disabled="!canSave" icon class="pr-5">
+        <v-icon>save</v-icon>
+      </v-btn>
+    </v-toolbar>-->
+    <v-tabs>
+      <v-tab>DETTAGLIO</v-tab>
+      <v-tab>DOCUMENTI</v-tab>
+      <v-tab>GALLERIA</v-tab>
+
+      <v-tab-item :touchless="true" class="tabs__content">
+        <FormDatiGenerali />
+      </v-tab-item>
+      <v-tab-item :touchless="true" class="tabs__content">
+           <v-container style="height: 80vh;" class="d-flex align-content-center" >
+          <EmptyList
+            :title="'Nessun documento'"
+            :subtitle="'Premere il pulsante in basso per aggiungere nuovi documenti'"
+          />
+        </v-container>
+      </v-tab-item>
+      <v-tab-item :touchless="true" class="tabs__content">
+        <v-container style="height: 80vh;" class="d-flex align-content-center" >
+          <EmptyList
+            :title="'Nessuna immagine'"
+            :subtitle="'Premere il pulsante in basso per aggiungere nuove immagini'"
+          />
+        </v-container>
+      </v-tab-item>
+    </v-tabs>
+  </Panel>
+  <!--  </v-card> -->
+
+  <!-- <Panel :title="tmpFormTitle" :subtitle="isAdd?'':$record.committenteDesc + ': ' + $record.descrizione" >
     <DxForm :form-data.sync="$record" :col-count="1" label-location="top" v-if="isFormVisible">
       <DxGroupItem>
           <DxSimpleItem data-field="committenteDesc" />
@@ -61,41 +104,34 @@
 
      </v-bottom-navigation>
 
- </div>
+  </Panel>-->
 </template>
 
+<style>
+.tabs__content {
+  min-height: 100vh;
+}
+</style>
+
 <script>
-import {mapState, mapGetters, mapActions} from 'vuex'
-import {saveFile} from '../../assets/allegati'
-import {appDirImages, fs} from '../../assets/filesystem'
+import { mapState, mapGetters, mapActions } from 'vuex'
+import { appDirImages, fs } from '../../assets/filesystem'
+
 import Panel from '../Containers/Panel'
-import PhotoCamera from '../Photo/PhotoCamera'
-import FileManager from '../FileManager/FileManager'
-import { DxButton, DxSpeedDialAction } from 'devextreme-vue'
-import {
-  DxForm,
-  DxSimpleItem,
-  DxGroupItem,
-  DxLabel,
-  DxButtonItem
-} from 'devextreme-vue/form'
+import ConfirmDialog from '../General/ConfirmDialog'
+import EmptyList from '../General/EmptyList'
+import FormDatiGenerali from '../GestioneLavori/Form_DatiGenerali'
 
 const storeName = 'gestione_lavori'
 
 export default {
   components: {
-    PhotoCamera,
-    FileManager,
-    DxForm,
-    DxSimpleItem,
-    DxGroupItem,
-    DxLabel,
+    ConfirmDialog,
+    EmptyList,
     Panel,
-    DxButtonItem,
-    DxSpeedDialAction,
-    DxButton
+    FormDatiGenerali
   },
-  data () {
+  data() {
     return {
       isPreviewVisible: false,
       isFileManagerVisible: false,
@@ -112,37 +148,34 @@ export default {
     onPreviewFile (file) {
       this.isPreviewVisible = true
     },
-    onSnapPhoto (file) {
+    onSnapPhoto(file) {
       this.takenImage = file
     },
-    setVisible (flag) {
-        this.isFileManagerVisible = false
-        this.isCameraVisible = false
-        this.isFormVisible = false
+    setVisible(flag) {
+      this.isFileManagerVisible = false
+      this.isCameraVisible = false
+      this.isFormVisible = false
 
-        this[flag] = true
+      this[flag] = true
     },
-    exit () {
+    exit() {
       this.$router.replace(`/${storeName}`)
     },
-    onCancel () {
-      if(!confirm('Confermi?')) return
+    onCancel() {
+      if (!confirm('Confermi?')) return
       this.exit()
     },
-    onSaveImg () {
-        const {_id} = this.$record
-        saveFile(this.takenImage, appDirImages(_id), fs, this.$store)
-        this.setVisible('isFileManagerVisible')
+    onSaveImg() {
+      const { _id } = this.$record
+      saveFile(this.takenImage, appDirImages(_id), fs, this.$store)
+      this.setVisible('isFileManagerVisible')
     },
-    onClose () {
-      if(!this.isPreviewVisible)
-        this.setVisible('isFormVisible')
-      else
-        this.isPreviewVisible = false
+    onClose() {
+      if (!this.isPreviewVisible) this.setVisible('isFormVisible')
+      else this.isPreviewVisible = false
     },
-    onSave () {
-      this.save()
-        .then(this.exit)
+    onSave() {
+      this.save().then(this.exit)
     },
     ...mapActions(storeName, ['save'])
   },
@@ -153,16 +186,15 @@ export default {
     isSalvaImmagineDisabled() {
       return this.takenImage === null
     },
-    tmpFormTitle () {
-      if(this.isFileManagerVisible) return `${this.formTitle} - Allegati`
+    tmpFormTitle() {
+      if (this.isFileManagerVisible) return `${this.formTitle} - Allegati`
       return this.formTitle
     },
-    canSave () {
-      if(!this.$record.committenteDesc) return false
-      if(!this.$record.descrizione) return false
+    canSave() {
+      if (!this.$record.committenteDesc) return false
+      if (!this.$record.descrizione) return false
       return true
     }
   }
 }
-
 </script>

@@ -8,6 +8,7 @@
 import Form from '../../components/GestioneLavori/Form'
 
 export default {
+   layout: 'fullPage',
   components: {
     Form
   },
