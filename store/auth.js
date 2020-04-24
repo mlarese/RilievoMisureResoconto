@@ -72,7 +72,7 @@ export const actions = {
         return setAuth(commit, dispatch, res.data, data.username)
       })
       .catch(e => {
-        console.dir('post /api/Users/authenticate', e)
+        throw e
       })
   }
 }

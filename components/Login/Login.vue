@@ -13,7 +13,12 @@
           </v-avatar>
           <h1 class="my-2">AgileWork</h1>
           <h5>
-            Powered by <a href="http://www.4innovation.srl">4innovation.srl</a>
+            Powered by
+            <a
+              style="color: whitesmoke !important;"
+              href="http://www.4innovation.srl"
+              >4innovation.srl</a
+            >
           </h5>
         </div>
         <v-card class="elevation-0" style="border-radius: 16px 16px 8px 8px">
@@ -52,6 +57,7 @@
               :loading="loading"
               :disabled="loading"
               color="info"
+              small
               @click="login"
             >
               accedi
@@ -63,6 +69,15 @@
               <v-icon right dark>mdi-login</v-icon>
             </v-btn>
           </v-card-actions>
+          <v-alert
+            type="error"
+            dense
+            class="mb-0"
+            transition="scroll-y-transition"
+            :value="error"
+          >
+            {{ error }}
+          </v-alert>
         </v-card>
       </v-card>
     </v-flex>
@@ -82,7 +97,11 @@
               <h1 class="my-2">AgileWork</h1>
               <h5>
                 Powered by
-                <a style="color: red" href="http://www.4innovation.srl">4innovation.srl</a>
+                <a
+                  style="color: whitesmoke !important;"
+                  href="http://www.4innovation.srl"
+                  >4innovation.srl</a
+                >
               </h5>
             </div>
           </v-col>
@@ -91,7 +110,7 @@
               class="elevation-0"
               style="border-radius: 16px 8px 8px 16px"
             >
-              <v-card-text>
+              <v-card-text class="pb-0">
                 <v-form>
                   <v-text-field
                     prepend-icon="mdi-account-group"
@@ -138,6 +157,15 @@
                   <v-icon right dark>mdi-login</v-icon>
                 </v-btn>
               </v-card-actions>
+              <v-alert
+                type="error"
+                dense
+                class="mb-0"
+                transition="scroll-y-transition"
+                :value="error"
+              >
+                {{ error }}
+              </v-alert>
             </v-card>
           </v-col>
         </v-row>
@@ -172,10 +200,6 @@ h1 {
 
 h5 {
   color: whitesmoke;
-}
-
-.v-application a {
-    color: whitesmoke !important;
 }
 
 .custom-loader {
@@ -280,13 +304,23 @@ export default {
         azienda: this.azienda,
         username: this.username,
         password: this.password
-      }).then(() => {
-        if (this.loggedIn) {
-          this.$router.push('/')
-        } else {
-          this.loading = false
-        }
       })
+        .then(() => {
+          if (this.loggedIn) {
+            this.$router.push('/')
+          } else {
+            this.loading = false
+            // NON DOVREBBE MAI PRESENTARSI
+            this.error = 'Errore imprevisto'
+          }
+        })
+        .catch((err) => {
+          this.loading = false
+          this.error = err.response.data.message
+          if (this.error == null) {
+            this.error = 'Verificare la connessione'
+          }
+        })
     }
   }
 }
