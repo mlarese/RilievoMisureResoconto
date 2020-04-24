@@ -39,22 +39,3 @@ export default async ({ app }) => {
   defineCustomElements(window)
   return app.store.dispatch('auth/persistentUser', {}, {root: true})
 }
-
-
-function is_touch_device4() {
-    
-  var prefixes = ' -webkit- -moz- -o- -ms- '.split(' ');
-  
-  var mq = function (query) {
-      return window.matchMedia(query).matches;
-  }
-
-  if (('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch) {
-      return true;
-  }
-
-  // include the 'heartz' as a way to have a non matching MQ to help terminate the join
-  // https://git.io/vznFH
-  var query = ['(', prefixes.join('touch-enabled),('), 'heartz', ')'].join('');
-  return mq(query);
-}
