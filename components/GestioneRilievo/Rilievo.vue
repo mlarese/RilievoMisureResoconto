@@ -1,53 +1,47 @@
 <template>
-  <div>
-    <v-row v-for="pos in listaPosizioni" :key="pos._id">
-      <v-col cols="12" sm="6" offset-sm="3">
-        <v-card>
-          <v-card-title class="blue white--text">
-            <span class="headline">Posizione: {{ pos.posizioneDesc }}</span>
+  <div class="masterDIV">
+    <v-container>
+      <v-btn rounded color="primary" dark small @click="addPos()" class="ma-2">
+        posizione<v-icon>mdi-plus</v-icon>
+      </v-btn>
+      <v-row v-for="pos in listaPosizioni" :key="pos._id">
+        <v-col cols="12" sm="6" offset-sm="3">
+          <v-card>
+            <v-card-title class="blue white--text py-1">
+              <span class="headline">{{ pos.posizioneDesc }}</span>
 
-            <v-spacer></v-spacer>
+              <v-spacer></v-spacer>
 
-            <v-menu bottom left>
-              <template v-slot:activator="{ on }">
-                <v-btn dark icon v-on="on">
-                  <v-icon>mdi-dots-vertical</v-icon>
-                </v-btn>
-              </template>
+              <v-menu bottom left>
+                <template v-slot:activator="{ on }">
+                  <v-btn dark icon v-on="on">
+                    <v-icon>mdi-dots-vertical</v-icon>
+                  </v-btn>
+                </template>
 
-              <v-list>
-                <v-list-item>
-                  <v-list-item-title>Modifica</v-list-item-title>
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-title>Duplica</v-list-item-title>
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-title>Elimina</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-            <template v-slot:extension>
-              <v-btn
-                color="pink"
-                dark
-                small
-                absolute
-                bottom
-                left
-                fab
+                <v-list>
+                  <v-list-item>
+                    <v-list-item-title>Modifica</v-list-item-title>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-title>Duplica</v-list-item-title>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-title>Elimina</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </v-card-title>
+
+            <div v-for="det in listaDettagli" :key="det._id">
+              <v-col
+                v-if="det.RifPosID == pos._id"
+                cols="12"
+                @click="apriDettaglio(det._id)"
               >
-                <v-icon>mdi-plus</v-icon>
-              </v-btn>
-            </template>
-          </v-card-title>
-
-          <div v-for="det in listaDettagli" :key="det._id">
-            <v-touch @tap="apriDettaglio(det._id)">
-              <v-col v-if="det.RifPosID == pos._id" cols="12">
                 <v-card>
                   <div class="d-flex flex-no-wrap ">
-                    <v-avatar class="ma-3" size="125" tile>
+                    <v-avatar  size="125" tile>
                       <!-- <v-img :src="getIMG_base64(det.macroComandi)"></v-img> -->
                       <ImmagineDet
                         :drawingCommands="det.drawingCommands"
@@ -85,28 +79,49 @@
                   </div>
                 </v-card>
               </v-col>
-            </v-touch>
-          </div>
-          <v-col>
-            <DxButton
-              @click="addDettaglio(pos._id)"
-              icon="plus"
-              text="Aggiungi articolo"
-            />
-          </v-col>
-        </v-card>
-      </v-col>
-    </v-row>
+            </div>
+            <v-card-actions>
+              <v-btn
+                rounded
+                color="success"
+                dark
+                absolute
+                fab
+                small
+                bottom
+                right
+                @click="addDettaglio(pos._id)"
+               
+              >
+                <v-icon>mdi-plus</v-icon>
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+    <popupPosEdit ref="popupPosEdit" />
   </div>
 </template>
+
+<style scoped>
+.masterDIV {
+  width: 100%;
+  height: calc(100vh - 100px);
+  overscroll-behavior: contain;
+  overflow: auto;
+}
+</style>
 
 <script>
 import { mapState, mapActions, mapMutations, mapGetters } from 'vuex'
 import ImmagineDet from '~/components/GestioneRilievo/ImmagineDet'
+import popupPosEdit from '../../components/GestioneRilievo/posizioneEdit'
 
 export default {
   components: {
-    ImmagineDet
+    ImmagineDet,
+    popupPosEdit
   },
   props: [],
   computed: {
@@ -122,6 +137,32 @@ export default {
   },
   methods: {
     ...mapMutations('rilievoDet', { setRecordRilievoDet: 'setRecord' }),
+    ...mapMutations('rilievoPos', ['setRecord']),
+    ...mapActions('rilievoPos', { saveRow: 'save', deleteRow: 'deleteByID' }),
+    addPos() {
+      this.$refs.popupPosEdit.open('Nuova posizione', '', 1).then((data) => {
+        if (data) {
+          this.insertRow(data)
+        }
+      })
+    },
+    insertRow(data) {
+      let newPos = {}
+      newPos.posizioneDesc = data.NomePosizione
+      newPos.PosQta = data.QtaPosizione
+      newPos.rilievoID = this.rilievo._id
+      this.setRecord(newPos)
+      this.saveRow()
+    },
+    updateRow({ data }) {
+      console.log(data)
+      this.setRecord(data)
+      this.saveRow()
+    },
+    removeRow({ data }) {
+      console.log(data._id)
+      this.deleteRow(data._id)
+    },
     addDettaglio(posID) {
       let newDettaglio = {
         rilievoID: this.rilievo._id,
@@ -158,7 +199,6 @@ export default {
         } else {
           throw jsonDataObj.data
         }
-
       } catch (e) {
         console.log(e)
       }

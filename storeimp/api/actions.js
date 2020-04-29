@@ -17,39 +17,54 @@ export const notifyError = (err, translate = null) => {
     title = translate(title)
     text = translate(text)
   }
-  return {title, text, type}
+  return { title, text, type }
 }
 
-export const notifySuccess = ({title, text}) => ({title, text, type: 'success'})
+export const notifySuccess = ({ title, text }) => ({
+  title,
+  text,
+  type: 'success'
+})
+export const baseURL = 'https://localhost:44397'
 
-export const baseURL = 'https://localhost:44397';
+// if (Vue.config.performance) {
+//   baseURL = 'https://localhost:44397'
+// } else {
+//   baseURL = 'https://agile4work.4innovation.srl:1002'
+// }
+
 // export const baseURL = 'https://agile4work.4innovation.srl:1002';
 const instance = axios.create({
   baseURL,
   timeout: 90000,
-  headers: {'Content-Type': 'application/json'},
+  headers: { 'Content-Type': 'application/json' },
   withCredentials: false
 })
 
 export const actions = {
-  init ({commit}) {
+  init({ commit }) {
     commit('error')
     commit('hasError')
   },
-  get ({commit, getters, state, rootState}, {url, options = {}, debug = false}) {
+  get(
+    { commit, getters, state, rootState },
+    { url, options = {}, debug = false }
+  ) {
     commit('isAjax', true)
     commit('error')
     commit('hasError')
 
     if (!options.headers) options.headers = {}
-    if(rootState.auth.token) options.headers['authorization'] = rootState.auth.token
+    if (rootState.auth.token)
+      options.headers['authorization'] = rootState.auth.token
 
-    return instance.get(url, options)
-      .then(res => {
+    return instance
+      .get(url, options)
+      .then((res) => {
         commit('isAjax')
         return res
       })
-      .catch(err => {
+      .catch((err) => {
         console.log('get', url)
         console.dir(err)
 
@@ -60,22 +75,27 @@ export const actions = {
         return Promise.reject(err)
       })
   },
-  post ({commit, getters, state, rootState}, {url, data = {}, options = {}}) {
+  post(
+    { commit, getters, state, rootState },
+    { url, data = {}, options = {} }
+  ) {
     commit('isAjax', true)
     commit('error')
     commit('hasError')
     //console.log('---- post', url, data, options)
 
     if (!options.headers) options.headers = {}
-    if(rootState.auth.token) options.headers['authorization'] = rootState.auth.token
+    if (rootState.auth.token)
+      options.headers['authorization'] = rootState.auth.token
 
-    return instance.post(url, data, options)
-      .then(res => {
+    return instance
+      .post(url, data, options)
+      .then((res) => {
         commit('isAjax')
         return res
       })
-      .catch(err => {
-        console.log('err','post',url)
+      .catch((err) => {
+        console.log('err', 'post', url)
         console.log(err.response.data.message)
         commit('isAjax')
         commit('error', err)
@@ -84,20 +104,22 @@ export const actions = {
         return Promise.reject(err)
       })
   },
-  put ({commit, getters, state, rootState}, {url, data, options = {}}) {
+  put({ commit, getters, state, rootState }, { url, data, options = {} }) {
     commit('isAjax', true)
     commit('error')
     commit('hasError')
 
     if (!options.headers) options.headers = {}
-    if(rootState.auth.token) options.headers['authorization'] = rootState.auth.token
+    if (rootState.auth.token)
+      options.headers['authorization'] = rootState.auth.token
 
-    return instance.put(url, data, options)
-      .then(res => {
+    return instance
+      .put(url, data, options)
+      .then((res) => {
         commit('isAjax')
         return res
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err)
         commit('isAjax')
         commit('error', err)
@@ -106,21 +128,23 @@ export const actions = {
         return Promise.reject(err)
       })
   },
-  delete ({commit, getters, state, rootState}, {url, options = {}}) {
+  delete({ commit, getters, state, rootState }, { url, options = {} }) {
     commit('isAjax', true)
     commit('error')
     commit('hasError')
     console.log(url)
 
     if (!options.headers) options.headers = {}
-    if(rootState.auth.token) options.headers['authorization'] = rootState.auth.token
+    if (rootState.auth.token)
+      options.headers['authorization'] = rootState.auth.token
 
-    return instance.delete(url, options)
-      .then(res => {
+    return instance
+      .delete(url, options)
+      .then((res) => {
         commit('isAjax')
         return res
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err)
         commit('isAjax')
         commit('error', err)

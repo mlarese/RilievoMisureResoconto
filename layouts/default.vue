@@ -40,7 +40,7 @@
         </v-avatar>
       </slot>
       <template v-slot:extension>
-        <v-tabs v-model="tab">
+        <v-tabs v-model="tab" fixed-tabs>
           <v-tabs-slider color="accent"></v-tabs-slider>
           <v-tab v-for="(item, i) in getMenuItems_Tab" :key="i" :to="item.to">
             <v-icon>{{ item.icon }}</v-icon>

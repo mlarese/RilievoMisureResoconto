@@ -38,6 +38,7 @@
     "vue-touch": "^2.0.0-beta.4",
     "vue-web-cam": "^1.9.0",
     "vue-webcam": "^2.0.4",
+    "vue2-touch-events": "^2.2.1",
     "vuex-persist": "^2.2.0"
   },
   "devDependencies": {

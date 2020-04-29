@@ -1,29 +1,39 @@
 <template>
-  <v-card flat class="pa-5">
+  <v-card flat>
     <v-container>
       <v-row dense>
         <v-col class="align-self-center">
-          <v-img :src="require('../../assets/images/casa.jpg')" aspect-ratio="1.5" contain />
+          <v-img
+            :src="require('../../assets/images/casa.jpg')"
+            aspect-ratio="1.5"
+            contain
+          />
         </v-col>
-        <v-col >
-          <v-card outlined style="border-color:#2979FF">
+        <v-col>
+          <!-- <v-card outlined style="border-color:#2979FF">
             <div class="d-flex flex-no-wrap" style="padding: 0 0 0 10px">
               <v-icon x-large color="primary">description</v-icon>
               <div>
-                <!-- <v-card-title class="headline">Documenti</v-card-title> -->
                 <v-card-subtitle>documenti</v-card-subtitle>
               </div>
             </div>
-          </v-card>
-          <v-card outlined style="border-color:#2979FF" class="mt-2">
+          </v-card> -->
+          <v-btn class="ma-2" rounded outlined block color="info" @click="openGoogleMap()">
+            Naviga
+            <v-icon right dark>mdi-map</v-icon>
+          </v-btn>
+          <!-- <v-card outlined style="border-color:#2979FF" class="mt-2">
             <div class="d-flex flex-no-wrap" style="padding: 0 0 0 10px">
               <v-icon x-large color="primary">panorama</v-icon>
               <div>
-                <!-- <v-card-title class="headline">Galleria</v-card-title> -->
                 <v-card-subtitle>galleria</v-card-subtitle>
               </div>
             </div>
-          </v-card>
+          </v-card> -->
+          <v-btn class="ma-2" rounded outlined block color="info">
+            Chiama
+            <v-icon right dark>mdi-phone</v-icon>
+          </v-btn>
         </v-col>
       </v-row>
     </v-container>
@@ -32,20 +42,18 @@
       v-model="$record.committenteDesc"
       label="Committente"
       required
-      clearable
       dense
       outlined
-      clear-icon="cancel"
+      :readonly="isView"
       style="margin-top: 20px"
     ></v-text-field>
     <v-text-field
       v-model="$record.descrizione"
       label="Descrizione Lavori"
       required
-      clearable
       dense
       outlined
-      clear-icon="cancel"
+      :readonly="isView"
       style="margin-top: -12px"
     ></v-text-field>
     <v-text-field
@@ -54,15 +62,15 @@
       required
       dense
       outlined
-      clear-icon="cancel"
+      :readonly="isView"
       style="margin-top: -12px"
     ></v-text-field>
     <v-textarea
       v-model="$record.note"
       label="Note"
       dense
-      outlined
-      clearable
+      outlined  
+      :readonly="isView"    
       clear-icon="cancel"
       style="margin-top: -12px"
     />
@@ -73,10 +81,18 @@
       off-icon="favorite_border"
       label="Preferito"
       style="margin-top: -12px"
+       :readonly="isView"
     />
 
-    <v-btn class="mr-4" color="primary" large @click="onSave()" style="margin-top: -12px">SALVA</v-btn>
-    <v-btn large @click="exit()" style="margin-top: -12px">ANNULLA</v-btn>
+    <!-- <v-btn
+      class="mr-4"
+      color="primary"
+      large
+      @click="onSave()"
+      style="margin-top: -12px"
+      >SALVA</v-btn
+    >
+    <v-btn large @click="exit()" style="margin-top: -12px">ANNULLA</v-btn> -->
   </v-card>
 
   <!--     <v-bottom-navigation grow color="blue accent-3" fixed>
@@ -103,10 +119,13 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 const storeName = 'gestione_lavori'
 
 export default {
+  props: {
+    // editable: { type: Boolean, default: false }
+  },
   computed: {
     ...mapState('app', ['dark']),
     ...mapState(storeName, ['$record']),
-    ...mapGetters(storeName, ['isEdit', 'isAdd']),
+    ...mapGetters(storeName, ['isEdit', 'isAdd', 'isView']),
 
     isSalvaImmagineDisabled() {
       return this.takenImage === null
@@ -124,7 +143,13 @@ export default {
     onSave() {
       this.save().then(this.exit)
     },
-    ...mapActions(storeName, ['save'])
+    ...mapActions(storeName, ['save']),
+    openGoogleMap() {
+        window.open(
+          "https://goo.gl/maps/5vn9uhm7x6gavZ699",
+          "_blank"
+        );
+      }
   }
 }
 </script>

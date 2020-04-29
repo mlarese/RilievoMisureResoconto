@@ -1,127 +1,65 @@
 <template>
   <Panel
-    :title="isAdd?'Nuovo lavoro':$record.committenteDesc"
-    :subtitle="isAdd?'':$record.descrizione"
+    :title="isAdd ? 'Nuovo lavoro' : isEdit ? 'Modifica lavoro' : $record.committenteDesc"
+    :subtitle="isAdd ? ''  : isEdit ? '' : $record.descrizione"
+
+    @editClick="onEditClick"
   >
-    <!--   <v-card>
-    <v-toolbar flat color="blue accent-3" dense dark>
-      <div>
-        <v-btn @click="dialog=false" icon class="hidden-xs-only">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-      </div>
-      <v-toolbar-title>{{ $record.committenteDesc }}</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-btn @click="onSave" :disabled="!canSave" icon class="pr-5">
-        <v-icon>save</v-icon>
-      </v-btn>
-    </v-toolbar>-->
-    <v-tabs>
-      <v-tab>DETTAGLIO</v-tab>
-      <v-tab>DOCUMENTI</v-tab>
-      <v-tab>GALLERIA</v-tab>
+    <v-btn icon class="mr-1" @click="onEditClick()" slot="panelToolbarRight">
+      <v-icon>mdi-{{ isView ? 'pencil' : 'check-bold' }}</v-icon>
+    </v-btn>
 
-      <v-tab-item :touchless="true" class="tabs__content">
-        <FormDatiGenerali />
-      </v-tab-item>
-      <v-tab-item :touchless="true" class="tabs__content">
-           <v-container style="height: 80vh;" class="d-flex align-content-center" >
-          <EmptyList
-            :title="'Nessun documento'"
-            :subtitle="'Premere il pulsante in basso per aggiungere nuovi documenti'"
-          />
-        </v-container>
-      </v-tab-item>
-      <v-tab-item :touchless="true" class="tabs__content">
-        <v-container style="height: 80vh;" class="d-flex align-content-center" >
-          <EmptyList
-            :title="'Nessuna immagine'"
-            :subtitle="'Premere il pulsante in basso per aggiungere nuove immagini'"
-          />
-        </v-container>
-      </v-tab-item>
-    </v-tabs>
+    <FormDatiGenerali slot="back" />
+
+    <v-card slot="slider" v-show="isView">
+      <v-tabs fixed-tabs>
+        <v-tab>RILIEVO</v-tab>
+        <v-tab>DOCUMENTI</v-tab>
+        <v-tab>GALLERIA</v-tab>
+
+        <v-tab-item :touchless="true" class="tabs__content">
+          <Rilievo />
+        </v-tab-item>
+        <v-tab-item :touchless="true" class="tabs__content">
+          <v-container
+            style="height: 80vh;"
+            class="d-flex align-content-center"
+          >
+            <EmptyList
+              :title="'Nessun documento'"
+              :subtitle="
+                'Premere il pulsante in basso per aggiungere nuovi documenti'
+              "
+            />
+          </v-container>
+        </v-tab-item>
+        <v-tab-item :touchless="true" class="tabs__content">
+          <v-container
+            style="height: 80vh;"
+            class="d-flex align-content-center"
+          >
+            <EmptyList
+              :title="'Nessuna immagine'"
+              :subtitle="
+                'Premere il pulsante in basso per aggiungere nuove immagini'
+              "
+            />
+          </v-container>
+        </v-tab-item>
+      </v-tabs>
+    </v-card>
   </Panel>
-  <!--  </v-card> -->
-
-  <!-- <Panel :title="tmpFormTitle" :subtitle="isAdd?'':$record.committenteDesc + ': ' + $record.descrizione" >
-    <DxForm :form-data.sync="$record" :col-count="1" label-location="top" v-if="isFormVisible">
-      <DxGroupItem>
-          <DxSimpleItem data-field="committenteDesc" />
-          <DxSimpleItem data-field="descrizione" />
-          <DxSimpleItem data-field="luogo" />
-      </DxGroupItem>
-    </DxForm>
-
-    <FileManager :entry-point="$record._id" :preview-visible="isPreviewVisible" @on-preview-file="onPreviewFile" v-if="isFileManagerVisible" />
-
-    <PhotoCamera v-if="isEdit && isCameraVisible" @snap-photo="onSnapPhoto" class="mt-2" />
-
-    <v-bottom-navigation app :dark="dark">
-          <div v-if="isFormVisible">
-              <v-btn value="save" @click="onSave" :disabled="!canSave">
-                  <span>Salva</span>
-                  <v-icon>mdi-content-save-edit</v-icon>
-              </v-btn>
-
-              <v-btn value="cancel" @click="onCancel">
-                  <span>Esci</span>
-                  <v-icon>mdi-undo</v-icon>
-              </v-btn>
-          </div>
-
-           <div v-if="isCameraVisible">
-               <v-btn value="save" @click="onSaveImg" :disabled="isSalvaImmagineDisabled">
-                   <span>Salva Immagine</span>
-                   <v-icon>mdi-content-save-edit</v-icon>
-               </v-btn>
-           </div>
-
-          <v-spacer></v-spacer>
-
-            <v-btn v-if="isEdit && isFormVisible" value="fotocamera" @click="setVisible('isCameraVisible')">
-                <span>Fotocamera</span>
-                <v-icon>mdi-camera</v-icon>
-            </v-btn>
-
-            <v-btn v-if="isEdit && isFormVisible" value="fotocamera" @click="apriRilievo()">
-                <span>rilievo</span>
-                <v-icon>mdi-camera</v-icon>
-            </v-btn>
-
-          <v-btn v-if="isEdit && isFormVisible" value="allegati" @click="setVisible('isFileManagerVisible')">
-              <span>Allegati</span>
-              <v-icon>mdi-file-cabinet</v-icon>
-          </v-btn>
-
-
-          <v-btn v-if="!isFormVisible" value="chiudi"
-                 @click="onClose">
-                <span>Chiudi</span>
-                <v-icon>mdi-close</v-icon>
-          </v-btn>
-
-
-     </v-bottom-navigation>
-
-  </Panel>-->
 </template>
 
-<style>
-.tabs__content {
-  min-height: 100vh;
-}
-</style>
-
 <script>
-import { mapState, mapGetters, mapActions } from 'vuex'
+import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
 import { appDirImages, fs } from '../../assets/filesystem'
 
 import Panel from '../Containers/Panel'
 import ConfirmDialog from '../General/ConfirmDialog'
 import EmptyList from '../General/EmptyList'
 import FormDatiGenerali from '../GestioneLavori/Form_DatiGenerali'
-
+import Rilievo from '../GestioneRilievo/Rilievo'
 const storeName = 'gestione_lavori'
 
 export default {
@@ -129,7 +67,8 @@ export default {
     ConfirmDialog,
     EmptyList,
     Panel,
-    FormDatiGenerali
+    FormDatiGenerali,
+    Rilievo
   },
   data() {
     return {
@@ -137,15 +76,63 @@ export default {
       isFileManagerVisible: false,
       isCameraVisible: false,
       isFormVisible: true,
-      takenImage: null
+      takenImage: null,
+      expanded: false
     }
   },
+  computed: {
+    ...mapState('app', ['dark']),
+    ...mapState(storeName, ['$record']),
+    ...mapGetters(storeName, ['formTitle', 'isEdit', 'isAdd', 'isView'])
+  },
   methods: {
-    apriRilievo(){
-      const {_id} = this.$record
+    ...mapActions(storeName, { salvaLavoro: 'save' }),
+    ...mapMutations(storeName, ['setEditMode', 'setNewMode', 'setViewMode']),
+    onEditClick() {
+      // Un nuovo lavoro può essere inserito e modificato anche se offline
+      // Ad oggi, se un lavoro è stato sincronizzato, la sua modifica può avvenire solamnte se siamo online
+      // Così da evitare conflitti
+      if (this.$record.agileID == null || this.$record.agileID == 0) {
+        // Lavoro non ancora sincronizzato
+        // possiamo manipolarlo come ci pare
+
+        if (this.isView) {
+          // Imposta la modalità di visualizzazione a EDITABLE
+          this.setEditMode()
+        } else {
+          // Provvede a salvare il lavoro
+          this.salvaLavoro()
+
+          // Imposta la modalità di visualizzazione a READONLY
+          this.setViewMode()
+        }
+      } else {
+        // lavoro già sincronizzato
+        if (navigator.onLine) {
+          // Lo possiamo modificare / salvare solamente se siamo online
+
+          if (this.isView) {
+            // Imposta la modalità di visualizzazione a EDITABLE
+            this.setEditMode()
+          } else {
+            // Provvede a salvare il lavoro
+            this.salvaLavoro()
+
+            // Imposta la modalità di visualizzazione a READONLY
+            this.setViewMode()
+          }
+        } else {
+          alert('Quando offline non è possibile modificare un lavoro!')
+        }
+      }
+      this.expanded = false
+    },
+
+    apriRilievo() {
+      const { _id } = this.$record
       this.$router.push(`/rilievo/${_id}`)
     },
-    onPreviewFile (file) {
+    onPreviewFile(file) {
       this.isPreviewVisible = true
     },
     onSnapPhoto(file) {
@@ -176,25 +163,9 @@ export default {
     },
     onSave() {
       this.save().then(this.exit)
-    },
-    ...mapActions(storeName, ['save'])
-  },
-  computed: {
-    ...mapState('app', ['dark']),
-    ...mapState(storeName, ['$record']),
-    ...mapGetters(storeName, ['formTitle', 'isEdit', 'isAdd']),
-    isSalvaImmagineDisabled() {
-      return this.takenImage === null
-    },
-    tmpFormTitle() {
-      if (this.isFileManagerVisible) return `${this.formTitle} - Allegati`
-      return this.formTitle
-    },
-    canSave() {
-      if (!this.$record.committenteDesc) return false
-      if (!this.$record.descrizione) return false
-      return true
     }
-  }
+  },
+
+  mounted() {}
 }
 </script>

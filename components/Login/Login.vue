@@ -44,8 +44,10 @@
                 v-model="password"
                 label="Password"
                 id="password"
-                type="password"
                 :disabled="loading"
+                :append-icon="cript ? 'mdi-eye-outline' : 'mdi-eye-off-outline'"
+                @click:append="() => (cript = !cript)"
+                :type="cript ? 'password' : 'text'"
               ></v-text-field>
             </v-form>
           </v-card-text>
@@ -132,8 +134,10 @@
                     v-model="password"
                     label="Password"
                     id="password"
-                    type="password"
                     :disabled="loading"
+                    :append-icon="cript ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
+                    @click:append="() => (cript = !cript)"
+                    :type="cript ? 'password' : 'text'"
                   ></v-text-field>
                 </v-form>
               </v-card-text>
@@ -176,7 +180,7 @@
 
 <style lang="scss">
 .loginSmall {
-  max-width: 300px;
+  max-width: 350px;
 }
 
 .loginBig {
@@ -185,7 +189,7 @@
 
 .panelSmall {
   background: #448aff !important;
-  height: 250px;
+  height: 40vh;
   vertical-align: middle;
 }
 
@@ -269,7 +273,8 @@ export default {
       alert: null,
       unverified: false,
       showReset: false,
-      loading: false
+      loading: false,
+      cript: true
     }
   },
   computed: {
@@ -316,9 +321,10 @@ export default {
         })
         .catch((err) => {
           this.loading = false
-          this.error = err.response.data.message
-          if (this.error == null) {
+          if (this.error == null || err.response == null) {
             this.error = 'Verificare la connessione'
+          } else {
+            this.error = err.response.data.message
           }
         })
     }

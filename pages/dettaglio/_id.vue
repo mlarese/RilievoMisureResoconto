@@ -5,6 +5,7 @@
 <script>
 import dettaglioEdit from '../../components/GestioneRilievo/dettaglioEdit'
 export default {
+  layout: 'fullPage',
   components: {
     dettaglioEdit
   },

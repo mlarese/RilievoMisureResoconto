@@ -80,6 +80,7 @@ export default {
     ...mapMutations('rilievoDet', ['setMacroComandi', 'setDrawingCommands']),
     salva: function() {
       this.save()
+      this.$router.back()
     },
     applicaMC() {
       window.GPROD.resetStrutturaSerramento()

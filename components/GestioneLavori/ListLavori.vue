@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="mainContainer">
     <!-- FILTRO -->
     <v-row dense>
       <v-col cols="12">
@@ -13,8 +13,13 @@
               background-color="white"
               v-model="ui.filter.text"
             />
-            <v-btn icon color="primary" @click="ui.filter.preferito = !ui.filter.preferito" class="pl-2">
-              <v-icon v-if="ui.filter.preferito ">favorite</v-icon>
+            <v-btn
+              icon
+              color="primary"
+              @click="ui.filter.preferito = !ui.filter.preferito"
+              class="pl-2"
+            >
+              <v-icon v-if="ui.filter.preferito">favorite</v-icon>
               <v-icon v-else>favorite_border</v-icon>
             </v-btn>
           </div>
@@ -24,8 +29,19 @@
 
     <!-- LISTA LAVORI -->
     <v-row dense>
-      <v-col v-for="(item, i) in getfilteredList" :key="i" xs="12" md="6" lg="4">
-        <v-card color="white" @click="openEditForm(item._id)" min-width="300" max-height="180">
+      <v-col
+        v-for="(item, i) in getfilteredList"
+        :key="i"
+        xs="12"
+        md="6"
+        lg="4"
+      >
+        <v-card
+          color="white"
+          @click="openEditForm(item._id)"
+          min-width="300"
+          max-height="200"
+        >
           <div class="d-flex flex-no-wrap">
             <v-avatar class="ma-3" size="125" tile>
               <v-img :src="require('../../assets/images/casa.jpg')"></v-img>
@@ -39,17 +55,41 @@
               <v-card-subtitle v-text="item.descrizione" />
               <v-card-text v-text="item.luogo" />
             </div>
-            <v-icon v-if="item.isPreferito" color="primary" class="align-self-end pa-3">favorite</v-icon>
           </div>
+          <v-card-actions class="py-0">
+            <v-spacer></v-spacer>
+            <v-icon
+              v-if="item.isPreferito"
+              color="primary"
+              class="align-self-end pa-1"
+              >favorite</v-icon
+            >
+          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
 
-    <v-btn fab color="primary" class="mx-2 mb-12" dark fixed absolute bottom right @click="onAdd">
+    <v-btn
+      fab
+      color="primary"
+      class="mx-2 mb-12"
+      dark
+      fixed
+      absolute
+      bottom
+      right
+      @click="onAdd"
+    >
       <v-icon>mdi-plus</v-icon>
     </v-btn>
   </v-container>
 </template>
+
+<style scoped>
+.mainContainer {
+  height: 100%;
+}
+</style>
 
 <script>
 import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
