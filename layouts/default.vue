@@ -35,7 +35,7 @@
         >
           <v-icon medium>mdi-email</v-icon>
         </v-badge>
-        <v-avatar color="primary" class="ma-4" size="36px">
+        <v-avatar color="primary" class="ma-4" size="36px" @click="openProfile">
           <v-icon dark>person</v-icon>
         </v-avatar>
       </slot>
@@ -131,6 +131,9 @@ export default {
     },
     tabChanged(e) {
       this.$router.push(e)
+    },
+    openProfile(){
+      this.$router.push('/profile')
     }
   }
 }

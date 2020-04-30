@@ -147,6 +147,12 @@ export const actions = {
     const db = new PouchDb(rootState.auth.azienda + '_' + table)
     return db.remove(data, options, callback)
   },
+  async delete_system( { commit, dispatch }, { table, data, options = null, callback = emptyFn }) 
+  {
+    console.log(table, data)
+    const db = new PouchDb(table)
+    return db.remove(data, options, callback)
+  },
   async dbInfo({ commit, dispatch, rootState }, table) {
     const db = new PouchDb(rootState.auth.azienda + '_' + table)
     var result = await db.info()

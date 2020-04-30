@@ -4,7 +4,7 @@
       <v-btn rounded color="primary" dark small @click="addPos()" class="ma-2">
         posizione<v-icon>mdi-plus</v-icon>
       </v-btn>
-      <v-row v-for="pos in listaPosizioni" :key="pos._id">
+      <v-row v-for="pos in listaPosizioni" :key="pos._id" class="pa-0 ma-0">
         <v-col cols="12" sm="6" offset-sm="3">
           <v-card>
             <v-card-title class="blue white--text py-1">
@@ -107,7 +107,7 @@
 <style scoped>
 .masterDIV {
   width: 100%;
-  height: calc(100vh - 100px);
+  height: calc(100vh - 90px);
   overscroll-behavior: contain;
   overflow: auto;
 }

@@ -17,12 +17,12 @@
         <v-tab>DOCUMENTI</v-tab>
         <v-tab>GALLERIA</v-tab>
 
-        <v-tab-item :touchless="true" class="tabs__content">
+        <v-tab-item class="tabs__content">
           <Rilievo />
         </v-tab-item>
-        <v-tab-item :touchless="true" class="tabs__content">
+        <v-tab-item class="tabs__content">
           <v-container
-            style="height: 80vh;"
+            style="height: 90vh;"
             class="d-flex align-content-center"
           >
             <EmptyList
@@ -33,9 +33,9 @@
             />
           </v-container>
         </v-tab-item>
-        <v-tab-item :touchless="true" class="tabs__content">
+        <v-tab-item class="tabs__content">
           <v-container
-            style="height: 80vh;"
+            style="height: 90vh;"
             class="d-flex align-content-center"
           >
             <EmptyList

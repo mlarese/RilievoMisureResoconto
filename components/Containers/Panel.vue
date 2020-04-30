@@ -39,8 +39,10 @@
       v-touch:moving="movingHandler"
       v-touch:start="startHandler"
       v-touch:end="endHandler"
+      v-touch-options="{swipeTolerance: 80}"
       ref="sliderCard"
       :ripple="false"
+      v-if="sliderVisible"
     >
       <slot name="slider"></slot>
     </v-card>
@@ -68,6 +70,7 @@
   width: 100%;
   transition: top 0s;
   overflow: auto;
+  overflow-x: hidden;
   overscroll-behavior: contain;
 }
 .positionup {
@@ -83,14 +86,16 @@ export default {
   name: 'CardPanel',
   props: {
     title: { type: String, default: '' },
-    subtitle: { type: String, default: '' }
+    subtitle: { type: String, default: '' },
+    sliderVisible: { type: Boolean, default: true }
   },
   data() {
     return {
       expanded: false,
       direction: '',
       firstTOP: null,
-      startY: null
+      startY: null,
+      swipeActive: false
     }
   },
   methods: {
@@ -118,6 +123,10 @@ export default {
       this.firstTOP = h - 40
     },
     movingHandler(e) {
+      if (!this.swipeActive){
+        return
+      }
+
       if (this.startY == null) {
         return
       }
@@ -150,9 +159,23 @@ export default {
         this.direction = 'down'
       }
 
+      if (this.firstTOP - diff <= 48) {
+        return
+      }
+
+      var h = Math.max(
+        document.documentElement.clientHeight,
+        window.innerHeight || 0
+      )
+
+      if (this.firstTOP - diff >= h - 40) {
+        return
+      }
+
       slider.$el.style.top = this.firstTOP - diff + 'px'
     },
     startHandler(e) {
+      this.swipeActive = true
       if (e.touches == null) {
         return
       }
@@ -164,7 +187,8 @@ export default {
 
       if (x.length > 0) {
         if (x[0].scrollTop > 0) {
-          offset = x[0].scrollTop
+          this.swipeActive = false //offset = x[0].scrollTop
+          return
         }
       }
 
@@ -172,6 +196,9 @@ export default {
       this.startY = posY + offset
     },
     endHandler(e) {
+      if (!this.swipeActive){
+        return
+      }
       let slider = this.$refs.sliderCard
       slider.$el.style.transition = '0.5s'
 

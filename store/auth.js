@@ -7,9 +7,6 @@ export const state = () => ({
 })
 
 export const mutations = {
-  setUser(state, payload) {
-    state.user = payload
-  },
   setLoggedIn(state, payload) {
     state.loggedIn = payload
   },
@@ -28,7 +25,7 @@ const AUTH_RECORD_ID = 'auth_record_id'
 const table = 'auth'
 
 const setAuth = (commit, dispatch, state, token) => {
-  // Decodicica payload token
+  // Decodifica payload token
   var base64Url = token.split('.')[1]
   var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
   var jsonPayload = decodeURIComponent(
@@ -65,6 +62,9 @@ const setAuth = (commit, dispatch, state, token) => {
           { table: 'auth', data },
           { root: true }
         ).then((res1) => {
+          commit('setUtente', res1.utente)
+          commit('setAzienda', res1.azienda)
+          commit('setToken', res1.token)
           commit('setLoggedIn', true)
         })
       }
@@ -103,6 +103,28 @@ export const actions = {
       })
       .catch((e) => {
         throw e
+      })
+  },
+  doLogout({ commit, dispatch, state }) {
+    const id = AUTH_RECORD_ID
+
+    return dispatch('db/selectById_system', { table, id }, { root: true })
+      .then((res) => {
+        console.log(res)
+
+        return dispatch(
+          'db/delete_system',
+          { table, data: res },
+          { root: true }
+        ).then(() => {
+          commit('setLoggedIn', false)
+          commit('setToken', '')
+          commit('setUtente', '')
+          commit('setAzienda', '')
+        })
+      })
+      .catch((e) => {
+        console.log('selectById', e)
       })
   }
 }
