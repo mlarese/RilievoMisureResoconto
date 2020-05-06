@@ -1,8 +1,14 @@
 <template>
   <Panel
-    :title="isAdd ? 'Nuovo lavoro' : isEdit ? 'Modifica lavoro' : $record.committenteDesc"
-    :subtitle="isAdd ? ''  : isEdit ? '' : $record.descrizione"
-
+    :title="
+      isAdd
+        ? 'Nuovo lavoro'
+        : isEdit
+        ? 'Modifica lavoro'
+        : $record.data.GL_CommittenteDesc
+    "
+    :subtitle="isAdd ? '' : isEdit ? '' : $record.data.GL_Descrizione"
+    :sliderVisible="isView"
     @editClick="onEditClick"
   >
     <v-btn icon class="mr-1" @click="onEditClick()" slot="panelToolbarRight">
@@ -86,9 +92,17 @@ export default {
     ...mapGetters(storeName, ['formTitle', 'isEdit', 'isAdd', 'isView'])
   },
   methods: {
-    ...mapActions(storeName, { salvaLavoro: 'save' }),
-    ...mapMutations(storeName, ['setEditMode', 'setNewMode', 'setViewMode']),
-    onEditClick() {
+    ...mapActions(storeName, {
+      salvaLavoro: 'save',
+      UploadESaveLavoro: 'upload'
+    }),
+    ...mapMutations(storeName, [
+      'setEditMode',
+      'setNewMode',
+      'setViewMode',
+      'setAgileID'
+    ]),
+    async onEditClick() {
       // Un nuovo lavoro può essere inserito e modificato anche se offline
       // Ad oggi, se un lavoro è stato sincronizzato, la sua modifica può avvenire solamnte se siamo online
       // Così da evitare conflitti
@@ -101,7 +115,13 @@ export default {
           this.setEditMode()
         } else {
           // Provvede a salvare il lavoro
-          this.salvaLavoro()
+          await this.salvaLavoro({ doUpload: true, saveLacalAnyway: true, rawData: false })
+          .then(() => {
+            // Andato a bun fine
+          })
+          .catch((err) => {
+            // Errore
+          })
 
           // Imposta la modalità di visualizzazione a READONLY
           this.setViewMode()
@@ -115,8 +135,23 @@ export default {
             // Imposta la modalità di visualizzazione a EDITABLE
             this.setEditMode()
           } else {
-            // Provvede a salvare il lavoro
-            this.salvaLavoro()
+            // Parte l'animazione di caricamento
+            console.log('inizio')
+
+            // Prima di salvare delle modifiche in locale dobbiamo inviarle al server
+            await this.salvaLavoro({ toUpload: true, rawData: false })
+
+            // await this.UploadESaveLavoro()
+            // .then((res) => {
+            //   // Lavoro Caricato correttamente
+            // })
+            // .catch((err) => {
+            //   // Qualcosa è andato storto
+            //   console.log(err)
+            // })
+
+            // Termina animazione
+            console.log('fine')
 
             // Imposta la modalità di visualizzazione a READONLY
             this.setViewMode()

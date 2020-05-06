@@ -49,6 +49,10 @@ export default {
   css: [
     '@/assets/main.css'
   ],
+  pageTransition: {
+    name: 'page',
+    mode: 'out-in'
+  },
   pwa: {
     workbox: {
       dev: false,
@@ -136,6 +140,11 @@ export default {
     /*
      ** You can extend webpack config here
      */
-    extend(config, ctx) { }
+    extend(config, ctx) { 
+      // config.optimization.splitChunks.maxSize = 100000;
+      if (ctx.isDev) {
+        config.devtool = ctx.isClient ? 'source-map' : 'inline-source-map'
+      }
+    }
   }
 }

@@ -39,7 +39,7 @@
           <v-icon dark>person</v-icon>
         </v-avatar>
       </slot>
-      <template v-slot:extension>
+      <template v-slot:extension >
         <v-tabs v-model="tab" fixed-tabs>
           <v-tabs-slider color="accent"></v-tabs-slider>
           <v-tab v-for="(item, i) in getMenuItems_Tab" :key="i" :to="item.to">
@@ -49,7 +49,7 @@
       </template>
     </v-app-bar>
 
-    <v-tabs-items v-model="tab" @change="tabChanged">
+    <v-tabs-items v-model="tab" @change="tabChanged" >
       <v-tab-item
         v-for="(item, i) in getMenuItems_Tab"
         :key="i"

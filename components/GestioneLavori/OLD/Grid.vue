@@ -23,7 +23,7 @@
         </DxPopup>
         <DxForm>
           <DxItem item-type="group">
-            <DxItem data-field="committenteDesc" />
+            <DxItem data-field="data.GL_CommittenteDesc" />
             <DxItem
               :editor-options="{ height: 100 }"
               data-field="descrizione"
@@ -36,7 +36,7 @@
 
       <DxSearchPanel :visible="true" :width="240" placeholder="Search..." />
 
-      <DxColumn data-field="committenteDesc" caption="Committente" />
+      <DxColumn data-field="data.GL_CommittenteDesc" caption="Committente" />
       <DxColumn data-field="descrizione" caption="Descrizione" />
       <DxColumn data-field="luogo" caption="Indirizzo" />
 

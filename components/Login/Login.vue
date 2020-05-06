@@ -321,7 +321,7 @@ export default {
         })
         .catch((err) => {
           this.loading = false
-          if (this.error == null || err.response == null) {
+          if (err == null || err.response == null) {
             this.error = 'Verificare la connessione'
           } else {
             this.error = err.response.data.message

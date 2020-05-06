@@ -1,8 +1,8 @@
 <template>
-  <Panel :title="tmpFormTitle" :subtitle="isAdd?'':$record.committenteDesc + ': ' + $record.descrizione" >
+  <Panel :title="tmpFormTitle" :subtitle="isAdd?'':$record.data.GL_CommittenteDesc + ': ' + $record.descrizione" >
     <DxForm :form-data.sync="$record" :col-count="1" label-location="top" v-if="isFormVisible">
       <DxGroupItem>
-          <DxSimpleItem data-field="committenteDesc" />
+          <DxSimpleItem data-field="data.GL_CommittenteDesc" />
           <DxSimpleItem data-field="descrizione" />
           <DxSimpleItem data-field="luogo" />
       </DxGroupItem>
@@ -147,7 +147,7 @@ export default {
       return this.formTitle
     },
     canSave () {
-      if(!this.$record.committenteDesc) return false
+      if(!this.$record.data.GL_CommittenteDesc) return false
       if(!this.$record.descrizione) return false
       return true
     }

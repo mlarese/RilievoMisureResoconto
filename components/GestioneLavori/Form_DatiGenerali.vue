@@ -39,7 +39,7 @@
     </v-container>
 
     <v-text-field
-      v-model="$record.committenteDesc"
+      v-model="$record.data.GL_CommittenteDesc"
       label="Committente"
       required
       dense
@@ -48,7 +48,7 @@
       style="margin-top: 20px"
     ></v-text-field>
     <v-text-field
-      v-model="$record.descrizione"
+      v-model="$record.data.GL_Descrizione"
       label="Descrizione Lavori"
       required
       dense
@@ -57,7 +57,7 @@
       style="margin-top: -12px"
     ></v-text-field>
     <v-text-field
-      v-model="$record.luogo"
+      v-model="$record.data.GL_Indirizzo"
       label="Indirizzo"
       required
       dense
@@ -66,7 +66,7 @@
       style="margin-top: -12px"
     ></v-text-field>
     <v-textarea
-      v-model="$record.note"
+      v-model="$record.data.GL_Note"
       label="Note"
       dense
       outlined  
@@ -75,7 +75,7 @@
       style="margin-top: -12px"
     />
     <v-checkbox
-      v-model="$record.isPreferito"
+      v-model="$record.data.isPreferito"
       color="primary"
       on-icon="favorite"
       off-icon="favorite_border"
@@ -131,8 +131,8 @@ export default {
       return this.takenImage === null
     },
     canSave() {
-      if (!this.$record.committenteDesc) return false
-      if (!this.$record.descrizione) return false
+      if (!this.$record.data.GL_CommittenteDesc) return false
+      if (!this.$record.data.GL_Descrizione) return false
       return true
     }
   },

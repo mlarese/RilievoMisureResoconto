@@ -15,9 +15,6 @@
         <div class="caption">{{ subtitle }}</div>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <!-- <v-btn icon class="mr-1" @click="toggleExpand()">
-        <v-icon>mdi-chevron-{{ expanded ? 'down' : 'up' }}</v-icon>
-      </v-btn> -->
       <slot name="panelToolbarRight"></slot>
     </v-app-bar>
     <div class="masterPanel pb-10">
@@ -33,16 +30,15 @@
     <v-card
       tile
       color="blue darken-2"
-      :class="{ positiondown: !expanded, positionup: expanded }"
+      :style="{ top: sliderTopValue }"
       class="elevation-12 slide ma-0"
       @click="expand()"
-      v-touch:moving="movingHandler"
-      v-touch:start="startHandler"
-      v-touch:end="endHandler"
-      v-touch-options="{swipeTolerance: 80}"
       ref="sliderCard"
       :ripple="false"
       v-if="sliderVisible"
+      v-touch:moving="movingHandler"
+      v-touch:start="startHandler"
+      v-touch:end="endHandler"
     >
       <slot name="slider"></slot>
     </v-card>
@@ -68,17 +64,18 @@
   max-height: calc(100vh - 45px);
   position: fixed;
   width: 100%;
-  transition: top 0s;
+  transition: 0.5s;
   overflow: auto;
   overflow-x: hidden;
   overscroll-behavior: contain;
 }
-.positionup {
+
+/* .positionup {
   top: 48px;
 }
 .positiondown {
-  top: calc(100vh - 40px);
-}
+  top: calc(100vh - 60px);
+} */
 </style>
 
 <script>
@@ -91,56 +88,55 @@ export default {
   },
   data() {
     return {
-      expanded: false,
+      expanded: true,
       direction: '',
       firstTOP: null,
       startY: null,
-      swipeActive: false
+      swipeActive: false,
+      sliderTopValue: '48px'
     }
   },
   methods: {
     exit() {
       this.$router.back()
     },
-    toggleExpand() {
-      this.expanded = !this.expanded
-    },
     expand() {
       this.expanded = true
-      let slider = this.$refs.sliderCard
-      slider.$el.style.top = 48 + 'px'
+      // let slider = this.$refs.sliderCard
+      // slider.$el.style.top = 48 + 'px'
+      this.sliderTopValue = '48px'
       this.firstTOP = 48
     },
     compress() {
       this.expanded = false
-      this.expanded = true
       let slider = this.$refs.sliderCard
       var h = Math.max(
         document.documentElement.clientHeight,
         window.innerHeight || 0
       )
-      slider.$el.style.top = h - 40 + 'px'
-      this.firstTOP = h - 40
+      // slider.$el.style.top = h - 60 + 'px'
+      this.firstTOP = h - 60
+      this.sliderTopValue = h - 60 + 'px'
     },
     movingHandler(e) {
-      if (!this.swipeActive){
+      if (!this.swipeActive) {
         return
       }
 
       if (this.startY == null) {
         return
       }
-      let x = e.path.filter(function(item) {
-        return item.className == 'masterDIV'
-      })
+      // let x = e.path.filter(function(item) {
+      //   return item.className == 'masterDIV'
+      // })
 
-      if (x.length > 0) {
-        if (x[0].scrollTop > 0) {
-          return
-        }
-      }
-      let slider = this.$refs.sliderCard
-      slider.$el.style.transition = '0s'
+      // if (x.length > 0) {
+      //   if (x[0].scrollTop > 0) {
+      //     return
+      //   }
+      // }
+      // let slider = this.$refs.sliderCard
+      // slider.$el.style.transition = '0s'
 
       if (e.touches == null) {
         return
@@ -153,12 +149,6 @@ export default {
         return
       }
 
-      if (diff > 0) {
-        this.direction = 'up'
-      } else {
-        this.direction = 'down'
-      }
-
       if (this.firstTOP - diff <= 48) {
         return
       }
@@ -168,13 +158,22 @@ export default {
         window.innerHeight || 0
       )
 
-      if (this.firstTOP - diff >= h - 40) {
+      if (this.firstTOP - diff >= h - 60) {
         return
       }
 
-      slider.$el.style.top = this.firstTOP - diff + 'px'
+      // slider.$el.style.top = this.firstTOP - diff + 'px'
+      this.sliderTopValue = this.firstTOP - diff + 'px'
+      if (diff > 0) {
+        this.direction = 'up'
+      } else {
+        this.direction = 'down'
+      }
     },
     startHandler(e) {
+      if (e == null){
+        return
+      }
       this.swipeActive = true
       if (e.touches == null) {
         return
@@ -191,16 +190,30 @@ export default {
           return
         }
       }
+      let slider = this.$refs.sliderCard
+      slider.$el.style.transition = '0s'
 
       let posY = e.touches[0].clientY
       this.startY = posY + offset
     },
     endHandler(e) {
-      if (!this.swipeActive){
+      if (!this.swipeActive) {
         return
       }
       let slider = this.$refs.sliderCard
       slider.$el.style.transition = '0.5s'
+
+      let distance = Math.abs(this.startY - e.changedTouches[0].clientY)
+
+      if (distance < 80) {
+        // se la distanza non è sufficiente ritorna alla posizione iniziale
+        if (this.expanded) {
+          this.expand()
+        } else {
+          this.compress()
+        }
+        return
+      }
 
       if (this.direction == 'up') {
         this.expand()
@@ -218,10 +231,14 @@ export default {
     }
   },
   mounted() {
-    this.compress()
+    if (this.isAdd) {
+      this.compress()
+    } else {
+      this.expand()
+    }
     // let slider = this.$refs.sliderCard
     // console.log(slider)
-    //slider.addEventListener('touchstart', this.handleTouchStart, false)
+    // slider.$el.addEventListener('touchstart', pippo(), false)
     //   var el = document.getElementById("canvas");
     // el.addEventListener("touchstart", handleStart, false);
     //   document.addEventListener('touchstart', this.handleTouchStart, false)
@@ -233,4 +250,5 @@ export default {
     // }, 500)
   }
 }
+
 </script>

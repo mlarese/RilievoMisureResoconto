@@ -1,6 +1,5 @@
 <template>
-  <CardPanel :sliderVisible="false">
-    <card slot="back">
+    <v-card slot="back">
       <v-card-text>
         <div>
           <v-text-field
@@ -26,20 +25,18 @@
           logout
         </v-btn>
       </v-card-actions>
-    </card>
-  </CardPanel>
+    </v-card>
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex'
-import CardPanel from '../components/Containers/Panel'
 export default {
   layout: 'fullPage',
   fetch({ store }) {
     store.dispatch('auth/persistentUser', {}, { root: true })
   },
   components: {
-    CardPanel
+    
   },
   computed: {
     ...mapState('auth', ['utente', 'azienda'])

@@ -26,7 +26,12 @@
             </v-flex>
             <v-flex>
               <v-btn slot="right" @click="importAll"  :disabled="!syncBtnVisible" :loading="synchronizing">
-                <span>Sincronizza</span>
+                <span>download</span>
+                <v-icon>mdi-database-sync</v-icon>
+            </v-btn>
+
+            <v-btn slot="right" @click="exportAll"  :disabled="!syncBtnVisible" :loading="synchronizing">
+                <span>upload</span>
                 <v-icon>mdi-database-sync</v-icon>
             </v-btn>
             </v-flex>
@@ -41,7 +46,7 @@
   export default {
     components: {Panel},
     methods: {
-      ...mapActions('sync', ['importAll'])
+      ...mapActions('sync', ['importAll', 'exportAll'])
     },
     computed: {
       ...mapState('sync', ['updatingStatus', 'statusUpdated', 'dbStatus', 'synchronized', 'synchronizing']),

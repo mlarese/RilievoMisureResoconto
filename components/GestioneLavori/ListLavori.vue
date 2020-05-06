@@ -48,18 +48,18 @@
             </v-avatar>
             <div class="flex-grow-1 flex-shrink-1">
               <v-card-title
-                v-text="item.committenteDesc"
+                v-text="item.data.GL_CommittenteDesc"
                 class="headline"
                 style="word-break: normal;"
               />
-              <v-card-subtitle v-text="item.descrizione" />
+              <v-card-subtitle v-text="item.data.GL_Descrizione" />
               <v-card-text v-text="item.luogo" />
             </div>
           </div>
           <v-card-actions class="py-0">
             <v-spacer></v-spacer>
             <v-icon
-              v-if="item.isPreferito"
+              v-if="item.data.isPreferito"
               color="primary"
               class="align-self-end pa-1"
               >favorite</v-icon
