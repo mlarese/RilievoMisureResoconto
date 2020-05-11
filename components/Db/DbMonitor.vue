@@ -34,6 +34,10 @@
                 <span>upload</span>
                 <v-icon>mdi-database-sync</v-icon>
             </v-btn>
+            <v-btn slot="right" @click="syncRisorse"  :disabled="!syncBtnVisible" :loading="synchronizing">
+                <span>risorse</span>
+                <v-icon>mdi-database-sync</v-icon>
+            </v-btn>
             </v-flex>
         </v-layout>
     </v-card>
@@ -46,7 +50,7 @@
   export default {
     components: {Panel},
     methods: {
-      ...mapActions('sync', ['importAll', 'exportAll'])
+      ...mapActions('sync', ['importAll', 'exportAll', 'syncRisorse'])
     },
     computed: {
       ...mapState('sync', ['updatingStatus', 'statusUpdated', 'dbStatus', 'synchronized', 'synchronizing']),

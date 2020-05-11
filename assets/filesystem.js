@@ -44,6 +44,7 @@ export const workAppDir = (entryPoint) =>`${appDir}/${entryPoint}`
 export const appDirImages = (entryPoint) =>`${appDir}/${entryPoint}/Immagini`
 export const appDirCatalogs = (entryPoint) =>`${appDir}/${entryPoint}/Cataloghi`
 export const appDirDocs = (entryPoint) =>`${appDir}/${entryPoint}/Documents`
+export const appDirRes = () =>`${appDir}/Resources`
 
 export const createBaseFs = async (entryPoint) => {
   fs.mkdir(rootDir)
@@ -52,6 +53,7 @@ export const createBaseFs = async (entryPoint) => {
   fs.mkdir(appDirCatalogs(entryPoint), (err) => console.dir(err))
   fs.mkdir(appDirDocs(entryPoint), (err) => console.dir(err))
   fs.mkdir(appDirImages(entryPoint), (err) => console.dir(err))
+  fs.mkdir(appDirRes(), (err) => console.dir(err))
 }
 
 export const rootDir = '/apps'
