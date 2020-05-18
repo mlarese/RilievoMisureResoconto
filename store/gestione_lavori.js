@@ -26,7 +26,15 @@ const emptyRecord = () => ({
 export const state = () => {
   return {
     list: [],
-    $record: {},
+    $record: {
+      data: {
+        GL_CommittenteDesc: null,
+        GL_Descrizione: null,
+        GL_Indirizzo: null,
+        GL_Note: null,
+        isPreferito: false
+      }
+    },
     record: {},
     dbName: 'lavori',
     modalita: 'FIND',

@@ -43,7 +43,7 @@
           max-height="200"
         >
           <div class="d-flex flex-no-wrap">
-            <v-avatar class="ma-3" size="125" tile>
+            <v-avatar class="ma-3" size="100" tile>
               <v-img :src="require('../../assets/images/casa.jpg')"></v-img>
             </v-avatar>
             <div class="flex-grow-1 flex-shrink-1">
@@ -99,12 +99,14 @@ export default {
     ...mapState('gestione_lavori', { ui: 'ui', listLavori: 'list' }),
     ...mapGetters('gestione_lavori', { getfilteredList: 'filteredList' })
   },
-  methods: {
+  methods: {    
+    ...mapActions('gestione_lavori', {caricaLavoro: 'getById'} ),
     onAdd() {
       this.$router.push(`/gestione_lavori/add`)
     },
     openEditForm(id) {
       this.$router.push(`/gestione_lavori/${id}`)
+      // this.caricaLavoro(id)
     }
   }
 }

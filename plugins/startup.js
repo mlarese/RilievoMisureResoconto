@@ -11,8 +11,8 @@ import {dmy, time, truncate,number} from '../assets/filters'
 // import VueTouch from 'vue-touch';
 // Vue.use(VueTouch);
 
-import Vue2TouchEvents from 'vue2-touch-events' 
-Vue.use(Vue2TouchEvents)
+// import Vue2TouchEvents from 'vue2-touch-events' 
+// Vue.use(Vue2TouchEvents)
 
 // import themes from "devextreme/ui/themes"; 
 // themes.current("material.blue-light");

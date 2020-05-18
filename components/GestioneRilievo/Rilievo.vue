@@ -1,114 +1,211 @@
 <template>
-  <div class="masterDIV">
-    <v-container>
-      <v-btn rounded color="primary" dark small @click="addPos()" class="ma-2">
-        posizione<v-icon>mdi-plus</v-icon>
+  <div>
+    <Panel>
+      <div slot="toolbarTitle">
+        <div v-if="$vuetify.breakpoint.xsOnly">
+          <b>{{ record.descrizione }}</b>
+          <v-spacer></v-spacer>
+        </div>
+        <div v-else>
+          Gestione rilievo
+        </div>
+      </div>
+      <v-btn
+        icon
+        class="mr-1"
+        @click="openEditForm()"
+        slot="panelToolbarRight"
+        v-if="$vuetify.breakpoint.xsOnly"
+      >
+        <v-icon>mdi-pencil</v-icon>
       </v-btn>
-      <v-row v-for="pos in listaPosizioni" :key="pos._id" class="pa-0 ma-0">
-        <v-col cols="12" sm="6" offset-sm="3">
-          <v-card>
-            <v-card-title class="blue white--text py-1">
-              <span class="headline">{{ pos.posizioneDesc }}</span>
 
-              <v-spacer></v-spacer>
+      <div slot="mainContent">
+        <div v-if="$vuetify.breakpoint.smAndUp">
+          <p>{{ record.descrizione }}</p>
+          <v-divider></v-divider>
+        </div>
 
-              <v-menu bottom left>
-                <template v-slot:activator="{ on }">
-                  <v-btn dark icon v-on="on">
-                    <v-icon>mdi-dots-vertical</v-icon>
-                  </v-btn>
-                </template>
+        <v-tabs centered>
+          <v-tab>FORI</v-tab>
+          <v-tab>SCHEDE</v-tab>
+          <v-tab>DOCS</v-tab>
+          <v-tab>FOTO</v-tab>
 
-                <v-list>
-                  <v-list-item>
-                    <v-list-item-title>Modifica</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item>
-                    <v-list-item-title>Duplica</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item>
-                    <v-list-item-title>Elimina</v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
-            </v-card-title>
-
-            <div v-for="det in listaDettagli" :key="det._id">
-              <v-col
-                v-if="det.RifPosID == pos._id"
-                cols="12"
-                @click="apriDettaglio(det._id)"
-              >
-                <v-card>
-                  <div class="d-flex flex-no-wrap ">
-                    <v-avatar  size="125" tile>
-                      <!-- <v-img :src="getIMG_base64(det.macroComandi)"></v-img> -->
-                      <ImmagineDet
-                        :drawingCommands="det.drawingCommands"
-                        :imgWidth="imgWidth"
-                        :imgHeight="imgHeight"
-                      ></ImmagineDet>
-                    </v-avatar>
-                    <div>
-                      <v-card-title v-text="det.descrizione">
-                        <v-spacer></v-spacer>
-                        <v-menu bottom left>
-                          <template v-slot:activator="{ on }">
-                            <v-btn dark icon v-on="on">
-                              <v-icon>mdi-dots-vertical</v-icon>
-                            </v-btn>
-                          </template>
-                          <v-list>
-                            <v-list-item>
-                              <v-list-item-title>Modifica</v-list-item-title>
-                            </v-list-item>
-                            <v-list-item>
-                              <v-list-item-title>Duplica</v-list-item-title>
-                            </v-list-item>
-                            <v-list-item>
-                              <v-list-item-title>Elimina</v-list-item-title>
-                            </v-list-item>
-                          </v-list>
-                        </v-menu>
-                      </v-card-title>
-
-                      <v-card-subtitle
-                        v-text="det.Descrizione"
-                      ></v-card-subtitle>
-                    </div>
-                  </div>
-                </v-card>
-              </v-col>
-            </div>
-            <v-card-actions>
+          <v-tab-item
+            :class="
+              $vuetify.breakpoint.xsOnly
+                ? 'tabs__content_small'
+                : 'tabs__content_large'
+            "
+          >
+            <v-container>
               <v-btn
                 rounded
-                color="success"
+                color="primary"
                 dark
-                absolute
-                fab
                 small
-                bottom
-                right
-                @click="addDettaglio(pos._id)"
-               
+                @click="addPos()"
+                class="ma-2"
               >
-                <v-icon>mdi-plus</v-icon>
+                posizione<v-icon>mdi-plus</v-icon>
               </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-container>
+              <v-row
+                v-for="pos in listaPosizioni"
+                :key="pos._id"
+                class="pa-0 ma-0"
+              >
+                <v-col cols="12" sm="6" offset-sm="3">
+                  <v-card>
+                    <v-card-title class="blue white--text py-1">
+                      <span class="headline">{{ pos.posizioneDesc }}</span>
+
+                      <v-spacer></v-spacer>
+
+                      <v-menu bottom left>
+                        <template v-slot:activator="{ on }">
+                          <v-btn dark icon v-on="on">
+                            <v-icon>mdi-dots-vertical</v-icon>
+                          </v-btn>
+                        </template>
+
+                        <v-list>
+                          <v-list-item>
+                            <v-list-item-title>Modifica</v-list-item-title>
+                          </v-list-item>
+                          <v-list-item>
+                            <v-list-item-title>Duplica</v-list-item-title>
+                          </v-list-item>
+                          <v-list-item>
+                            <v-list-item-title>Elimina</v-list-item-title>
+                          </v-list-item>
+                        </v-list>
+                      </v-menu>
+                    </v-card-title>
+
+                    <div v-for="det in listaDettagli" :key="det._id">
+                      <v-col
+                        v-if="det.RifPosID == pos._id"
+                        cols="12"
+                        @click="apriDettaglio(det._id)"
+                      >
+                        <v-card>
+                          <div class="d-flex flex-no-wrap ">
+                            <v-avatar size="125" tile>
+                              <!-- <v-img :src="getIMG_base64(det.macroComandi)"></v-img> -->
+                              <ImmagineDet
+                                :drawingCommands="det.drawingCommands"
+                                :imgWidth="imgWidth"
+                                :imgHeight="imgHeight"
+                              ></ImmagineDet>
+                            </v-avatar>
+                            <div>
+                              <v-card-title v-text="det.descrizione">
+                                <v-spacer></v-spacer>
+                                <v-menu bottom left>
+                                  <template v-slot:activator="{ on }">
+                                    <v-btn dark icon v-on="on">
+                                      <v-icon>mdi-dots-vertical</v-icon>
+                                    </v-btn>
+                                  </template>
+                                  <v-list>
+                                    <v-list-item>
+                                      <v-list-item-title
+                                        >Modifica</v-list-item-title
+                                      >
+                                    </v-list-item>
+                                    <v-list-item>
+                                      <v-list-item-title
+                                        >Duplica</v-list-item-title
+                                      >
+                                    </v-list-item>
+                                    <v-list-item>
+                                      <v-list-item-title
+                                        >Elimina</v-list-item-title
+                                      >
+                                    </v-list-item>
+                                  </v-list>
+                                </v-menu>
+                              </v-card-title>
+
+                              <v-card-subtitle
+                                v-text="det.Descrizione"
+                              ></v-card-subtitle>
+                            </div>
+                          </div>
+                        </v-card>
+                      </v-col>
+                    </div>
+                    <v-card-actions>
+                      <v-btn
+                        rounded
+                        color="success"
+                        dark
+                        absolute
+                        fab
+                        small
+                        bottom
+                        right
+                        @click="addDettaglio(pos._id)"
+                      >
+                        <v-icon>mdi-plus</v-icon>
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-tab-item>
+        </v-tabs>
+      </div>
+    </Panel>
     <popupPosEdit ref="popupPosEdit" />
+    <v-dialog
+      :value="isEdit || isAdd"
+      persistent
+      :fullscreen="$vuetify.breakpoint.xsOnly"
+      max-width="700px"
+    >
+      <v-card>
+        <v-card-title>
+          <span class="headline">{{
+            isAdd ? 'Nuovo rilievo' : 'Modifica rilievo'
+          }}</span>
+        </v-card-title>
+
+        <v-card-text>
+          <v-text-field
+            v-model="record.descrizione"
+            label="Descrizione"
+            required
+            dense
+            :readonly="isView"
+            class="py-2"
+          ></v-text-field>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="annullaModifiche()"
+            >Annulla</v-btn
+          >
+          <v-btn color="blue darken-1" text @click="salvaModifiche()"
+            >Salva</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <style scoped>
-.masterDIV {
-  width: 100%;
-  height: calc(100vh - 90px);
-  overscroll-behavior: contain;
+.tabs__content_small {
+  height: calc(100vh - 110px);
+  overflow: auto;
+}
+.tabs__content_large {
+  min-height: 200px;
+  max-height: calc(100vh - 250px);
   overflow: auto;
 }
 </style>
@@ -117,17 +214,20 @@
 import { mapState, mapActions, mapMutations, mapGetters } from 'vuex'
 import ImmagineDet from '~/components/GestioneRilievo/ImmagineDet'
 import popupPosEdit from '../../components/GestioneRilievo/posizioneEdit'
+import Panel from '../Containers/Panel'
 
 export default {
   components: {
     ImmagineDet,
-    popupPosEdit
+    popupPosEdit,
+    Panel
   },
   props: [],
   computed: {
     ...mapState('rilievo', ['listaPosizioni']),
     ...mapState('rilievo', ['listaDettagli']),
-    ...mapState('rilievo', { rilievo: 'record' })
+    ...mapState('rilievo', ['record']),
+    ...mapGetters('rilievo', ['formTitle', 'isEdit', 'isAdd', 'isView'])
   },
   data() {
     return {
@@ -139,6 +239,15 @@ export default {
     ...mapMutations('rilievoDet', { setRecordRilievoDet: 'setRecord' }),
     ...mapMutations('rilievoPos', ['setRecord']),
     ...mapActions('rilievoPos', { saveRow: 'save', deleteRow: 'deleteByID' }),
+    ...mapActions('rilievo', { saveRilievo: 'save' }),
+    ...mapMutations('rilievo', ['setViewMode']),
+    salvaModifiche(){
+      this.saveRilievo()
+      this.setViewMode()
+    },
+    annullaModifiche(){
+      this.setViewMode()
+    },
     addPos() {
       this.$refs.popupPosEdit.open('Nuova posizione', '', 1).then((data) => {
         if (data) {
@@ -150,7 +259,7 @@ export default {
       let newPos = {}
       newPos.posizioneDesc = data.NomePosizione
       newPos.PosQta = data.QtaPosizione
-      newPos.rilievoID = this.rilievo._id
+      newPos.rilievoID = this.record._id
       this.setRecord(newPos)
       this.saveRow()
     },
@@ -165,7 +274,7 @@ export default {
     },
     addDettaglio(posID) {
       let newDettaglio = {
-        rilievoID: this.rilievo._id,
+        rilievoID: this.record._id,
         RifPosID: posID,
         macroComandi: 'MACRO:DEMO1'
       }

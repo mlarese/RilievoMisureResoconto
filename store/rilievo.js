@@ -4,6 +4,7 @@ const root = { root: true }
 export const state = () => {
   return {
     lavoroID: 0,
+    list: [],
     listaPosizioni: [],
     listaDettagli: [],
     listaSchedeGenerali: {},
@@ -25,8 +26,7 @@ export const actions = {
 
     let reduceFunctionRilievo = {
       key: state.lavoroID,
-      include_docs: true,
-      limit: 1
+      include_docs: true
     }
 
     // Carica il rilievo
@@ -39,26 +39,38 @@ export const actions = {
       },
       root
     )
-      .then((rilievo) => {
-        if (Object.keys(rilievo).length === 0) {
-          console.log('nessun rilievo, provvede a crearne uno provvisorio')
-          commit('setEmptyRecord')
-          dispatch('save')
+      .then((rilievi) => {
+        commit('setListaRilievi', rilievi)
+        if (Object.keys(rilievi).length === 0) {
+          // console.log('nessun rilievo, provvede a crearne uno provvisorio')
+          // commit('setEmptyRecord')
+          // dispatch('save')
         } else {
-          commit('setRecord', rilievo[0])
-          
-          dispatch('loadPosizioni').catch((e) => {
-            console.log(e)
-          })
-          
-          dispatch('loadDettagli').catch((e) => {
-            console.log(e)
-          })
+          // commit('setRecord', rilievi[0])
+          // dispatch('loadPosizioni').catch((e) => {
+          //   console.log(e)
+          // })
+          // dispatch('loadDettagli').catch((e) => {
+          //   console.log(e)
+          // })
         }
       })
       .catch((e) => {
         console.log(e)
       })
+  },
+  getById({ dispatch, commit, state }, id) {
+    const table = state.dbName
+    dispatch('db/selectById', { table, id }, root).then((rec) => {
+      commit('setRecord', rec)
+      commit('setViewMode')
+      dispatch('loadPosizioni').catch((e) => {
+        console.log(e)
+      })
+      dispatch('loadDettagli').catch((e) => {
+        console.log(e)
+      })
+    })
   },
   loadPosizioni({ dispatch, commit, state }) {
     const table = 'rilievoPos'
@@ -132,6 +144,10 @@ export const actions = {
 export const mutations = {
   setRiferimentoAlLavoro(state, payload = {}) {
     state.lavoroID = payload
+    state.record.lavoroID = payload
+  },
+  setListaRilievi(state, payload = {}) {
+    state.list = payload
   },
   setPosizioni(state, payload = {}) {
     state.listaPosizioni = payload
@@ -157,5 +173,20 @@ export const mutations = {
   },
   setModalita(state, payload = {}) {
     state.modalita = payload
+  },
+  setEditMode(state) {
+    state.modalita = 'EDIT'
+  },
+  setNewMode(state) {
+    state.modalita = 'ADD'
+  },
+  setViewMode(state) {
+    state.modalita = 'VIEW'
   }
+}
+
+export const getters = {
+  isView: (s) => s.modalita === 'VIEW',
+  isEdit: (s) => s.modalita === 'EDIT',
+  isAdd: (s) => s.modalita === 'ADD'
 }

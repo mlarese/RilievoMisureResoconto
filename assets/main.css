@@ -2,5 +2,5 @@
     word-break: normal; /* maybe !important  */
   }
 body{
-  overscroll-behavior: contain;
+  overscroll-behavior: contain !important;
 }

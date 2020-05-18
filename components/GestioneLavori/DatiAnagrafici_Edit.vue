@@ -1,88 +1,54 @@
 <template>
   <v-card flat>
-    <v-container>
-      <v-row dense>
-        <v-col class="align-self-center">
-          <v-img
-            :src="require('../../assets/images/casa.jpg')"
-            aspect-ratio="1.5"
-            contain
-          />
-        </v-col>
-        <v-col>
-          <!-- <v-card outlined style="border-color:#2979FF">
-            <div class="d-flex flex-no-wrap" style="padding: 0 0 0 10px">
-              <v-icon x-large color="primary">description</v-icon>
-              <div>
-                <v-card-subtitle>documenti</v-card-subtitle>
-              </div>
-            </div>
-          </v-card> -->
-          <v-btn class="ma-2" rounded outlined block color="info" @click="openGoogleMap()">
-            Naviga
-            <v-icon right dark>mdi-map</v-icon>
-          </v-btn>
-          <!-- <v-card outlined style="border-color:#2979FF" class="mt-2">
-            <div class="d-flex flex-no-wrap" style="padding: 0 0 0 10px">
-              <v-icon x-large color="primary">panorama</v-icon>
-              <div>
-                <v-card-subtitle>galleria</v-card-subtitle>
-              </div>
-            </div>
-          </v-card> -->
-          <v-btn class="ma-2" rounded outlined block color="info">
-            Chiama
-            <v-icon right dark>mdi-phone</v-icon>
-          </v-btn>
-        </v-col>
-      </v-row>
-    </v-container>
-
-    <v-text-field
-      v-model="$record.data.GL_CommittenteDesc"
-      label="Committente"
-      required
-      dense
-      outlined
-      :readonly="isView"
-      style="margin-top: 20px"
-    ></v-text-field>
-    <v-text-field
-      v-model="$record.data.GL_Descrizione"
-      label="Descrizione Lavori"
-      required
-      dense
-      outlined
-      :readonly="isView"
-      style="margin-top: -12px"
-    ></v-text-field>
-    <v-text-field
-      v-model="$record.data.GL_Indirizzo"
-      label="Indirizzo"
-      required
-      dense
-      outlined
-      :readonly="isView"
-      style="margin-top: -12px"
-    ></v-text-field>
-    <v-textarea
-      v-model="$record.data.GL_Note"
-      label="Note"
-      dense
-      outlined  
-      :readonly="isView"    
-      clear-icon="cancel"
-      style="margin-top: -12px"
-    />
     <v-checkbox
       v-model="$record.data.isPreferito"
       color="primary"
       on-icon="favorite"
       off-icon="favorite_border"
       label="Preferito"
-      style="margin-top: -12px"
        :readonly="isView"
     />
+    
+    <v-text-field
+      v-model="$record.data.GL_CommittenteDesc"
+      label="Committente"
+      required
+      dense
+      :readonly="isView"
+      class="py-2"
+    ></v-text-field>
+    <v-text-field
+      v-model="$record.data.GL_Descrizione"
+      label="Descrizione Lavori"
+      required
+      dense
+      :readonly="isView"
+      class="py-2"
+    ></v-text-field>
+    <v-text-field
+      v-model="$record.data.GL_Indirizzo"
+      label="Indirizzo"
+      required
+      dense
+      :readonly="isView"
+      class="py-2"
+    ></v-text-field>
+    <v-text-field
+      v-model="$record.data.GL_Telefono"
+      label="Telefono"
+      required
+      dense
+      :readonly="isView"
+      class="py-2"
+    ></v-text-field>
+    <v-textarea
+      v-model="$record.data.GL_Note"
+      label="Note"
+      dense
+      :readonly="isView"
+      class="py-2"
+    />
+    
 
     <!-- <v-btn
       class="mr-4"

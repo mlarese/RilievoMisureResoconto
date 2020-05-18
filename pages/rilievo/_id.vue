@@ -1,21 +1,15 @@
 <template>
   <div>
     <GridRilievo />
-    <popupPosEdit ref="popupPosEdit" />
+    <!-- <popupPosEdit ref="popupPosEdit" />
     <BottomNavigation class="">
       <div slot="right">
-        <!-- <v-btn @click="showFilter=!showFilter">
-                    <span>Filtro</span>
-                    <v-icon v-if="!showFilter">mdi-filter</v-icon>
-                    <v-icon v-else>mdi-filter-remove</v-icon>
-                </v-btn> -->
-
         <v-btn @click="apriNuovaPosizione()">
           <span>Nuovo</span>
           <v-icon>mdi-plus</v-icon>
         </v-btn>
       </div>
-    </BottomNavigation>
+    </BottomNavigation> -->
   </div>
 </template>
 
@@ -26,11 +20,11 @@ import { mapState, mapActions, mapMutations, mapGetters } from 'vuex'
 import { tr } from 'date-fns/locale'
 
 export default {
+  layout: 'fullPage',
   components: { GridRilievo, popupPosEdit },
   props: [],
   fetch({ store, params }) {
-    store.commit('rilievo/setRiferimentoAlLavoro', params.id, { root: true })
-    store.dispatch('rilievo/load', { root: true })
+    store.dispatch('rilievo/getById', params.id, { root: true })
   },
   computed: {
     ...mapState('rilievo', { rilievo: 'record' })

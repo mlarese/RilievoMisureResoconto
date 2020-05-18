@@ -1,20 +1,18 @@
 <template>
-
-  <Form/>
-
+  <Form />
 </template>
 
 <script>
 import Form from '../../components/GestioneLavori/Form'
 
 export default {
-   layout: 'fullPage',
+  layout: 'fullPage',
   components: {
     Form
   },
-  fetch ({store, params}) {
-    store.commit('gestione_lavori/setModalita', 'ADD',  {root: true})
-    store.commit('gestione_lavori/resetRecord', null,  {root: true})
+  fetch({ store, params }) {
+    store.commit('gestione_lavori/setEditMode', { root: true })
+    store.commit('gestione_lavori/resetRecord', null, { root: true })
   }
 }
 </script>
