@@ -55,6 +55,7 @@ export const actions = {
         return dispatch('setAuth', { token: res.data }) //(commit, dispatch, state, res.data)
       })
       .catch((e) => {
+        console.log(e)
         throw e
       })
   },
@@ -91,7 +92,6 @@ export const actions = {
         commit('setAzienda', res.azienda)
         commit('setToken', res.token)
         commit('setLoggedIn', true)
-        
       })
       .catch((e) => {
         console.log('selectById_system', e)
@@ -101,14 +101,18 @@ export const actions = {
             'db/insertInto_system',
             { table: 'auth', data },
             { root: true }
-          ).then((res1) => {
-            // Inserito correttamente
-            // old
-            // commit('setUtente', res1.utente)
-            // commit('setAzienda', res1.azienda)
-            // commit('setToken', res1.token)
-            // commit('setLoggedIn', true)
-          })
+          )
+            .catch((err) => {
+              console.log(err)
+            })
+            .then((res1) => {
+              // Inserito correttamente
+              // old
+              // commit('setUtente', res1.utente)
+              // commit('setAzienda', res1.azienda)
+              // commit('setToken', res1.token)
+              commit('setLoggedIn', true)
+            })
         }
       })
   },

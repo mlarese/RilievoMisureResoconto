@@ -23,26 +23,21 @@
         </div>
         <v-card class="elevation-0" style="border-radius: 16px 16px 8px 8px">
           <v-card-text>
-            <v-form>
-              <v-text-field
-                prepend-icon="mdi-account-group"
-                v-model="azienda"
-                label="Azienda"
-                type="text"
-                :disabled="loading"
-              ></v-text-field>
+            <v-form ref="loginForm" v-model="formValid">
               <v-text-field
                 prepend-icon="mdi-account"
                 v-model="username"
-                label="Utente"
+                placeholder="Utente@Azienda"
                 type="text"
+                :rules="[rules.required, rules.username]"
                 :disabled="loading"
               ></v-text-field>
               <v-text-field
                 prepend-icon="mdi-lock"
                 @keyup.enter="login"
                 v-model="password"
-                label="Password"
+                placeholder="Password"
+                :rules="[rules.required]"
                 id="password"
                 :disabled="loading"
                 :append-icon="cript ? 'mdi-eye-outline' : 'mdi-eye-off-outline'"
@@ -59,7 +54,6 @@
               :loading="loading"
               :disabled="loading"
               color="info"
-              small
               @click="login"
             >
               accedi
@@ -113,29 +107,26 @@
               style="border-radius: 16px 8px 8px 16px"
             >
               <v-card-text class="pb-0">
-                <v-form>
-                  <v-text-field
-                    prepend-icon="mdi-account-group"
-                    v-model="azienda"
-                    label="Azienda"
-                    type="text"
-                    :disabled="loading"
-                  ></v-text-field>
+                <v-form ref="loginForm" v-model="formValid">
                   <v-text-field
                     prepend-icon="mdi-account"
                     v-model="username"
-                    label="Utente"
+                    placeholder="Utente@Azienda"
                     type="text"
+                    :rules="[rules.required, rules.username]"
                     :disabled="loading"
                   ></v-text-field>
                   <v-text-field
                     prepend-icon="mdi-lock"
                     @keyup.enter="login"
                     v-model="password"
-                    label="Password"
+                    placeholder="Password"
+                    :rules="[rules.required]"
                     id="password"
                     :disabled="loading"
-                    :append-icon="cript ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
+                    :append-icon="
+                      cript ? 'mdi-eye-outline' : 'mdi-eye-off-outline'
+                    "
                     @click:append="() => (cript = !cript)"
                     :type="cript ? 'password' : 'text'"
                   ></v-text-field>
@@ -150,7 +141,6 @@
                   :disabled="loading"
                   color="info"
                   @click="login"
-                  small
                 >
                   accedi
                   <template v-slot:loader>
@@ -259,55 +249,55 @@ h5 {
 
 <script>
 import { mapState, mapActions } from 'vuex'
-import { notifyError } from '../../storeimp/api/actions'
 const schema = 'prod'
 
 export default {
   components: {},
   data() {
     return {
+      formValid: false,
       error: null,
       username: '',
       password: '',
-      azienda: '',
       alert: null,
-      unverified: false,
-      showReset: false,
       loading: false,
-      cript: true
+      cript: true,
+      rules: {
+        required: (value) => !!value || 'Campo obbligatorio.',
+        username: (value) => {
+          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@([a-zA-Z\-0-9]{3,})$/
+          return (
+            pattern.test(value) || 'Combinazione utente@azienda non valida.'
+          )
+        }
+      }
     }
   },
   computed: {
     ...mapState('app', ['title']),
     ...mapState('api', ['isAjax']),
-    ...mapState('auth', ['loggedIn']),
-    canLogin() {
-      if (!this.username) {
-        return false
-      }
-      if (!this.password) {
-        return false
-      }
-      if (!this.azienda) {
-        return false
-      }
-
-      return true
-    }
-  },
-  mounted() {
-    // debugger // eslint-disable-line
-    // console.log('debug')
+    ...mapState('auth', ['loggedIn'])
   },
   methods: {
     ...mapActions('auth', ['doLogin']),
     onResetPassword(user) {},
+
     async login() {
+      this.$refs.loginForm.validate()
+      if (!this.formValid) {
+        this.error = 'Verificare i dati inseriti'
+        return
+      }
+
       this.error = null
       this.loading = true
+
+      let nomeUtente = this.username.split('@')[0]
+      let azienda = this.username.split('@')[1]
+
       this.doLogin({
-        azienda: this.azienda,
-        username: this.username,
+        azienda: azienda,
+        username: nomeUtente,
         password: this.password
       })
         .then(() => {
@@ -321,10 +311,10 @@ export default {
         })
         .catch((err) => {
           this.loading = false
-          if (err == null || err.response == null) {
-            this.error = 'Verificare la connessione'
-          } else {
+          if (err && err.response && err.response.data) {
             this.error = err.response.data.message
+          } else {
+            this.error = 'Verificare la connessione'
           }
         })
     }
