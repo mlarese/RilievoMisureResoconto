@@ -11,11 +11,10 @@
 </template>
 
 <script>
-import ListLavori from '../../components/GestioneLavori/ListLavori'
 
 export default {
   components: {
-    ListLavori
+    
   },
   fetch({ store }) {
     store.dispatch('gestione_lavori/load', {}, { root: true })

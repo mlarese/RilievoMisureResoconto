@@ -8,26 +8,17 @@
             <v-text-field
               outlined
               dense
-              label="Cerca lavoro..."
+              label="Cerca contatto..."
               append-icon="search"
               background-color="white"
               v-model="ui.filter.text"
             />
-            <v-btn
-              icon
-              color="primary"
-              @click="ui.filter.preferito = !ui.filter.preferito"
-              class="pl-2"
-            >
-              <v-icon v-if="ui.filter.preferito">favorite</v-icon>
-              <v-icon v-else>favorite_border</v-icon>
-            </v-btn>
           </div>
         </v-card>
       </v-col>
     </v-row>
 
-    <!-- LISTA LAVORI -->
+    <!-- LISTA CONTATTI -->
     <v-row dense>
       <v-col
         v-for="(item, i) in getfilteredList"
@@ -44,16 +35,16 @@
         >
           <div class="d-flex flex-no-wrap">
             <v-avatar class="ma-3" size="100" tile>
-              <v-img :src="require('../../assets/images/casa.jpg')"></v-img>
+              <v-img :src="require('../../assets/images/contact-placeholder.jpg')"></v-img>
             </v-avatar>
             <div class="flex-grow-1 flex-shrink-1">
               <v-card-title
-                v-text="item.data.GL_CommittenteDesc"
+                v-text="item.data.CONDescrizione"
                 class="headline"
                 style="word-break: normal;"
               />
-              <v-card-subtitle v-text="item.data.GL_Descrizione" />
-              <v-card-text v-text="item.luogo" />
+              <v-card-subtitle v-text="item.data.CONTelefono" />
+              <v-card-text v-text="item.data.CONIndirizzo" />
             </div>
           </div>
           <v-card-actions class="py-0">
@@ -96,17 +87,16 @@ import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
 
 export default {
   computed: {
-    ...mapState('gestione_lavori', { ui: 'ui', listLavori: 'list' }),
-    ...mapGetters('gestione_lavori', { getfilteredList: 'filteredList' })
+    ...mapState('gestione_contatti', { ui: 'ui', listLavori: 'list' }),
+    ...mapGetters('gestione_contatti', { getfilteredList: 'filteredList' })
   },
   methods: {    
-    ...mapActions('gestione_lavori', {caricaLavoro: 'getById'} ),
+    ...mapActions('gestione_contatti', {caricaLavoro: 'getById'} ),
     onAdd() {
-      this.$router.push(`/gestione_lavori/add`)
+      this.$router.push(`/gestione_contatti/add`)
     },
     openEditForm(id) {
-      this.$router.push(`/gestione_lavori/${id}`)
-      // this.caricaLavoro(id)
+      this.$router.push(`/gestione_contatti/${id}`)
     }
   }
 }

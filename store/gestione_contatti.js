@@ -13,11 +13,11 @@ const emptyRecord = () => ({
   insertDate: null,
   insertUser: null,
   data: {
-    GL_CommittenteDesc: null,
-    GL_Descrizione: null,
-    GL_Indirizzo: null,
-    GL_Note: null,
-    isPreferito: false
+    CONDescrizione: null,
+    CONIndirizzo: null,
+    CONTelefono: null,
+    CONEmail: null,
+    CONNote: false
   }
 })
 
@@ -26,30 +26,30 @@ export const state = () => {
     list: [],
     $record: {
       data: {
-        GL_CommittenteDesc: null,
-        GL_Descrizione: null,
-        GL_Indirizzo: null,
-        GL_Note: null,
-        isPreferito: false
+        CONDescrizione: null,
+        CONIndirizzo: null,
+        CONTelefono: null,
+        CONEmail: null,
+        CONNote: false
       }
     },
     record: {},
-    dbName: 'lavori',
+    dbName: 'contatti',
     modalita: 'FIND',
     ui: {
-      title: 'Gestione Lavori',
-      formTitleSuffix: 'Lavoro',
-      filter: { preferito: false, text: '' }
+      title: 'Gestione contatti',
+      formTitleSuffix: 'Contatto',
+      filter: { text: '' }
     }
   }
 }
+
 export const actions = {
   load({ commit, dispatch, state }) {
     const table = state.dbName
     return dispatch('db/selectAll', { table }, root)
       .then((res) => {
         commit('setList', res)
-        // commit('setRecord', {})
         return res
       })
       .catch((e) => {
@@ -65,45 +65,10 @@ export const actions = {
   },
   async upload({ dispatch, commit, state }) {
     let data = state.$record
-
-    // Prepara l'header da inviare
-    // let header = {
-    //   tipo: 'LAVORO', // tipo(lavoro, contatto, rilievo ...)
-    //   GUID: lavoro._id, //- GUID
-    //   agileID: lavoro.agileID, //- ID di Agile(null se nuovo)
-    //   lastUpdateDate: lavoro.lastUpdateDate, //- data ultima modifica
-    //   lastUpdateUser: lavoro.lastUpdateUser, //- utente ultima modifica
-    //   insertDate: lavoro.insertDate, //- (ev data / utente di inserimento?)
-    //   insertUser: lavoro.insertUser
-    // }
-
-    // let data = {
-    //   header,
-    //   jsonData: JSON.stringify(lavoro)
-    // }
-
-    // const options = {
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Access-Control-Allow-Origin': '*'
-    //   }
-    // }
-
     const url = '/api/Sincronizza/uploadSingleData'
 
     // Invia i dati al WS
     return await dispatch('api/post', { url, data }, { root: true })
-    // .then((res) => {
-    //   console.log(res)
-    //   // Il ws restituisce AgileID
-    //   // lavoro.agileID = res.data
-    //   // commit('gestione_lavori/setRecord', lavoro, { root: true })
-    //   // // Salva il lavoro con i nuovi dati restituiti dal WS
-    //   // dispatch('gestione_lavori/save', {}, { root: true })
-    // })
-    // .catch((e) => {
-    //   throw e
-    // })
   },
   async save(
     { dispatch, commit, state, rootState },
@@ -191,12 +156,8 @@ export const actions = {
         console.log(e)
         return e
       })
-  },
-  impostaModalitaVisualizzazione({ dispatch, commit, state }, modalita) {
-    commit('setModalita', modalita)
   }
 }
-
 export const mutations = {
   setList(state, payload = []) {
     state.list = payload
@@ -255,37 +216,20 @@ export const getters = {
 
   filteredList: (s) =>
     _filter(s.list, function(o) {
-      if (s.ui.filter.preferito) {
-        /* preferiti */
-        if (s.ui.filter.text === null) {
-          return o.data.isPreferito === s.ui.filter.preferito
-        } else {
-          return (
-            (o.data.GL_CommittenteDesc.toLowerCase().includes(
-              s.ui.filter.text.toLowerCase()
-            ) ||
-              o.data.GL_Descrizione.toLowerCase().includes(
-                s.ui.filter.text.toLowerCase()
-              ) ||
-              o.data.GL_Indirizzo.toLowerCase().includes(s.ui.filter.text.toLowerCase())) &&
-            o.data.isPreferito === s.ui.filter.preferito
-          )
-        }
+      if (s.ui.filter.text == '') {
+        return true
       } else {
-        /* tutti */
-        if (s.ui.filter.text == '') {
-          return true
-        } else {
-          return (
-            o.data.GL_CommittenteDesc.toLowerCase().includes(
-              s.ui.filter.text.toLowerCase()
-            ) ||
-            o.data.GL_Descrizione.toLowerCase().includes(
-              s.ui.filter.text.toLowerCase()
-            ) ||
-            o.data.GL_Indirizzo.toLowerCase().includes(s.ui.filter.text.toLowerCase())
+        return (
+          o.data.CONDescrizione.toLowerCase().includes(
+            s.ui.filter.text.toLowerCase()
+          ) ||
+          o.data.CONNote.toLowerCase().includes(
+            s.ui.filter.text.toLowerCase()
+          ) ||
+          o.data.CONIndirizzo.toLowerCase().includes(
+            s.ui.filter.text.toLowerCase()
           )
-        }
+        )
       }
     }),
 
