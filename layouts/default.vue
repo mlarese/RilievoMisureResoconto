@@ -78,7 +78,7 @@
       </template>
     </v-app-bar>
 
-    <v-tabs-items v-model="tab" @change="tabChanged">
+    <v-tabs-items v-model="tab" @change="tabChanged" v-if="$vuetify.breakpoint.xsOnly">
       <v-tab-item
         v-for="(item, i) in getMenuItems_Tab"
         :key="i"
