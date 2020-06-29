@@ -38,6 +38,12 @@ export const dmy = (date) => {
   return formatSt(ldate, 'dd/MM/yyyy')
 }
 
+export const repoFilename = (fileName) => {
+  let ldate = new Date()
+  //ldate = addMinutes(ldate, offs)
+  return formatSt(ldate, 'yyyyMMddHHmmss') + '_' + fileName
+}
+
 export const time = (date, pattern='HH:mm:ss') => {
   if (!date) return ''
   let ldate = null

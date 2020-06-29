@@ -44,7 +44,14 @@
         >
           <div class="d-flex flex-no-wrap">
             <v-avatar class="ma-3" size="100" tile>
-              <v-img :src="require('../../assets/images/casa.jpg')"></v-img>
+              <v-img
+                :src="getImgPric_asURL(item)"
+                v-if="getImgPric_asURL(item)"
+              ></v-img>
+              <v-img
+                :src="require('../../assets/images/lavoro.png')"
+                v-else
+              ></v-img>
             </v-avatar>
             <div class="flex-grow-1 flex-shrink-1">
               <v-card-title
@@ -52,7 +59,7 @@
                 class="headline"
                 style="word-break: normal;"
               />
-              <v-card-subtitle v-text="item.data.GL_Descrizione" />
+              <v-card-subtitle v-text="item.data.GL_Oggetto" />
               <v-card-text v-text="item.data.GL_Indirizzo" />
             </div>
           </div>
@@ -97,16 +104,32 @@ import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
 export default {
   computed: {
     ...mapState('gestione_lavori', { ui: 'ui', listLavori: 'list' }),
-    ...mapGetters('gestione_lavori', { getfilteredList: 'filteredList' })
+    ...mapGetters('gestione_lavori', {
+      getfilteredList: 'filteredList',
+      getImg: 'getImg'
+    })
   },
-  methods: {    
-    ...mapActions('gestione_lavori', {caricaLavoro: 'getById'} ),
+  methods: {
+    ...mapActions('gestione_lavori', { caricaLavoro: 'getById' }),
     onAdd() {
       this.$router.push(`/gestione_lavori/add`)
     },
     openEditForm(id) {
       this.$router.push(`/gestione_lavori/${id}`)
-      // this.caricaLavoro(id)
+    },
+    getImgPric_asURL(record) {
+      let imgUrl = ''
+      const allegatiDelRecord = record._attachments
+      const fileNameImmagineLavoro = record.data.imgFileName
+      if (allegatiDelRecord && fileNameImmagineLavoro) {
+        if (allegatiDelRecord.hasOwnProperty(fileNameImmagineLavoro)) {
+          const myAllegato = allegatiDelRecord[fileNameImmagineLavoro]
+          if (myAllegato && myAllegato.data) {
+            imgUrl = 'data:' + myAllegato.content_type + ';base64,' + myAllegato.data
+          }
+        }
+      }
+      return imgUrl
     }
   }
 }

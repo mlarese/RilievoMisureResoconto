@@ -6,7 +6,14 @@
           <v-row no-gutters>
             <v-col cols="2">
               <v-avatar size="40">
-                <v-img :src="require('../../assets/images/casa.jpg')"></v-img>
+                <v-img
+                  :src="getImgPric_asURL()"
+                  v-if="getImgPric_asURL()"
+                ></v-img>
+                <v-img
+                  :src="require('../../assets/images/lavoro.png')"
+                  v-else
+                ></v-img>
               </v-avatar>
             </v-col>
             <v-col cols="10">
@@ -14,7 +21,7 @@
                 <b>{{ $record.data.GL_CommittenteDesc }}</b>
               </div>
               <div class="caption ellipseText">
-                {{ $record.data.GL_Descrizione }}
+                {{ $record.data.GL_Oggetto }}
               </div>
             </v-col>
           </v-row>
@@ -39,7 +46,23 @@
           <v-row class="mx-2">
             <v-col cols="auto">
               <v-avatar size="75" class="pb-0">
-                <v-img :src="require('../../assets/images/casa.jpg')"></v-img>
+                <v-img
+                  :src="getImgPric_asURL()"
+                  v-if="getImgPric_asURL()"
+                ></v-img>
+                <v-img
+                  :src="require('../../assets/images/lavoro.png')"
+                  v-else
+                ></v-img>
+                <input
+                  type="file"
+                  @change="
+                    filesChange($event.target.name, $event.target.files)
+                    fileCount = $event.target.files.length
+                  "
+                  accept="image/*"
+                  class="input-file"
+                />
               </v-avatar>
             </v-col>
             <v-col class="align-self-center ">
@@ -47,7 +70,7 @@
                 <b>{{ $record.data.GL_CommittenteDesc }}</b>
               </div>
               <div class="subtitle-1 ellipseText">
-                {{ $record.data.GL_Descrizione }}
+                {{ $record.data.GL_Oggetto }}
               </div>
             </v-col>
             <v-col cols="auto" class="pb-0">
@@ -191,6 +214,13 @@
 </template>
 
 <style scoped>
+.input-file {
+  opacity: 0; /* invisible but it's there! */
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  cursor: pointer;
+}
 .ellipseText {
   white-space: nowrap;
   overflow: hidden;
@@ -237,15 +267,15 @@ export default {
     }
   },
   computed: {
-    ...mapState(storeName, ['$record']),
-    ...mapGetters(storeName, ['isEdit', 'isAdd', 'isView'])
+    ...mapState(storeName, ['$record', 'ui']),
+    ...mapGetters(storeName, ['isEdit', 'isAdd', 'isView', 'getImg'])
   },
   methods: {
     openEditForm() {
       // Un nuovo lavoro può essere inserito e modificato anche se offline
       // Ad oggi, se un lavoro è stato sincronizzato, la sua modifica può avvenire solamnte se siamo online
       // Così da evitare conflitti
-      if (this.$record.agileID == null || this.$record.agileID == 0) {
+      if (this.$record.statoSync == null || this.$record.statoSync == 'N') {
         // Lavoro non ancora sincronizzato
         // possiamo manipolarlo come ci pare
         // Apre la form di modifica
@@ -273,7 +303,7 @@ export default {
       this.setViewMode()
     },
     async salvaModifiche() {
-      if (this.$record.agileID == null || this.$record.agileID == 0) {
+      if (this.$record.statoSync == null || this.$record.statoSync == 'N') {
         // Provvede a salvare il lavoro
         await this.salvaLavoro({
           doUpload: true,
@@ -308,19 +338,15 @@ export default {
     },
     ...mapActions(storeName, {
       salvaLavoro: 'save',
-      UploadESaveLavoro: 'upload'
+      UploadESaveLavoro: 'upload',
+      aggiungiImmagine: 'addImgPrinc'
     }),
-    ...mapMutations(storeName, [
-      'setEditMode',
-      'setNewMode',
-      'setViewMode',
-      'setAgileID'
-    ]),
+    ...mapMutations(storeName, ['setEditMode', 'setNewMode', 'setViewMode']),
     async old_onEditClick() {
       // Un nuovo lavoro può essere inserito e modificato anche se offline
       // Ad oggi, se un lavoro è stato sincronizzato, la sua modifica può avvenire
       // solamente se siamo online così da evitare conflitti
-      if (this.$record.agileID == null || this.$record.agileID == 0) {
+      if (this.$record.statoSync == null || this.$record.statoSync == 'N') {
         // Lavoro non ancora sincronizzato
         // possiamo manipolarlo come ci pare
 
@@ -415,6 +441,25 @@ export default {
     },
     onSave() {
       this.save().then(this.exit)
+    },
+    filesChange(fieldName, fileList) {
+      if (!fileList.length) return
+      const myFile = fileList[0]
+      this.aggiungiImmagine(myFile)
+    },
+    getImgPric_asURL() {
+      let imgUrl = ''
+      const allegatiDelRecord = this.$record._attachments
+      const fileNameImmagineLavoro = this.$record.data.imgFileName
+      if (allegatiDelRecord && fileNameImmagineLavoro) {
+        if (allegatiDelRecord.hasOwnProperty(fileNameImmagineLavoro)) {
+          const myAllegato = allegatiDelRecord[fileNameImmagineLavoro]
+          if (myAllegato && myAllegato.data) {
+            imgUrl = 'data:' + myAllegato.content_type + ';base64,' + myAllegato.data
+          }
+        }
+      }
+      return imgUrl
     }
   },
 

@@ -57,6 +57,7 @@ export default {
     workbox: {
       dev: false,
       workboxVersion: '0.0.2',
+      workboxURL: "importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js')",
       runtimeCaching: [
         {
           urlPattern: 'https://fonts.googleapis.com/.*',

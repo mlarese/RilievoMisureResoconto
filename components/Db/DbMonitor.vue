@@ -25,17 +25,8 @@
 
             </v-flex>
             <v-flex>
-              <v-btn slot="right" @click="importAll"  :disabled="!syncBtnVisible" :loading="synchronizing">
+              <v-btn slot="right" @click="syncAll"  :disabled="!syncBtnVisible" :loading="synchronizing">
                 <span>download</span>
-                <v-icon>mdi-database-sync</v-icon>
-            </v-btn>
-
-            <v-btn slot="right" @click="exportAll"  :disabled="!syncBtnVisible" :loading="synchronizing">
-                <span>upload</span>
-                <v-icon>mdi-database-sync</v-icon>
-            </v-btn>
-            <v-btn slot="right" @click="syncRisorse"  :disabled="!syncBtnVisible" :loading="synchronizing">
-                <span>risorse</span>
                 <v-icon>mdi-database-sync</v-icon>
             </v-btn>
             </v-flex>
@@ -50,7 +41,7 @@
   export default {
     components: {Panel},
     methods: {
-      ...mapActions('sync', ['importAll', 'exportAll', 'syncRisorse'])
+      ...mapActions('sync', ['syncAll', 'exportAll', 'syncRisorse'])
     },
     computed: {
       ...mapState('sync', ['updatingStatus', 'statusUpdated', 'dbStatus', 'synchronized', 'synchronizing']),

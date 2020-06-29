@@ -12,7 +12,7 @@
       hint="Descrizione lavori"
       prepend-icon="mdi-message-bulleted"
       class="py-2"
-      >{{ $record.data.GL_Descrizione }}
+      >{{ $record.data.GL_Oggetto }}
     </v-input>
     <v-input
       v-if="$record.data.GL_Indirizzo"

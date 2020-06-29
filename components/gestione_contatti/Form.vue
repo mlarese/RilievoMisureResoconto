@@ -36,7 +36,23 @@
           <v-row class="mx-2">
             <v-col cols="auto">
               <v-avatar size="75" class="pb-0">
-                <v-img :src="require('../../assets/images/contact-placeholder.jpg')"></v-img>
+                <v-img
+                  :src="getImgPric_asURL()"
+                  v-if="getImgPric_asURL()"
+                ></v-img>
+                <v-img
+                  :src="require('../../assets/images/contact-placeholder.jpg')"
+                  v-else
+                ></v-img>
+                <input
+                  type="file"
+                  @change="
+                    filesChange($event.target.name, $event.target.files)
+                    fileCount = $event.target.files.length
+                  "
+                  accept="image/*"
+                  class="input-file"
+                />
               </v-avatar>
             </v-col>
             <v-col class="align-self-center ">
@@ -167,6 +183,13 @@
 </template>
 
 <style scoped>
+.input-file {
+  opacity: 0; /* invisible but it's there! */
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  cursor: pointer;
+}
 .ellipseText {
   white-space: nowrap;
   overflow: hidden;
@@ -220,7 +243,7 @@ export default {
       // Un nuovo record può essere inserito e modificato anche se offline
       // Ad oggi, se un record è stato sincronizzato, la sua modifica può avvenire solamnte se siamo online
       // Così da evitare conflitti
-      if (this.$record.agileID == null || this.$record.agileID == 0) {
+      if (this.$record.statoSync == null || this.$record.statoSync == 'N') {
         // record non ancora sincronizzato
         // possiamo manipolarlo come ci pare
         // Apre la form di modifica
@@ -248,7 +271,7 @@ export default {
       this.setViewMode()
     },
     async salvaModifiche() {
-      if (this.$record.agileID == null || this.$record.agileID == 0) {
+      if (this.$record.statoSync == null || this.$record.statoSync == 'N') {
         // Provvede a salvare il record
         await this.salvaRecord({
           doUpload: true,
@@ -282,18 +305,37 @@ export default {
       }
     },
     ...mapActions(storeName, {
-      salvaRecord: 'save'
+      salvaRecord: 'save',
+      aggiungiImmagine: 'addImgPrinc'
     }),
     ...mapMutations(storeName, [
       'setEditMode',
       'setNewMode',
-      'setViewMode',
-      'setAgileID'
+      'setViewMode'
     ]),
 
     exit() {
       this.$router.replace(`/${storeName}`)
+    },    
+    filesChange(fieldName, fileList) {
+      if (!fileList.length) return
+      const myFile = fileList[0]
+      this.aggiungiImmagine(myFile)
     },
+    getImgPric_asURL() {
+      let imgUrl = ''
+      const allegatiDelRecord = this.$record._attachments
+      const fileNameImmagineLavoro = this.$record.data.imgFileName
+      if (allegatiDelRecord && fileNameImmagineLavoro) {
+        if (allegatiDelRecord.hasOwnProperty(fileNameImmagineLavoro)) {
+          const myAllegato = allegatiDelRecord[fileNameImmagineLavoro]
+          if (myAllegato && myAllegato.data) {
+            imgUrl = 'data:' + myAllegato.content_type + ';base64,' + myAllegato.data
+          }
+        }
+      }
+      return imgUrl
+    }
   },
 
   mounted() {}

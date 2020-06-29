@@ -18,7 +18,7 @@
       class="py-2"
     ></v-text-field>
     <v-text-field
-      v-model="$record.data.GL_Descrizione"
+      v-model="$record.data.GL_Oggetto"
       label="Descrizione Lavori"
       required
       dense
@@ -98,7 +98,7 @@ export default {
     },
     canSave() {
       if (!this.$record.data.GL_CommittenteDesc) return false
-      if (!this.$record.data.GL_Descrizione) return false
+      if (!this.$record.data.GL_Oggetto) return false
       return true
     }
   },

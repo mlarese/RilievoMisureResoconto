@@ -2,22 +2,21 @@ import _clone from 'lodash/clone'
 import _filter from 'lodash/filter'
 import { v4 as uuidv4 } from 'uuid'
 import { visibleRecord } from './db'
+import { repoFilename } from '../assets/filters'
 
 const root = { root: true }
 const emptyRecord = () => ({
-  tipo: null,
-  agileID: 0,
   _id: null,
+  tipo: 'CONTATTO',
+  statoSync: 'N',
   lastUpdateDate: null,
-  lastUpdateUser: null,
-  insertDate: null,
-  insertUser: null,
   data: {
     CONDescrizione: null,
     CONIndirizzo: null,
     CONTelefono: null,
     CONEmail: null,
-    CONNote: false
+    CONNote: null,
+    imgFileName: null
   }
 })
 
@@ -30,7 +29,8 @@ export const state = () => {
         CONIndirizzo: null,
         CONTelefono: null,
         CONEmail: null,
-        CONNote: false
+        CONNote: null,
+        imgFileName: null
       }
     },
     record: {},
@@ -57,11 +57,10 @@ export const actions = {
         return e
       })
   },
-  getById({ dispatch, commit, state }, id) {
+  async getById({ dispatch, commit, state }, id) {
     const table = state.dbName
-    dispatch('db/selectById', { table, id }, root).then((rec) =>
-      commit('setRecord', rec)
-    )
+    const rec = await dispatch('db/selectById', { table, id }, root)
+    commit('setRecord', rec)    
   },
   async upload({ dispatch, commit, state }) {
     let data = state.$record
@@ -98,7 +97,7 @@ export const actions = {
       // Invia i dati al WS
       await dispatch('upload')
         .then((res) => {
-          commit('setAgileID', res.data)
+          commit('setState', 'U')
         })
         .catch((err) => {
           if (saveLacalAnyway) {
@@ -121,6 +120,37 @@ export const actions = {
         console.log(e)
         return e
       })
+  },
+  async addImgPrinc({ dispatch, commit, state }, file) {
+    const docID = state.$record._id
+    const table = state.dbName
+    const oldFileName = state.$record.data.imgFileName
+
+    // Genera un nuovo filename per la risorsa
+    const newFileName = repoFilename(file.name)
+
+    // Salva fisicamente il file come allegato
+    await dispatch('db/putAttachment',{table,docID,file,fileName: newFileName},root)
+
+    // Ricarica il record dopo aver salvato l'allegato
+    // (necessario per ottenere la nuova versione del record)
+    await dispatch('getById', docID)
+
+    // Aggiorna il nuovo nome del file
+    let listaRis = []
+    listaRis.push(newFileName)
+
+    // Aggiorna i riferimenti alla risorsa
+    commit('setImgFileName', newFileName)
+    commit('setListaRisorse', listaRis)
+
+    // Salva il documento
+    await dispatch('save', {
+      doUpload: false,
+      saveLacalAnyway: true,
+      rawData: true
+    })
+
   },
 
   safeDelete({ dispatch, commit, state }, rec) {
@@ -174,9 +204,9 @@ export const mutations = {
     state.record._id = payload
     state.$record._id = payload
   },
-  setAgileID(state, payload = {}) {
-    state.record.agileID = payload
-    state.$record.agileID = payload
+  setState(state, payload = {}) {
+    state.record.statoSync = payload
+    state.$record.statoSync = payload
   },
   setLastUpdateDate(state, payload = {}) {
     state.record.lastUpdateDate = payload
@@ -208,6 +238,21 @@ export const mutations = {
   },
   setFiltro(state, payload = {}) {
     state.filter = payload
+  },
+  setListaRisorse(state, payload) {
+    state.record.listaRisorse = payload
+    state.$record.listaRisorse = payload
+  },
+  addRisorsa(state, payload) {
+    if (!state.record.listaRisorse) {
+      state.record.listaRisorse = []
+    }
+    state.record.listaRisorse.push(payload)
+    state.$record.listaRisorse = state.record.listaRisorse
+  },
+  setImgFileName(state, payload) {
+    state.record.data.imgFileName = payload
+    state.$record.data.imgFileName = payload
   }
 }
 
