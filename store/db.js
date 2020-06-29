@@ -9,6 +9,19 @@ export const dbList = {
   CONTATTO:'contatti',
   EVENTO: 'eventi'
 }
+
+export const syncStates = {
+  INDEFINITO: 'I',
+  SYNC_PARZIALE: 'P',
+  COMPLETO: 'C' 
+}
+
+export const internalStates = {
+  ADDED: 'A',
+  MODIFIED: 'M',
+  DELETED: 'D' 
+}
+
 export const systemDBList = {
   auth: new PouchDb('auth') //DB di sistema - contiene l'utente attualmente loggato, NON dipende da azienda
   // lavori: new PouchDb('lavori'),

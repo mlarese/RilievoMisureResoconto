@@ -1,4 +1,4 @@
-import { dbList } from './db'
+import { dbList, syncStates, internalStates } from './db'
 
 const root = { root: true }
 export const state = () => {
@@ -39,13 +39,21 @@ export const actions = {
 
       var listaDaInviare = []
       // Preleva solamente l'header
+      // ottimizzato nel caso di nuovi oggetti: invia subito i dati (senza files)
       listaOggettiLocali.forEach((obj) => {
-        listaDaInviare.push({
+
+        let objToSend = {
           _id: obj._id,
           tipo: obj.tipo,
           lastUpdateDate: obj.lastUpdateDate,
           listaRisorse: obj.listaRisorse
-        })
+        }
+
+        if (obj.internalStatus == internalStates['ADDED'] | obj.internalStatus == internalStates['MODIFIED']) {
+          objToSend.data = obj.data
+        }
+
+        listaDaInviare.push(objToSend)
       })
 
       commit('logMe', `Inizio Upload al ws degli oggetti locali`)
@@ -98,12 +106,15 @@ export const actions = {
         return
       }
 
+      // Come defaul come primo salvataggio del record viene impostato il flag come download parziale
+      remoteDoc.syncStatus = syncStates['SYNC_PARZIALE']
+
       let localDoc
       try {
         commit('logMe', `---> Lettura dell'oggetto locale da db`)
         localDoc = await dispatch('db/selectById', { table, id: docID }, root)
+
         // Aggiorna il record con i dati interni
-        remoteDoc._rev = localDoc._rev
         if (localDoc._attachments)
           remoteDoc._attachments = localDoc._attachments
 
@@ -144,6 +155,12 @@ export const actions = {
           await dispatch('db/putAttachment', { table, docID, file, fileName }, root)
         }
       }
+
+      // se siamo arrivati fino a qui signofica che abbiamo scaricato tutto
+      // Provvede a salvare il record come completato
+      remoteDoc.syncStatus = syncStates['COMPLETO']
+      await dispatch('db/update', { table, data: remoteDoc }, root)
+      
     } catch (err) {
       console.error();
       // Gestire meglio i vari tipi di errori
