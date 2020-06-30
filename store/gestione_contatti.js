@@ -1,14 +1,14 @@
 import _clone from 'lodash/clone'
 import _filter from 'lodash/filter'
 import { v4 as uuidv4 } from 'uuid'
-import { visibleRecord } from './db'
+import { visibleRecord, syncStates, internalStates } from './db'
 import { repoFilename } from '../assets/filters'
 
 const root = { root: true }
 const emptyRecord = () => ({
   _id: null,
   tipo: 'CONTATTO',
-  statoSync: 'N',
+  syncStatus: syncStates['NOT_SYNC'],
   lastUpdateDate: null,
   data: {
     CONDescrizione: null,
@@ -205,8 +205,8 @@ export const mutations = {
     state.$record._id = payload
   },
   setState(state, payload = {}) {
-    state.record.statoSync = payload
-    state.$record.statoSync = payload
+    state.record.syncStatus = payload
+    state.$record.syncStatus = payload
   },
   setLastUpdateDate(state, payload = {}) {
     state.record.lastUpdateDate = payload

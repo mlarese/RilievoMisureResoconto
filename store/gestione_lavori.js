@@ -1,14 +1,14 @@
 import _clone from 'lodash/clone'
 import _filter from 'lodash/filter'
 import { v4 as uuidv4 } from 'uuid'
-import { visibleRecord } from './db'
+import { visibleRecord, syncStates, internalStates } from './db'
 import { repoFilename } from '../assets/filters'
 
 const root = { root: true }
 const emptyRecord = () => ({
   _id: null,
   tipo: 'LAVORO',
-  statoSync: 'N',
+  syncStatus: syncStates['NOT_SYNC'],
   lastUpdateDate: null,
   data: {
     GL_CommittenteDesc: null,
@@ -62,58 +62,50 @@ export const actions = {
     const rec = await dispatch('db/selectById', { table, id }, root)
     commit('setRecord', rec)
   },
-  async save(
-    { dispatch, commit, state, rootState },
-    { doUpload, saveLacalAnyway, rawData }
-  ) {
+  async save({ dispatch, commit, state, rootState }) {
     const isInsert = !state.$record._id
+    const table = state.dbName
     let actionName = 'db/update'
 
     if (isInsert) {
       actionName = 'db/insertInto'
     }
 
-    // Per rowData si intente la manipolazione di dati base
-    // necessario per un salvataggio as is
-    if (!rawData) {
-      commit('setLastUpdateDate', new Date().toJSON())
-      commit('setLastUpdateUser', rootState.auth.utente)
+    commit('setLastUpdateDate', new Date().toJSON())
+    commit('setLastUpdateUser', rootState.auth.utente)
 
-      if (isInsert) {
-        commit('setLocalID', uuidv4())
-        commit('setInsertDate', new Date().toJSON())
-        commit('setInsertUser', rootState.auth.utente)
+    if (isInsert) {
+      commit('setSyncStatus', syncStates['NOT_SYNC'])
+      commit('setLocalID', uuidv4())
+      commit('setInsertDate', new Date().toJSON())
+      commit('setInsertUser', rootState.auth.utente)
+
+      // Salva localmente
+      await dispatch(actionName, { table, data: state.$record }, root)
+
+      // tenta l'upload in background altrimenti sarà caricato surante la sincronizzazione
+      // chiamata async in modo da non bloccare l'utente
+      dispatch('sync/UPLOAD', {
+        table, data: state.$record, callback: () => {
+          console.log('callback')
+          dispatch('getById', state.$record._id), dispatch('load') // ricarica i dati
+        }
+      }, root)
+
+    } else {
+      console.log('start upload')
+      // Una modifica deve per forza prima essere sincronizzata con il ws
+      // Se tutto va a buon fine provvede a salvarla localmente
+      try {
+        await dispatch('sync/UPLOAD', { table, data: state.$record }, root)
+        console.log('end upload'),
+          await dispatch(actionName, { table, data: state.$record }, root)
+      } catch (error) {
+        console.error()
       }
+
     }
 
-    // if (doUpload) {
-      if (false) {
-      // Invia i dati al WS
-      await dispatch('upload')
-        .then((res) => {
-          commit('setState', 'U')
-        })
-        .catch((err) => {
-          if (saveLacalAnyway) {
-            // ignora l'errore di connessione per salvare localmente
-            console.log(err)
-          } else {
-            throw err
-          }
-        })
-    }
-
-    // Salva effettivamente su db
-    const table = state.dbName
-    return dispatch(actionName, { table, data: state.$record }, root)
-      .then(() => {
-        // ?????
-        return dispatch('load')
-      })
-      .catch((e) => {
-        console.log(e)
-        return e
-      })
   },
   async addImgPrinc({ dispatch, commit, state }, file) {
     const docID = state.$record._id
@@ -215,9 +207,9 @@ export const mutations = {
     state.record._id = payload
     state.$record._id = payload
   },
-  setState(state, payload = {}) {
-    state.record.statoSync = payload
-    state.$record.statoSync = payload
+  setSyncStatus(state, payload = {}) {
+    state.record.syncStatus = payload
+    state.$record.syncStatus = payload
   },
   setLastUpdateDate(state, payload = {}) {
     state.record.lastUpdateDate = payload
@@ -270,7 +262,7 @@ export const mutations = {
 export const getters = {
   noDeletedList: (s) => s.list.filter(visibleRecord),
   filteredList: (s) =>
-    _filter(s.list, function(o) {
+    _filter(s.list, function (o) {
       if (s.ui.filter.preferito) {
         /* preferiti */
         if (s.ui.filter.text === null) {

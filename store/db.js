@@ -11,8 +11,8 @@ export const dbList = {
 }
 
 export const syncStates = {
-  INDEFINITO: 'I',
-  SYNC_PARZIALE: 'P',
+  NOT_SYNC: 'L',
+  PARTIAL_SYNC: 'P',
   COMPLETO: 'C' 
 }
 
@@ -117,6 +117,13 @@ export const actions = {
     const doc = await db.get(data._id)
     data._rev = doc._rev
     return db.put(data, options)
+  },
+  async updateProp({rootState}, {table, docID, prop, value}){
+    const options = { force: true }
+    const db = new PouchDb(rootState.auth.azienda + '_' + table)
+    const doc = await db.get(docID)
+    doc[prop] = value
+    return db.put(doc, options)
   },
   async update_(
     { commit, dispatch, rootState },

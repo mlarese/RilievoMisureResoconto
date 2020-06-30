@@ -6,30 +6,20 @@
           <v-row no-gutters>
             <v-col cols="2">
               <v-avatar size="40">
-                <v-img
-                  :src="getImgPric_asURL()"
-                  v-if="getImgPric_asURL()"
-                ></v-img>
-                <v-img
-                  :src="require('../../assets/images/lavoro.png')"
-                  v-else
-                ></v-img>
+                <v-img v-if="getImgPric_asURL()" :src="getImgPric_asURL()"></v-img>
+                <v-img v-else :src="require('../../assets/images/lavoro.png')"></v-img>
               </v-avatar>
             </v-col>
             <v-col cols="10">
               <div class="subtitle-1 ellipseText">
                 <b>{{ $record.data.GL_CommittenteDesc }}</b>
               </div>
-              <div class="caption ellipseText">
-                {{ $record.data.GL_Oggetto }}
-              </div>
+              <div class="caption ellipseText">{{ $record.data.GL_Oggetto }}</div>
             </v-col>
           </v-row>
           <v-spacer></v-spacer>
         </div>
-        <div v-else>
-          Gestione lavoro
-        </div>
+        <div v-else>Gestione lavoro</div>
       </div>
       <v-btn
         icon
@@ -46,14 +36,8 @@
           <v-row class="mx-2">
             <v-col cols="auto">
               <v-avatar size="75" class="pb-0">
-                <v-img
-                  :src="getImgPric_asURL()"
-                  v-if="getImgPric_asURL()"
-                ></v-img>
-                <v-img
-                  :src="require('../../assets/images/lavoro.png')"
-                  v-else
-                ></v-img>
+                <v-img :src="getImgPric_asURL()" v-if="getImgPric_asURL()"></v-img>
+                <v-img :src="require('../../assets/images/lavoro.png')" v-else></v-img>
                 <input
                   type="file"
                   @change="
@@ -65,13 +49,11 @@
                 />
               </v-avatar>
             </v-col>
-            <v-col class="align-self-center ">
+            <v-col class="align-self-center">
               <div class="title ellipseText">
                 <b>{{ $record.data.GL_CommittenteDesc }}</b>
               </div>
-              <div class="subtitle-1 ellipseText">
-                {{ $record.data.GL_Oggetto }}
-              </div>
+              <div class="subtitle-1 ellipseText">{{ $record.data.GL_Oggetto }}</div>
             </v-col>
             <v-col cols="auto" class="pb-0">
               <v-row class="pb-0">
@@ -171,13 +153,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            color="green darken-1"
-            text
-            @click="showDialogErrorOpenEditor = false"
-          >
-            OK
-          </v-btn>
+          <v-btn color="green darken-1" text @click="isDialogErrorVisible = false">OK</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -190,9 +166,7 @@
     >
       <v-card>
         <v-card-title>
-          <span class="headline">
-            {{ isAdd ? 'Nuovo lavoro' : 'Modifica lavoro' }}</span
-          >
+          <span class="headline">{{ isAdd ? 'Nuovo lavoro' : 'Modifica lavoro' }}</span>
         </v-card-title>
 
         <v-card-text>
@@ -201,12 +175,8 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="annullaModifiche()"
-            >Annulla</v-btn
-          >
-          <v-btn color="blue darken-1" text @click="salvaModifiche()"
-            >Salva</v-btn
-          >
+          <v-btn color="blue darken-1" text @click="annullaModifiche()">Annulla</v-btn>
+          <v-btn color="blue darken-1" text @click="salvaModifiche()">Salva</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -240,6 +210,7 @@
 <script>
 import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
 import { appDirImages, fs } from '../../assets/filesystem'
+import { syncStates, internalStates } from '../../store/db'
 
 import Panel from '../Containers/Panel'
 import EmptyList from '../General/EmptyList'
@@ -275,20 +246,18 @@ export default {
       // Un nuovo lavoro può essere inserito e modificato anche se offline
       // Ad oggi, se un lavoro è stato sincronizzato, la sua modifica può avvenire solamnte se siamo online
       // Così da evitare conflitti
-      if (this.$record.statoSync == null || this.$record.statoSync == 'N') {
-        // Lavoro non ancora sincronizzato
-        // possiamo manipolarlo come ci pare
-        // Apre la form di modifica
-        this.setEditMode()
-      } else {
+      if (this.$record.syncStatus == syncStates['COMPLETO']) {
         // lavoro già sincronizzato
         if (navigator.onLine) {
-          // Lo possiamo modificare / salvare solamente se siamo online
-          // Apre la form di modifica
-          this.setEditMode()
+          // siamo online
+          this.setEditMode() // Apre la form di modifica
         } else {
-          this.isDialogErrorVisible = true
+          this.isDialogErrorVisible = true // mostra messaggio di errore
         }
+      } else {
+        // Lavoro non ancora sincronizzato
+        // possiamo manipolarlo come ci pare
+        this.setEditMode() // Apre la form di modifica
       }
     },
     annullaModifiche() {
@@ -303,37 +272,23 @@ export default {
       this.setViewMode()
     },
     async salvaModifiche() {
-      if (this.$record.statoSync == null || this.$record.statoSync == 'N') {
-        // Provvede a salvare il lavoro
-        await this.salvaLavoro({
-          doUpload: true,
-          saveLacalAnyway: true,
-          rawData: false
-        })
-          .then(() => {
-            // Andato a bun fine
-            this.setViewMode()
-          })
-          .catch((err) => {
-            // Errore
-            this.setViewMode()
-          })
-      } else {
+      // Effettua un ulteriore verifica in quanto portebbe essere caduta la connessione
+      if (this.$record.syncStatus == syncStates['COMPLETO']) {
         // lavoro già sincronizzato
         if (navigator.onLine) {
-          // Parte l'animazione di caricamento
-          console.log('inizio')
-
-          // Prima di salvare delle modifiche in locale dobbiamo inviarle al server
-          await this.salvaLavoro({ toUpload: true, rawData: false })
-
-          console.log('fine')
-
-          // Imposta la modalità di visualizzazione a READONLY
-          this.setViewMode()
+          await this.salvaLavoro() // Prima invia il record al ws poi salva localmente
+          this.setViewMode() // Imposta la modalità di visualizzazione a READONLY
         } else {
-          this.isDialogErrorVisible = true
+          this.isDialogErrorVisible = true // mostra errore
         }
+      } else {
+        await this.salvaLavoro() // Provvede a salvare il lavoro
+          .then() // Andato a bun fine
+          .catch((err) => {
+            // Errore dobbiamo prevedere una schermata di errore
+          })
+
+        this.setViewMode()
       }
     },
     ...mapActions(storeName, {
@@ -455,7 +410,8 @@ export default {
         if (allegatiDelRecord.hasOwnProperty(fileNameImmagineLavoro)) {
           const myAllegato = allegatiDelRecord[fileNameImmagineLavoro]
           if (myAllegato && myAllegato.data) {
-            imgUrl = 'data:' + myAllegato.content_type + ';base64,' + myAllegato.data
+            imgUrl =
+              'data:' + myAllegato.content_type + ';base64,' + myAllegato.data
           }
         }
       }

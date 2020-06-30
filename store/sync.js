@@ -1,6 +1,7 @@
 import _clone from 'lodash/clone'
 import { dbList, syncStates, internalStates } from './db'
 
+const emptyFn = function () { }
 const root = { root: true }
 export const state = () => {
   return {
@@ -43,15 +44,22 @@ export const actions = {
       // ottimizzato nel caso di nuovi oggetti: invia subito i dati (senza files)
       listaOggettiLocali.forEach((obj) => {
 
+        // la lista delle risorse potrebbe trarre in inganno
+        // rappresenta la lista delle risorse necessarie 
+        // e non quelle effettivamente sincronizzate
+        var risorseEffettive = []
+        if (obj.listaRisorse) {
+          obj.listaRisorse.forEach((res) => {
+            if (obj._attachments && Object.keys(obj._attachments).includes(res))
+              risorseEffettive.push(res)
+          })
+        }
+
         let objToSend = {
           _id: obj._id,
           tipo: obj.tipo,
           lastUpdateDate: obj.lastUpdateDate,
-          listaRisorse: obj.listaRisorse
-        }
-
-        if (obj.internalStatus == internalStates['ADDED'] | obj.internalStatus == internalStates['MODIFIED']) {
-          objToSend.data = obj.data
+          listaRisorse: risorseEffettive
         }
 
         listaDaInviare.push(objToSend)
@@ -85,6 +93,7 @@ export const actions = {
 
       // Gestire meglio i vari tipi di errori
       commit('logMe', `ERRORE durante la sincronizzazione: ${err}`)
+      commit('setSynchronizing', false)
     }
 
     commit('setSynchronizing', false)
@@ -108,7 +117,7 @@ export const actions = {
       }
 
       // Come defaul come primo salvataggio del record viene impostato il flag come download parziale
-      remoteDoc.syncStatus = syncStates['SYNC_PARZIALE']
+      remoteDoc.syncStatus = syncStates['PARTIAL_SYNC']
 
       let localDoc
       try {
@@ -157,10 +166,8 @@ export const actions = {
         }
       }
 
-      // se siamo arrivati fino a qui signofica che abbiamo scaricato tutto
       // Provvede a salvare il record come completato
-      remoteDoc.syncStatus = syncStates['COMPLETO']
-      await dispatch('db/update', { table, data: remoteDoc }, root)
+      await dispatch('db/updateProp', { table, docID, prop: 'syncStatus', value: syncStates['COMPLETO'] }, root)
 
     } catch (err) {
       console.error();
@@ -170,16 +177,23 @@ export const actions = {
     }
   },
 
-  async UPLOAD({ dispatch, commit, state }, { table, data }) {
+  async UPLOAD({ dispatch, commit, state }, { table, data, callback = emptyFn }) {
     try {
       const docID = data._id
       const url = '/api/sincronizza/uploadSingleData'
       const urlFile = '/api/sincronizza/uploadSingleRes'
 
-      // L'egge l'oggetto dal DB locale
-      commit('logMe', `---> Lettura oggetto locale`)
-      let localDoc = await dispatch('db/selectById', { table, id: docID }, root)
 
+      let localDoc = {}
+      if (data.data) {
+        // è stato passato l'oggetto con i dati
+        localDoc = data
+      }
+      else {
+        // L'egge l'oggetto dal DB locale per ottenere i dati
+        commit('logMe', `---> Lettura oggetto locale`)
+        localDoc = await dispatch('db/selectById', { table, id: docID }, root)
+      }
       // Attenzione: localDoc contiene sia la lista di attachment sia i file
       // Per mantenere l'invio leggero vengono tolti
       let docToSend = _clone(localDoc)
@@ -191,7 +205,7 @@ export const actions = {
 
       // I dati sono stati caaricati correttamente
       // Viene salvato il record come parzialmente sincronizzato
-      localDoc.syncStatus = syncStates['SYNC_PARZIALE']
+      localDoc.syncStatus = syncStates['PARTIAL_SYNC']
       await dispatch('db/update', { table, data: localDoc }, root)
 
       // La risposta conterrà l'elenco delle risorse che mancano
@@ -208,9 +222,11 @@ export const actions = {
 
       // Se siamo arrivati fino a qui significa che abbiamo completato il caricamento delle risorse
       // Viene impostato lo stato come completamente sincronizzato
-      localDoc.syncStatus = syncStates['COMPLETO']
-      await dispatch('db/update', { table, data: localDoc }, root)
+      // localDoc.syncStatus = syncStates['COMPLETO']
+      await dispatch('db/updateProp', { table, docID, prop: 'syncStatus', value: syncStates['COMPLETO'] }, root)
 
+      // se presente
+      callback()
     } catch (error) {
       console.error();
       // Gestire meglio i vari tipi di errori
