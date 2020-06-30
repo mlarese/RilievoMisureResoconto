@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import Form from '../../components/GestioneLavori/Form'
+import Form from '../../components/gestione_lavori/Form'
 export default {
   layout: 'fullPage',
   components: {

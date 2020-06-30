@@ -277,15 +277,10 @@ export const getters = {
           return o.data.isPreferito === s.ui.filter.preferito
         } else {
           return (
-            (o.data.GL_CommittenteDesc.toLowerCase().includes(
-              s.ui.filter.text.toLowerCase()
-            ) ||
-              o.data.GL_Oggetto.toLowerCase().includes(
-                s.ui.filter.text.toLowerCase()
-              ) ||
-              o.data.GL_Indirizzo.toLowerCase().includes(
-                s.ui.filter.text.toLowerCase()
-              )) &&
+            (
+              ((o.data.GL_CommittenteDesc) && o.data.GL_CommittenteDesc.toLowerCase().includes(s.ui.filter.text.toLowerCase())) ||
+              ((o.data.GL_Oggetto) && o.data.GL_Oggetto.toLowerCase().includes(s.ui.filter.text.toLowerCase())) ||
+              ((o.data.GL_Indirizzo) && o.data.GL_Indirizzo.toLowerCase().includes(s.ui.filter.text.toLowerCase()))) &&
             o.data.isPreferito === s.ui.filter.preferito
           )
         }

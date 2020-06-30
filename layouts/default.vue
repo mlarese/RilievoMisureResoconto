@@ -102,9 +102,6 @@
 </template>
 
 <script>
-import 'devextreme/dist/css/dx.common.css'
-import 'devextreme/dist/css/dx.light.css'
-import '../assets/md-devexp.min.css'
 import { mapState, mapMutations, mapGetters } from 'vuex'
 
 export default {

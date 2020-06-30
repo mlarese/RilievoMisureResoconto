@@ -60,7 +60,7 @@ export const actions = {
   async getById({ dispatch, commit, state }, id) {
     const table = state.dbName
     const rec = await dispatch('db/selectById', { table, id }, root)
-    commit('setRecord', rec)    
+    commit('setRecord', rec)
   },
   async upload({ dispatch, commit, state }) {
     let data = state.$record
@@ -130,7 +130,7 @@ export const actions = {
     const newFileName = repoFilename(file.name)
 
     // Salva fisicamente il file come allegato
-    await dispatch('db/putAttachment',{table,docID,file,fileName: newFileName},root)
+    await dispatch('db/putAttachment', { table, docID, file, fileName: newFileName }, root)
 
     // Ricarica il record dopo aver salvato l'allegato
     // (necessario per ottenere la nuova versione del record)
@@ -260,20 +260,14 @@ export const getters = {
   noDeletedList: (s) => s.list.filter(visibleRecord),
 
   filteredList: (s) =>
-    _filter(s.list, function(o) {
+    _filter(s.list, function (o) {
       if (s.ui.filter.text == '') {
         return true
       } else {
         return (
-          o.data.CONDescrizione.toLowerCase().includes(
-            s.ui.filter.text.toLowerCase()
-          ) ||
-          o.data.CONNote.toLowerCase().includes(
-            s.ui.filter.text.toLowerCase()
-          ) ||
-          o.data.CONIndirizzo.toLowerCase().includes(
-            s.ui.filter.text.toLowerCase()
-          )
+          ((o.data.CONDescrizione) && o.data.CONDescrizione.toLowerCase().includes(s.ui.filter.text.toLowerCase())) ||
+          ((o.data.CONNote) && o.data.CONNote.toLowerCase().includes(s.ui.filter.text.toLowerCase())) ||
+          ((o.data.CONIndirizzo) && o.data.CONIndirizzo.toLowerCase().includes(s.ui.filter.text.toLowerCase()))
         )
       }
     }),

@@ -243,8 +243,8 @@ import { appDirImages, fs } from '../../assets/filesystem'
 
 import Panel from '../Containers/Panel'
 import EmptyList from '../General/EmptyList'
-import DatiAnagrafici from '../GestioneLavori/DatiAnagrafici'
-import DatiAnagraficiEdit from '../GestioneLavori/DatiAnagrafici_Edit'
+import DatiAnagrafici from '../gestione_lavori/DatiAnagrafici'
+import DatiAnagraficiEdit from '../gestione_lavori/DatiAnagrafici_Edit'
 import ListaRilievi from '../GestioneRilievo/listaRilievi'
 const storeName = 'gestione_lavori'
 

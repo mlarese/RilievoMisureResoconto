@@ -1,13 +1,13 @@
 .cursor-pointer{cursor: pointer}
 
-.v-text-field input{
+/* .v-text-field input{
     padding-left: 5px !important;
 }
 .v-text-field .v-label--active {
     max-width: 133%;
     -webkit-transform: translateY(-24px) scale(0.75);
     transform: translateY(-24px) scale(0.75);
-}
+} */
 
 td .dx-button-has-icon .dx-button-content {
     padding: 3px 6px 3px 6px !important;
