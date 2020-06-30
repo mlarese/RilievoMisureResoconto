@@ -1,13 +1,13 @@
-<!--eslint-disable-->
+
 <template>
   <v-layout align-center justify-center>
     <!-- SOLO SMARTPHONE PORTRAIT -->
-    <v-flex class="loginSmall" v-if="$vuetify.breakpoint.xsOnly">
+    <v-flex class="loginSmall text-center" v-if="$vuetify.breakpoint.xsOnly">
       <v-card
         class="elevation-12"
         style="border-radius: 8px; background-color: #448aff"
       >
-        <div class="panelSmall pt-12">
+        <div class="panelSmall pt-12" >
           <v-avatar size="70">
             <img src="~/assets/images/logoSolo.png" />
           </v-avatar>
@@ -79,14 +79,14 @@
     </v-flex>
 
     <!-- LANDSCAPE e OLTRE -->
-    <v-flex class="loginBig" v-if="$vuetify.breakpoint.smAndUp">
+    <v-flex class="loginBig text-center" v-if="$vuetify.breakpoint.smAndUp">
       <v-card
         class="elevation-12"
         style="border-radius: 8px; background-color: #448aff"
       >
         <v-row>
           <v-col cols="6">
-            <div class="panelBig pt-12">
+            <div class="panelBig pt-8">
               <v-avatar size="70">
                 <img src="~/assets/images/logoSolo.png" />
               </v-avatar>
@@ -179,7 +179,7 @@
 
 .panelSmall {
   background: #448aff !important;
-  height: 40vh;
+  height: 35vh;
   vertical-align: middle;
 }
 
