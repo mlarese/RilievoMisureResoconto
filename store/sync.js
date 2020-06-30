@@ -1,3 +1,4 @@
+import _clone from 'lodash/clone'
 import { dbList, syncStates, internalStates } from './db'
 
 const root = { root: true }
@@ -68,7 +69,7 @@ export const actions = {
 
         for (var obj of apiResponse.data) {
           commit('logMe', `Inizio azione ${obj.action} di ${obj.tipo} - ${obj._id}`)
-          // Ottiene la tabella DB in funzione del tipo oggetto
+          // Ottiene la tabella del DB in funzione del tipo oggetto
           let table = dbList[obj.tipo]
           await dispatch(obj.action, { table, data: obj })
         }
@@ -160,7 +161,7 @@ export const actions = {
       // Provvede a salvare il record come completato
       remoteDoc.syncStatus = syncStates['COMPLETO']
       await dispatch('db/update', { table, data: remoteDoc }, root)
-      
+
     } catch (err) {
       console.error();
       // Gestire meglio i vari tipi di errori
@@ -170,28 +171,51 @@ export const actions = {
   },
 
   async UPLOAD({ dispatch, commit, state }, { table, data }) {
+    try {
+      const docID = data._id
+      const url = '/api/sincronizza/uploadSingleData'
+      const urlFile = '/api/sincronizza/uploadSingleRes'
 
-    const docID = data._id
-    const url = '/api/sincronizza/uploadSingleData'
-    const urlFile = '/api/sincronizza/uploadSingleRes'
+      // L'egge l'oggetto dal DB locale
+      commit('logMe', `---> Lettura oggetto locale`)
+      let localDoc = await dispatch('db/selectById', { table, id: docID }, root)
 
-    // L'egge l'oggetto dal DB locale
-    commit('logMe', `---> Lettura oggetto locale`)
-    let localDoc = await dispatch('db/selectById', { table, id: docID }, root)
+      // Attenzione: localDoc contiene sia la lista di attachment sia i file
+      // Per mantenere l'invio leggero vengono tolti
+      let docToSend = _clone(localDoc)
+      delete docToSend._attachments
 
-    // Carica l'oggetto nel cloud
-    commit('logMe', `---> Invio oggetto al ws`)
-    const response = await dispatch('api/post', { url, data: localDoc }, root)
+      // Carica l'oggetto nel cloud
+      commit('logMe', `---> Invio oggetto al ws`)
+      const response = await dispatch('api/post', { url, data: docToSend }, root)
 
-    // La risposta conterrà l'elenco delle risorse che mancano
-    if (response.data) {
-      for (var fileName of response.data) {
-        commit('logMe', `--->> Lettura della risorsa localmente - ${fileName}`)
-        const file = await dispatch('db/getAttachment', { table, docID, fileName }, root)
-        commit('logMe', `--->> Invio al ws della risorsa`)
-        const responseFile = await dispatch('api/postFile', { url: urlFile, data: { data, file, fileName } }, root)
-        console.log(responseFile)
+      // I dati sono stati caaricati correttamente
+      // Viene salvato il record come parzialmente sincronizzato
+      localDoc.syncStatus = syncStates['SYNC_PARZIALE']
+      await dispatch('db/update', { table, data: localDoc }, root)
+
+      // La risposta conterrà l'elenco delle risorse che mancano
+      if (response.data) {
+        for (var fileName of response.data) {
+
+          commit('logMe', `--->> Lettura della risorsa localmente - ${fileName}`)
+          const file = await dispatch('db/getAttachment', { table, docID, fileName }, root)
+
+          commit('logMe', `--->> Invio al ws della risorsa`)
+          const responseFile = await dispatch('api/postFile', { url: urlFile, data: { data, file, fileName } }, root)
+        }
       }
+
+      // Se siamo arrivati fino a qui significa che abbiamo completato il caricamento delle risorse
+      // Viene impostato lo stato come completamente sincronizzato
+      localDoc.syncStatus = syncStates['COMPLETO']
+      await dispatch('db/update', { table, data: localDoc }, root)
+
+    } catch (error) {
+      console.error();
+      // Gestire meglio i vari tipi di errori
+      commit('logMe', `ERRORE durante UPLOAD: di ${data.tipo} - ${data._id} ${err}`)
+      commit('logMe', `--> ${err}`)
     }
   },
   async DELETE({ dispatch, commit, state }, { table, data }) {

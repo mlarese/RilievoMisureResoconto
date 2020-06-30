@@ -34,7 +34,7 @@
           max-height="200"
         >
           <div class="d-flex flex-no-wrap">
-            <v-avatar class="ma-3" size="100" tile>
+            <v-avatar class="ma-3" size="60" tile>
               <v-img
                 :src="getImgPric_asURL(item)"
                 v-if="getImgPric_asURL(item)"
