@@ -1,25 +1,41 @@
 <template>
   <div>
-    <v-simple-table fixed-header height="80vH">
-      <template v-slot:default>
-        <thead>
-          <tr>
-            <th class="text-left">Codice</th>
-            <th class="text-left">Descrizione</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(usr, i) in utenti" :key="i" @click="onEdit(usr)">
-            <td>{{ usr.codice }}</td>
-            <td>{{ usr.descrizione }}</td>
-          </tr>
-        </tbody>
-      </template>
-    </v-simple-table>
-
-    <v-btn fab color="primary" class="mx-2 mb-12" dark fixed absolute bottom right @click="onAdd">
-      <v-icon>mdi-plus</v-icon>
-    </v-btn>
+    <Panel>
+      <div slot="toolbarTitle">
+        <b>Gestione utenti</b>
+      </div>
+      <div slot="mainContent">
+          <v-simple-table fixed-header height="80vH">
+            <template v-slot:default>
+              <thead>
+                <tr>
+                  <th class="text-left"><b>Codice</b></th>
+                  <th class="text-left"><b>Descrizione</b></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(usr, i) in utenti" :key="i" @click="onEdit(usr)" style="cursor: pointer;">
+                  <td>{{ usr.codice }}</td>
+                  <td>{{ usr.descrizione }}</td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+        <v-btn
+          fab
+          color="primary"
+          class="mx-2 mb-12"
+          dark
+          fixed
+          absolute
+          bottom
+          right
+          @click="onAdd"
+        >
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
+      </div>
+    </Panel>
 
     <v-dialog
       :value="isEdit || isAdd"
@@ -94,8 +110,12 @@
 
 <script>
 import { mapActions } from 'vuex'
+import Panel from '../Containers/Panel'
 
 export default {
+  components: {
+    Panel
+  },
   props: { utenti: { default: [] } },
   data: () => ({
     isAdd: false,
@@ -114,7 +134,8 @@ export default {
     rules: {
       required: (value) => !!value || 'Campo obbligatorio',
       min4: (value) => value.length > 3 || 'Deve avere almeno 4 caratteri',
-      min8: (value) => ((value) && value.length > 7) || 'Deve avere almeno 8 caratteri',
+      min8: (value) =>
+        (value && value.length > 7) || 'Deve avere almeno 8 caratteri',
       noSpecial: (value) => {
         const pattern = /^[A-Za-z0-9_-]*$/
         return pattern.test(value) || 'Non sono consentiti caratteri speciali'
