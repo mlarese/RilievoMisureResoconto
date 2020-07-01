@@ -236,6 +236,41 @@ export const actions = {
   },
   async DELETE({ dispatch, commit, state }, { table, data }) {
     // TODO
+  },
+
+  async randomInsert({ dispatch, commit, state }) {
+    const table = 'contatti'
+    let fileName = ''
+    var passi;
+    for (passi = 0; passi < 100; passi++) {
+      
+      var url = `https://picsum.photos/600`
+      var responseFile = await dispatch('api/getFile', { url }, root)
+      fileName = `randomFile${passi}`
+
+      let data = {
+        _id: null,
+        tipo: 'CONTATTO',
+        syncStatus: syncStates['NOT_SYNC'],
+        lastUpdateDate: null,
+        data: {
+          CONDescrizione: `random contact ${passi}`,
+          CONIndirizzo: `random indirizzo ${passi}`,
+          CONTelefono: `random telefono ${passi}`,
+          CONEmail: `random email ${passi}`,
+          CONNote: `random note ${passi}`,
+          imgFileName: fileName
+        },
+        listaRisorse: [fileName]
+      }
+
+      let res = await dispatch('db/insertInto', { table, data }, root)
+
+
+      var file = responseFile.data
+      await dispatch('db/putAttachment', { table, docID: res.id, file, fileName }, root)
+    }
+
   }
 }
 
