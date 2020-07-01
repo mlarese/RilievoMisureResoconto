@@ -69,57 +69,47 @@ export const actions = {
     // Invia i dati al WS
     return await dispatch('api/post', { url, data }, { root: true })
   },
-  async save(
-    { dispatch, commit, state, rootState },
-    { doUpload, saveLacalAnyway, rawData }
-  ) {
+  async save({ dispatch, commit, state, rootState }) {
     const isInsert = !state.$record._id
+    const table = state.dbName
     let actionName = 'db/update'
 
     if (isInsert) {
       actionName = 'db/insertInto'
     }
 
-    // Per rowData si intente la manipolazione di dati base
-    // necessario per un salvataggio as is
-    if (!rawData) {
-      commit('setLastUpdateDate', new Date().toJSON())
-      commit('setLastUpdateUser', rootState.auth.utente)
+    commit('setLastUpdateDate', new Date().toJSON())
+    commit('setLastUpdateUser', rootState.auth.utente)
 
-      if (isInsert) {
-        commit('setLocalID', uuidv4())
-        commit('setInsertDate', new Date().toJSON())
-        commit('setInsertUser', rootState.auth.utente)
+    if (isInsert) {
+      commit('setSyncStatus', syncStates['NOT_SYNC'])
+      commit('setInsertDate', new Date().toJSON())
+      commit('setInsertUser', rootState.auth.utente)
+
+      // Salva localmente
+      const res = await dispatch(actionName, { table, data: state.$record }, root)
+
+      // Recupera il nuov ID e lo imposta
+      commit('setLocalID', res.id)
+
+      // tenta l'upload in background altrimenti sarà caricato durante la sincronizzazione
+      // chiamata async in modo da non bloccare l'utente
+      dispatch('sync/UPLOAD', {
+        table, data: state.$record, callback: () => {
+          console.log('callback')
+          dispatch('getById', state.$record._id), dispatch('load') // ricarica i dati
+        }
+      }, root)
+    } else {
+      // Una modifica deve per forza prima essere sincronizzata con il ws
+      // Se tutto va a buon fine provvede a salvarla localmente
+      try {
+        await dispatch('sync/UPLOAD', { table, data: state.$record }, root)
+        await dispatch(actionName, { table, data: state.$record }, root)
+      } catch (error) {
+        console.error()
       }
     }
-
-    if (doUpload) {
-      // Invia i dati al WS
-      await dispatch('upload')
-        .then((res) => {
-          commit('setState', 'U')
-        })
-        .catch((err) => {
-          if (saveLacalAnyway) {
-            // ignora l'errore di connessione per salvare localmente
-            console.log(err)
-          } else {
-            throw err
-          }
-        })
-    }
-
-    // Salva effettivamente su db
-    const table = state.dbName
-    return dispatch(actionName, { table, data: state.$record }, root)
-      .then(() => {
-        // ?????
-        return dispatch('load')
-      })
-      .catch((e) => {
-        console.log(e)
-        return e
-      })
   },
   async addImgPrinc({ dispatch, commit, state }, file) {
     const docID = state.$record._id
@@ -204,7 +194,7 @@ export const mutations = {
     state.record._id = payload
     state.$record._id = payload
   },
-  setState(state, payload = {}) {
+  setSyncStatus(state, payload = {}) {
     state.record.syncStatus = payload
     state.$record.syncStatus = payload
   },

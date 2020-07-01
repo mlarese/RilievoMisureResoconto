@@ -242,11 +242,16 @@ export default {
     ...mapGetters(storeName, ['isEdit', 'isAdd', 'isView', 'getImg'])
   },
   methods: {
+    ...mapMutations(storeName, ['setEditMode', 'setNewMode', 'setViewMode']),
     openEditForm() {
       // Un nuovo lavoro può essere inserito e modificato anche se offline
       // Ad oggi, se un lavoro è stato sincronizzato, la sua modifica può avvenire solamnte se siamo online
       // Così da evitare conflitti
-      if (this.$record.syncStatus == syncStates['COMPLETO']) {
+      if (this.$record.syncStatus == syncStates['NOT_SYNC']) {
+        // Lavoro non ancora sincronizzato
+        // possiamo manipolarlo come ci pare
+        this.setEditMode() // Apre la form di modifica
+      } else {
         // lavoro già sincronizzato
         if (navigator.onLine) {
           // siamo online
@@ -254,10 +259,6 @@ export default {
         } else {
           this.isDialogErrorVisible = true // mostra messaggio di errore
         }
-      } else {
-        // Lavoro non ancora sincronizzato
-        // possiamo manipolarlo come ci pare
-        this.setEditMode() // Apre la form di modifica
       }
     },
     annullaModifiche() {
@@ -273,15 +274,7 @@ export default {
     },
     async salvaModifiche() {
       // Effettua un ulteriore verifica in quanto portebbe essere caduta la connessione
-      if (this.$record.syncStatus == syncStates['COMPLETO']) {
-        // lavoro già sincronizzato
-        if (navigator.onLine) {
-          await this.salvaLavoro() // Prima invia il record al ws poi salva localmente
-          this.setViewMode() // Imposta la modalità di visualizzazione a READONLY
-        } else {
-          this.isDialogErrorVisible = true // mostra errore
-        }
-      } else {
+      if (this.$record.syncStatus == syncStates['NOT_SYNC']) {
         await this.salvaLavoro() // Provvede a salvare il lavoro
           .then() // Andato a bun fine
           .catch((err) => {
@@ -289,6 +282,14 @@ export default {
           })
 
         this.setViewMode()
+      } else {
+        // lavoro già sincronizzato
+        if (navigator.onLine) {
+          await this.salvaLavoro() // Prima invia il record al ws poi salva localmente
+          this.setViewMode() // Imposta la modalità di visualizzazione a READONLY
+        } else {
+          this.isDialogErrorVisible = true // mostra errore
+        }
       }
     },
     ...mapActions(storeName, {
@@ -296,70 +297,6 @@ export default {
       UploadESaveLavoro: 'upload',
       aggiungiImmagine: 'addImgPrinc'
     }),
-    ...mapMutations(storeName, ['setEditMode', 'setNewMode', 'setViewMode']),
-    async old_onEditClick() {
-      // Un nuovo lavoro può essere inserito e modificato anche se offline
-      // Ad oggi, se un lavoro è stato sincronizzato, la sua modifica può avvenire
-      // solamente se siamo online così da evitare conflitti
-      if (this.$record.statoSync == null || this.$record.statoSync == 'N') {
-        // Lavoro non ancora sincronizzato
-        // possiamo manipolarlo come ci pare
-
-        if (this.isView) {
-          // Imposta la modalità di visualizzazione a EDITABLE
-          this.setEditMode()
-        } else {
-          // Provvede a salvare il lavoro
-          await this.salvaLavoro({
-            doUpload: true,
-            saveLacalAnyway: true,
-            rawData: false
-          })
-            .then(() => {
-              // Andato a bun fine
-            })
-            .catch((err) => {
-              // Errore
-            })
-
-          // Imposta la modalità di visualizzazione a READONLY
-          this.setViewMode()
-        }
-      } else {
-        // lavoro già sincronizzato
-        if (navigator.onLine) {
-          // Lo possiamo modificare / salvare solamente se siamo online
-
-          if (this.isView) {
-            // Imposta la modalità di visualizzazione a EDITABLE
-            this.setEditMode()
-          } else {
-            // Parte l'animazione di caricamento
-            console.log('inizio')
-
-            // Prima di salvare delle modifiche in locale dobbiamo inviarle al server
-            await this.salvaLavoro({ toUpload: true, rawData: false })
-
-            // await this.UploadESaveLavoro()
-            // .then((res) => {
-            //   // Lavoro Caricato correttamente
-            // })
-            // .catch((err) => {
-            //   // Qualcosa è andato storto
-            //   console.log(err)
-            // })
-
-            // Termina animazione
-            console.log('fine')
-
-            // Imposta la modalità di visualizzazione a READONLY
-            this.setViewMode()
-          }
-        } else {
-          alert('Quando offline non è possibile modificare un lavoro!')
-        }
-      }
-    },
 
     apriRilievo() {
       const { _id } = this.$record

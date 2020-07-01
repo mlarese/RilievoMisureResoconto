@@ -17,9 +17,7 @@
           </v-row>
           <v-spacer></v-spacer>
         </div>
-        <div v-else>
-          Gestione contatto
-        </div>
+        <div v-else>Gestione contatto</div>
       </div>
       <v-btn
         icon
@@ -36,14 +34,8 @@
           <v-row class="mx-2">
             <v-col cols="auto">
               <v-avatar size="75" class="pb-0">
-                <v-img
-                  :src="getImgPric_asURL()"
-                  v-if="getImgPric_asURL()"
-                ></v-img>
-                <v-img
-                  :src="require('../../assets/images/contact-placeholder.jpg')"
-                  v-else
-                ></v-img>
+                <v-img :src="getImgPric_asURL()" v-if="getImgPric_asURL()"></v-img>
+                <v-img :src="require('../../assets/images/contact-placeholder.jpg')" v-else></v-img>
                 <input
                   type="file"
                   @change="
@@ -55,7 +47,7 @@
                 />
               </v-avatar>
             </v-col>
-            <v-col class="align-self-center ">
+            <v-col class="align-self-center">
               <div class="title ellipseText">
                 <b>{{ $record.data.CONDescrizione }}</b>
               </div>
@@ -140,13 +132,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            color="green darken-1"
-            text
-            @click="showDialogErrorOpenEditor = false"
-          >
-            OK
-          </v-btn>
+          <v-btn color="green darken-1" text @click="showDialogErrorOpenEditor = false">OK</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -159,9 +145,7 @@
     >
       <v-card>
         <v-card-title>
-          <span class="headline">
-            {{ isAdd ? 'Nuovo contatto' : 'Modifica contatto' }}</span
-          >
+          <span class="headline">{{ isAdd ? 'Nuovo contatto' : 'Modifica contatto' }}</span>
         </v-card-title>
 
         <v-card-text>
@@ -170,12 +154,8 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="annullaModifiche()"
-            >Annulla</v-btn
-          >
-          <v-btn color="blue darken-1" text @click="salvaModifiche()"
-            >Salva</v-btn
-          >
+          <v-btn color="blue darken-1" text @click="annullaModifiche()">Annulla</v-btn>
+          <v-btn color="blue darken-1" text @click="salvaModifiche()">Salva</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -209,6 +189,7 @@
 <script>
 import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
 import { appDirImages, fs } from '../../assets/filesystem'
+import { syncStates, internalStates } from '../../store/db'
 
 import Panel from '../Containers/Panel'
 import EmptyList from '../General/EmptyList'
@@ -243,7 +224,7 @@ export default {
       // Un nuovo record può essere inserito e modificato anche se offline
       // Ad oggi, se un record è stato sincronizzato, la sua modifica può avvenire solamnte se siamo online
       // Così da evitare conflitti
-      if (this.$record.statoSync == null || this.$record.statoSync == 'N') {
+      if (this.$record.syncStatus == syncStates['NOT_SYNC']) {
         // record non ancora sincronizzato
         // possiamo manipolarlo come ci pare
         // Apre la form di modifica
@@ -271,32 +252,21 @@ export default {
       this.setViewMode()
     },
     async salvaModifiche() {
-      if (this.$record.statoSync == null || this.$record.statoSync == 'N') {
+      if (this.$record.syncStatus == syncStates['NOT_SYNC']) {
         // Provvede a salvare il record
-        await this.salvaRecord({
-          doUpload: true,
-          saveLacalAnyway: true,
-          rawData: false
-        })
+        await this.salvaRecord()
           .then(() => {
             // Andato a bun fine
-            this.setViewMode()
           })
           .catch((err) => {
             // Errore
-            this.setViewMode()
           })
+        this.setViewMode()
       } else {
         // record già sincronizzato
         if (navigator.onLine) {
-          // Parte l'animazione di caricamento
-          console.log('inizio')
-
           // Prima di salvare delle modifiche in locale dobbiamo inviarle al server
           await this.salvaRecord({ toUpload: true, rawData: false })
-
-          console.log('fine')
-
           // Imposta la modalità di visualizzazione a READONLY
           this.setViewMode()
         } else {
@@ -308,15 +278,11 @@ export default {
       salvaRecord: 'save',
       aggiungiImmagine: 'addImgPrinc'
     }),
-    ...mapMutations(storeName, [
-      'setEditMode',
-      'setNewMode',
-      'setViewMode'
-    ]),
+    ...mapMutations(storeName, ['setEditMode', 'setNewMode', 'setViewMode']),
 
     exit() {
       this.$router.replace(`/${storeName}`)
-    },    
+    },
     filesChange(fieldName, fileList) {
       if (!fileList.length) return
       const myFile = fileList[0]
@@ -330,7 +296,8 @@ export default {
         if (allegatiDelRecord.hasOwnProperty(fileNameImmagineLavoro)) {
           const myAllegato = allegatiDelRecord[fileNameImmagineLavoro]
           if (myAllegato && myAllegato.data) {
-            imgUrl = 'data:' + myAllegato.content_type + ';base64,' + myAllegato.data
+            imgUrl =
+              'data:' + myAllegato.content_type + ';base64,' + myAllegato.data
           }
         }
       }

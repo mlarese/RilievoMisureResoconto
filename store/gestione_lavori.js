@@ -81,9 +81,12 @@ export const actions = {
       commit('setInsertUser', rootState.auth.utente)
 
       // Salva localmente
-      await dispatch(actionName, { table, data: state.$record }, root)
+      const res = await dispatch(actionName, { table, data: state.$record }, root)
 
-      // tenta l'upload in background altrimenti sarà caricato surante la sincronizzazione
+      // Recupera il nuov ID e lo imposta
+      commit('setLocalID', res.id)
+
+      // tenta l'upload in background altrimenti sarà caricato durante la sincronizzazione
       // chiamata async in modo da non bloccare l'utente
       dispatch('sync/UPLOAD', {
         table, data: state.$record, callback: () => {
@@ -93,17 +96,14 @@ export const actions = {
       }, root)
 
     } else {
-      console.log('start upload')
       // Una modifica deve per forza prima essere sincronizzata con il ws
       // Se tutto va a buon fine provvede a salvarla localmente
       try {
         await dispatch('sync/UPLOAD', { table, data: state.$record }, root)
-        console.log('end upload'),
-          await dispatch(actionName, { table, data: state.$record }, root)
+        await dispatch(actionName, { table, data: state.$record }, root)
       } catch (error) {
         console.error()
       }
-
     }
 
   },
