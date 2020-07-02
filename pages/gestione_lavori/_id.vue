@@ -3,16 +3,15 @@
 </template>
 
 <script>
-import Form from '../../components/GestioneLavori/Form'
+import Form from '../../components/gestione_lavori/Form'
 export default {
   layout: 'fullPage',
   components: {
     Form
   },
-  fetch({ store, params }) {
-    console.dir(arguments)
+  async fetch({ store, params }) {
     store.commit('gestione_lavori/setViewMode', { root: true })
-    store.dispatch('gestione_lavori/getById', params.id, { root: true })
+    await store.dispatch('gestione_lavori/getById', params.id, { root: true })
   }
 }
 </script>

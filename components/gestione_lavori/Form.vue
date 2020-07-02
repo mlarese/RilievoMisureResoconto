@@ -6,23 +6,20 @@
           <v-row no-gutters>
             <v-col cols="2">
               <v-avatar size="40">
-                <v-img :src="require('../../assets/images/casa.jpg')"></v-img>
+                <v-img v-if="getImgPric_asURL()" :src="getImgPric_asURL()"></v-img>
+                <v-img v-else :src="require('../../assets/images/lavoro.png')"></v-img>
               </v-avatar>
             </v-col>
             <v-col cols="10">
               <div class="subtitle-1 ellipseText">
                 <b>{{ $record.data.GL_CommittenteDesc }}</b>
               </div>
-              <div class="caption ellipseText">
-                {{ $record.data.GL_Descrizione }}
-              </div>
+              <div class="caption ellipseText">{{ $record.data.GL_Oggetto }}</div>
             </v-col>
           </v-row>
           <v-spacer></v-spacer>
         </div>
-        <div v-else>
-          Gestione lavoro
-        </div>
+        <div v-else>Gestione lavoro</div>
       </div>
       <v-btn
         icon
@@ -39,16 +36,24 @@
           <v-row class="mx-2">
             <v-col cols="auto">
               <v-avatar size="75" class="pb-0">
-                <v-img :src="require('../../assets/images/casa.jpg')"></v-img>
+                <v-img :src="getImgPric_asURL()" v-if="getImgPric_asURL()"></v-img>
+                <v-img :src="require('../../assets/images/lavoro.png')" v-else></v-img>
+                <input
+                  type="file"
+                  @change="
+                    filesChange($event.target.name, $event.target.files)
+                    fileCount = $event.target.files.length
+                  "
+                  accept="image/*"
+                  class="input-file"
+                />
               </v-avatar>
             </v-col>
-            <v-col class="align-self-center ">
+            <v-col class="align-self-center">
               <div class="title ellipseText">
                 <b>{{ $record.data.GL_CommittenteDesc }}</b>
               </div>
-              <div class="subtitle-1 ellipseText">
-                {{ $record.data.GL_Descrizione }}
-              </div>
+              <div class="subtitle-1 ellipseText">{{ $record.data.GL_Oggetto }}</div>
             </v-col>
             <v-col cols="auto" class="pb-0">
               <v-row class="pb-0">
@@ -148,13 +153,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            color="green darken-1"
-            text
-            @click="showDialogErrorOpenEditor = false"
-          >
-            OK
-          </v-btn>
+          <v-btn color="green darken-1" text @click="isDialogErrorVisible = false">OK</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -167,9 +166,7 @@
     >
       <v-card>
         <v-card-title>
-          <span class="headline">
-            {{ isAdd ? 'Nuovo lavoro' : 'Modifica lavoro' }}</span
-          >
+          <span class="headline">{{ isAdd ? 'Nuovo lavoro' : 'Modifica lavoro' }}</span>
         </v-card-title>
 
         <v-card-text>
@@ -178,12 +175,8 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="annullaModifiche()"
-            >Annulla</v-btn
-          >
-          <v-btn color="blue darken-1" text @click="salvaModifiche()"
-            >Salva</v-btn
-          >
+          <v-btn color="blue darken-1" text @click="annullaModifiche()">Annulla</v-btn>
+          <v-btn color="blue darken-1" text @click="salvaModifiche()">Salva</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -191,6 +184,13 @@
 </template>
 
 <style scoped>
+.input-file {
+  opacity: 0; /* invisible but it's there! */
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  cursor: pointer;
+}
 .ellipseText {
   white-space: nowrap;
   overflow: hidden;
@@ -210,11 +210,12 @@
 <script>
 import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
 import { appDirImages, fs } from '../../assets/filesystem'
+import { syncStates, internalStates } from '../../store/db'
 
 import Panel from '../Containers/Panel'
 import EmptyList from '../General/EmptyList'
-import DatiAnagrafici from '../GestioneLavori/DatiAnagrafici'
-import DatiAnagraficiEdit from '../GestioneLavori/DatiAnagrafici_Edit'
+import DatiAnagrafici from '../gestione_lavori/DatiAnagrafici'
+import DatiAnagraficiEdit from '../gestione_lavori/DatiAnagrafici_Edit'
 import ListaRilievi from '../GestioneRilievo/listaRilievi'
 const storeName = 'gestione_lavori'
 
@@ -237,27 +238,26 @@ export default {
     }
   },
   computed: {
-    ...mapState(storeName, ['$record']),
-    ...mapGetters(storeName, ['isEdit', 'isAdd', 'isView'])
+    ...mapState(storeName, ['$record', 'ui']),
+    ...mapGetters(storeName, ['isEdit', 'isAdd', 'isView', 'getImg'])
   },
   methods: {
+    ...mapMutations(storeName, ['setEditMode', 'setNewMode', 'setViewMode']),
     openEditForm() {
       // Un nuovo lavoro può essere inserito e modificato anche se offline
       // Ad oggi, se un lavoro è stato sincronizzato, la sua modifica può avvenire solamnte se siamo online
       // Così da evitare conflitti
-      if (this.$record.agileID == null || this.$record.agileID == 0) {
+      if (this.$record.syncStatus == syncStates['NOT_SYNC']) {
         // Lavoro non ancora sincronizzato
         // possiamo manipolarlo come ci pare
-        // Apre la form di modifica
-        this.setEditMode()
+        this.setEditMode() // Apre la form di modifica
       } else {
         // lavoro già sincronizzato
         if (navigator.onLine) {
-          // Lo possiamo modificare / salvare solamente se siamo online
-          // Apre la form di modifica
-          this.setEditMode()
+          // siamo online
+          this.setEditMode() // Apre la form di modifica
         } else {
-          this.isDialogErrorVisible = true
+          this.isDialogErrorVisible = true // mostra messaggio di errore
         }
       }
     },
@@ -273,112 +273,30 @@ export default {
       this.setViewMode()
     },
     async salvaModifiche() {
-      if (this.$record.agileID == null || this.$record.agileID == 0) {
-        // Provvede a salvare il lavoro
-        await this.salvaLavoro({
-          doUpload: true,
-          saveLacalAnyway: true,
-          rawData: false
-        })
-          .then(() => {
-            // Andato a bun fine
-            this.setViewMode()
-          })
+      // Effettua un ulteriore verifica in quanto portebbe essere caduta la connessione
+      if (this.$record.syncStatus == syncStates['NOT_SYNC']) {
+        await this.salvaLavoro() // Provvede a salvare il lavoro
+          .then() // Andato a bun fine
           .catch((err) => {
-            // Errore
-            this.setViewMode()
+            // Errore dobbiamo prevedere una schermata di errore
           })
+
+        this.setViewMode()
       } else {
         // lavoro già sincronizzato
         if (navigator.onLine) {
-          // Parte l'animazione di caricamento
-          console.log('inizio')
-
-          // Prima di salvare delle modifiche in locale dobbiamo inviarle al server
-          await this.salvaLavoro({ toUpload: true, rawData: false })
-
-          console.log('fine')
-
-          // Imposta la modalità di visualizzazione a READONLY
-          this.setViewMode()
+          await this.salvaLavoro() // Prima invia il record al ws poi salva localmente
+          this.setViewMode() // Imposta la modalità di visualizzazione a READONLY
         } else {
-          this.isDialogErrorVisible = true
+          this.isDialogErrorVisible = true // mostra errore
         }
       }
     },
     ...mapActions(storeName, {
       salvaLavoro: 'save',
-      UploadESaveLavoro: 'upload'
+      UploadESaveLavoro: 'upload',
+      aggiungiImmagine: 'addImgPrinc'
     }),
-    ...mapMutations(storeName, [
-      'setEditMode',
-      'setNewMode',
-      'setViewMode',
-      'setAgileID'
-    ]),
-    async old_onEditClick() {
-      // Un nuovo lavoro può essere inserito e modificato anche se offline
-      // Ad oggi, se un lavoro è stato sincronizzato, la sua modifica può avvenire
-      // solamente se siamo online così da evitare conflitti
-      if (this.$record.agileID == null || this.$record.agileID == 0) {
-        // Lavoro non ancora sincronizzato
-        // possiamo manipolarlo come ci pare
-
-        if (this.isView) {
-          // Imposta la modalità di visualizzazione a EDITABLE
-          this.setEditMode()
-        } else {
-          // Provvede a salvare il lavoro
-          await this.salvaLavoro({
-            doUpload: true,
-            saveLacalAnyway: true,
-            rawData: false
-          })
-            .then(() => {
-              // Andato a bun fine
-            })
-            .catch((err) => {
-              // Errore
-            })
-
-          // Imposta la modalità di visualizzazione a READONLY
-          this.setViewMode()
-        }
-      } else {
-        // lavoro già sincronizzato
-        if (navigator.onLine) {
-          // Lo possiamo modificare / salvare solamente se siamo online
-
-          if (this.isView) {
-            // Imposta la modalità di visualizzazione a EDITABLE
-            this.setEditMode()
-          } else {
-            // Parte l'animazione di caricamento
-            console.log('inizio')
-
-            // Prima di salvare delle modifiche in locale dobbiamo inviarle al server
-            await this.salvaLavoro({ toUpload: true, rawData: false })
-
-            // await this.UploadESaveLavoro()
-            // .then((res) => {
-            //   // Lavoro Caricato correttamente
-            // })
-            // .catch((err) => {
-            //   // Qualcosa è andato storto
-            //   console.log(err)
-            // })
-
-            // Termina animazione
-            console.log('fine')
-
-            // Imposta la modalità di visualizzazione a READONLY
-            this.setViewMode()
-          }
-        } else {
-          alert('Quando offline non è possibile modificare un lavoro!')
-        }
-      }
-    },
 
     apriRilievo() {
       const { _id } = this.$record
@@ -415,6 +333,26 @@ export default {
     },
     onSave() {
       this.save().then(this.exit)
+    },
+    filesChange(fieldName, fileList) {
+      if (!fileList.length) return
+      const myFile = fileList[0]
+      this.aggiungiImmagine(myFile)
+    },
+    getImgPric_asURL() {
+      let imgUrl = ''
+      const allegatiDelRecord = this.$record._attachments
+      const fileNameImmagineLavoro = this.$record.data.imgFileName
+      if (allegatiDelRecord && fileNameImmagineLavoro) {
+        if (allegatiDelRecord.hasOwnProperty(fileNameImmagineLavoro)) {
+          const myAllegato = allegatiDelRecord[fileNameImmagineLavoro]
+          if (myAllegato && myAllegato.data) {
+            imgUrl =
+              'data:' + myAllegato.content_type + ';base64,' + myAllegato.data
+          }
+        }
+      }
+      return imgUrl
     }
   },
 

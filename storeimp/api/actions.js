@@ -1,9 +1,13 @@
 import axios from 'axios'
 
 export const notifyError = (err, translate = null) => {
-  let text = 'Error'
+  let text = 'Errore'
   let title = 'Error'
   let type = 'error'
+
+  if (!err.response){
+    return { title, text: 'Errore di connessione al server: nessuna risposta dal server', type }
+  }
 
   if (err.response.data && err.response.data.error_message) {
     text = err.response.data.error_message
@@ -25,7 +29,7 @@ export const notifySuccess = ({ title, text }) => ({
   text,
   type: 'success'
 })
-// export const baseURL = 'https://localhost:44397'
+export const baseURL = 'https://localhost:44397'
 
 // if (Vue.config.performance) {
 //   baseURL = 'https://localhost:44397'
@@ -33,10 +37,10 @@ export const notifySuccess = ({ title, text }) => ({
 //   baseURL = 'https://agile4work.4innovation.srl:1002'
 // }
 
-export const baseURL = 'https://agile4work.4innovation.srl:1002';
+// export const baseURL = 'https://agile4work.4innovation.srl:1002';
 const instance = axios.create({
   baseURL,
-  timeout: 90000,
+  timeout: 180000,
   headers: { 'Content-Type': 'application/json' },
   withCredentials: false
 })
@@ -153,5 +157,73 @@ export const actions = {
         commit('notification', notifyError(err))
         return Promise.reject(err)
       })
+  },
+  postFile(
+    { commit, getters, state, rootState },
+    { url, data, options = {} }
+  ) {
+    commit('isAjax', true)
+    commit('error')
+    commit('hasError')
+    //console.log('---- post', url, data, options)
+
+    if (!options.headers) options.headers = {}
+    if (rootState.auth.token)
+      options.headers['authorization'] = rootState.auth.token
+
+    options.headers['Content-Type'] = 'multipart/form-data'
+    var formData = new FormData()
+    formData.append('file', data.file)
+    formData.append('head', JSON.stringify(data.data))
+    formData.append('filename', data.fileName)
+    console.log(formData)
+    return instance
+      .post(url, formData, options)
+      .then((res) => {
+        commit('isAjax')
+        return res
+      })
+      .catch((err) => {
+        console.log(err)
+        console.log('err', 'post', url)
+        console.log(err.response)
+        commit('isAjax')
+        commit('error', err)
+        commit('hasError', true)
+        commit('notification', notifyError(err))
+        return Promise.reject(err)
+      })
+  },
+  getFile(
+    { commit, getters, state, rootState },
+    { url, options = {} }
+  ) {
+    commit('isAjax', true)
+    commit('error')
+    commit('hasError')
+    //console.log('---- post', url, data, options)
+
+    if (!options.headers) options.headers = {}
+    if (rootState.auth.token)
+      options.headers['authorization'] = rootState.auth.token
+
+    options.responseType = 'blob'
+    return instance
+      .get(url, options)
+      .then((res) => {
+        commit('isAjax')
+        return res
+      })
+      .catch((err) => {
+        console.log(err)
+        console.log('err', 'post', url)
+        console.log(err.response)
+        commit('isAjax')
+        commit('error', err)
+        commit('hasError', true)
+        commit('notification', notifyError(err))
+        return Promise.reject(err)
+      })
   }
+
 }

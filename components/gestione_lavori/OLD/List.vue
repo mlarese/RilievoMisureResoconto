@@ -11,8 +11,8 @@
 
 <script>
 import GridContainer from '../../components/Containers/GridContainer'
-import Grid from '../../components/GestioneLavori/Grid'
-import ListLavori from "../../components/GestioneLavori/Lista"
+import Grid from '../../components/gestione_lavori/Grid'
+import ListLavori from "../../components/gestione_lavori/Lista"
 import { mapState, mapGetters } from 'vuex'
 export default {
   components: { GridContainer, Grid, ListLavori },

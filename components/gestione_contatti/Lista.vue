@@ -34,8 +34,15 @@
           max-height="200"
         >
           <div class="d-flex flex-no-wrap">
-            <v-avatar class="ma-3" size="100" tile>
-              <v-img :src="require('../../assets/images/contact-placeholder.jpg')"></v-img>
+            <v-avatar class="ma-3" size="60" tile>
+              <v-img
+                :src="getImgPric_asURL(item)"
+                v-if="getImgPric_asURL(item)"
+              ></v-img>
+              <v-img
+                :src="require('../../assets/images/contact-placeholder.jpg')"
+                v-else
+              ></v-img>
             </v-avatar>
             <div class="flex-grow-1 flex-shrink-1">
               <v-card-title
@@ -97,6 +104,21 @@ export default {
     },
     openEditForm(id) {
       this.$router.push(`/gestione_contatti/${id}`)
+    },
+    getImgPric_asURL(record) {
+      let imgUrl = ''
+      const allegatiDelRecord = record._attachments
+      const fileNameImmagineLavoro = record.data.imgFileName
+      if (allegatiDelRecord && fileNameImmagineLavoro) {
+        if (allegatiDelRecord.hasOwnProperty(fileNameImmagineLavoro)) {
+          const myAllegato = allegatiDelRecord[fileNameImmagineLavoro]
+          if (myAllegato && myAllegato.data) {
+            imgUrl = URL.createObjectURL(myAllegato.data)
+            // imgUrl = 'data:' + myAllegato.content_type + ';base64,' + myAllegato.data
+          }
+        }
+      }
+      return imgUrl
     }
   }
 }

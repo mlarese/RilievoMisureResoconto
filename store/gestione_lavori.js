@@ -1,23 +1,22 @@
 import _clone from 'lodash/clone'
 import _filter from 'lodash/filter'
 import { v4 as uuidv4 } from 'uuid'
-import { visibleRecord } from './db'
+import { visibleRecord, syncStates, internalStates } from './db'
+import { repoFilename } from '../assets/filters'
 
 const root = { root: true }
 const emptyRecord = () => ({
-  tipo: null,
-  agileID: 0,
   _id: null,
+  tipo: 'LAVORO',
+  syncStatus: syncStates['NOT_SYNC'],
   lastUpdateDate: null,
-  lastUpdateUser: null,
-  insertDate: null,
-  insertUser: null,
   data: {
     GL_CommittenteDesc: null,
-    GL_Descrizione: null,
+    GL_Oggetto: null,
     GL_Indirizzo: null,
     GL_Note: null,
-    isPreferito: false
+    isPreferito: false,
+    imgFileName: null
   }
 })
 
@@ -27,10 +26,11 @@ export const state = () => {
     $record: {
       data: {
         GL_CommittenteDesc: null,
-        GL_Descrizione: null,
+        GL_Oggetto: null,
         GL_Indirizzo: null,
         GL_Note: null,
-        isPreferito: false
+        isPreferito: false,
+        imgFileName: null
       }
     },
     record: {},
@@ -57,107 +57,101 @@ export const actions = {
         return e
       })
   },
-  getById({ dispatch, commit, state }, id) {
+  async getById({ dispatch, commit, state }, id) {
     const table = state.dbName
-    dispatch('db/selectById', { table, id }, root).then((rec) =>
-      commit('setRecord', rec)
-    )
+    const rec = await dispatch('db/selectById', { table, id }, root)
+    commit('setRecord', rec)
   },
-  async upload({ dispatch, commit, state }) {
-    let data = state.$record
-
-    // Prepara l'header da inviare
-    // let header = {
-    //   tipo: 'LAVORO', // tipo(lavoro, contatto, rilievo ...)
-    //   GUID: lavoro._id, //- GUID
-    //   agileID: lavoro.agileID, //- ID di Agile(null se nuovo)
-    //   lastUpdateDate: lavoro.lastUpdateDate, //- data ultima modifica
-    //   lastUpdateUser: lavoro.lastUpdateUser, //- utente ultima modifica
-    //   insertDate: lavoro.insertDate, //- (ev data / utente di inserimento?)
-    //   insertUser: lavoro.insertUser
-    // }
-
-    // let data = {
-    //   header,
-    //   jsonData: JSON.stringify(lavoro)
-    // }
-
-    // const options = {
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Access-Control-Allow-Origin': '*'
-    //   }
-    // }
-
-    const url = '/api/Sincronizza/uploadSingleData'
-
-    // Invia i dati al WS
-    return await dispatch('api/post', { url, data }, { root: true })
-    // .then((res) => {
-    //   console.log(res)
-    //   // Il ws restituisce AgileID
-    //   // lavoro.agileID = res.data
-    //   // commit('gestione_lavori/setRecord', lavoro, { root: true })
-    //   // // Salva il lavoro con i nuovi dati restituiti dal WS
-    //   // dispatch('gestione_lavori/save', {}, { root: true })
-    // })
-    // .catch((e) => {
-    //   throw e
-    // })
-  },
-  async save(
-    { dispatch, commit, state, rootState },
-    { doUpload, saveLacalAnyway, rawData }
-  ) {
+  async save({ dispatch, commit, state, rootState }) {
     const isInsert = !state.$record._id
+    const table = state.dbName
     let actionName = 'db/update'
 
     if (isInsert) {
       actionName = 'db/insertInto'
     }
 
-    // Per rowData si intente la manipolazione di dati base
-    // necessario per un salvataggio as is
-    if (!rawData) {
-      commit('setLastUpdateDate', new Date().toJSON())
-      commit('setLastUpdateUser', rootState.auth.utente)
+    commit('setLastUpdateDate', new Date().toJSON())
+    commit('setLastUpdateUser', rootState.auth.utente)
 
-      if (isInsert) {
-        commit('setLocalID', uuidv4())
-        commit('setInsertDate', new Date().toJSON())
-        commit('setInsertUser', rootState.auth.utente)
+    if (isInsert) {
+      commit('setSyncStatus', syncStates['NOT_SYNC'])
+      commit('setLocalID', uuidv4())
+      commit('setInsertDate', new Date().toJSON())
+      commit('setInsertUser', rootState.auth.utente)
+
+      // Salva localmente
+      const res = await dispatch(actionName, { table, data: state.$record }, root)
+
+      // Recupera il nuov ID e lo imposta
+      commit('setLocalID', res.id)
+
+      // tenta l'upload in background altrimenti sarà caricato durante la sincronizzazione
+      // chiamata async in modo da non bloccare l'utente
+      dispatch('sync/UPLOAD', {
+        table, data: state.$record, callback: () => {
+          console.log('callback')
+          dispatch('getById', state.$record._id), dispatch('load') // ricarica i dati
+        }
+      }, root)
+
+    } else {
+      // Una modifica deve per forza prima essere sincronizzata con il ws
+      // Se tutto va a buon fine provvede a salvarla localmente
+      try {
+        await dispatch('sync/UPLOAD', { table, data: state.$record }, root)
+        await dispatch(actionName, { table, data: state.$record }, root)
+      } catch (error) {
+        console.error()
       }
     }
 
-    if (doUpload) {
-      // Invia i dati al WS
-      await dispatch('upload')
-        .then((res) => {
-          commit('setAgileID', res.data)
-        })
-        .catch((err) => {
-          if (saveLacalAnyway) {
-            // ignora l'errore di connessione per salvare localmente
-            console.log(err)
-          } else {
-            throw err
-          }
-        })
-    }
-
-    // Salva effettivamente su db
-    const table = state.dbName
-    return dispatch(actionName, { table, data: state.$record }, root)
-      .then(() => {
-        // ?????
-        return dispatch('load')
-      })
-      .catch((e) => {
-        console.log(e)
-        return e
-      })
   },
+  async addImgPrinc({ dispatch, commit, state }, file) {
+    const docID = state.$record._id
+    const table = state.dbName
+    const oldFileName = state.$record.data.imgFileName
 
+    // Genera un nuovo filename per la risorsa
+    const newFileName = repoFilename(file.name)
+
+    // Salva fisicamente il file come allegato
+    await dispatch(
+      'db/putAttachment',
+      {
+        table,
+        docID,
+        file,
+        fileName: newFileName
+      },
+      root
+    )
+
+    // Ricarica il record dopo aver salvato l'allegato
+    // (necessario per ottenere la nuova versione del record)
+    await dispatch('getById', docID)
+
+    // Aggiorna il nuovo nome del file
+    let listaRis = []
+    listaRis.push(newFileName)
+
+    // Aggiorna i riferimenti alla risorsa
+    commit('setImgFileName', newFileName)
+    commit('setListaRisorse', listaRis)
+
+    // Salva il documento
+    await dispatch('save', {
+      doUpload: false,
+      saveLacalAnyway: true,
+      rawData: true
+    })
+
+  },
+  async addAllegato({ dispatch, commit, state }, { file, fileName }) {
+    const table = state.dbName
+    const docID = state.$record._id
+    await dispatch('db/putAttachment', { table, docID, file, fileName }, root)
+  },
   safeDelete({ dispatch, commit, state }, rec) {
     const table = state.dbName
     return dispatch('db/safeDelete', { table, data: rec }, root)
@@ -213,9 +207,9 @@ export const mutations = {
     state.record._id = payload
     state.$record._id = payload
   },
-  setAgileID(state, payload = {}) {
-    state.record.agileID = payload
-    state.$record.agileID = payload
+  setSyncStatus(state, payload = {}) {
+    state.record.syncStatus = payload
+    state.$record.syncStatus = payload
   },
   setLastUpdateDate(state, payload = {}) {
     state.record.lastUpdateDate = payload
@@ -247,27 +241,38 @@ export const mutations = {
   },
   setFiltro(state, payload = {}) {
     state.filter = payload
+  },
+  setListaRisorse(state, payload) {
+    state.record.listaRisorse = payload
+    state.$record.listaRisorse = payload
+  },
+  addRisorsa(state, payload) {
+    if (!state.record.listaRisorse) {
+      state.record.listaRisorse = []
+    }
+    state.record.listaRisorse.push(payload)
+    state.$record.listaRisorse = state.record.listaRisorse
+  },
+  setImgFileName(state, payload) {
+    state.record.data.imgFileName = payload
+    state.$record.data.imgFileName = payload
   }
 }
 
 export const getters = {
   noDeletedList: (s) => s.list.filter(visibleRecord),
-
   filteredList: (s) =>
-    _filter(s.list, function(o) {
+    _filter(s.list, function (o) {
       if (s.ui.filter.preferito) {
         /* preferiti */
         if (s.ui.filter.text === null) {
           return o.data.isPreferito === s.ui.filter.preferito
         } else {
           return (
-            (o.data.GL_CommittenteDesc.toLowerCase().includes(
-              s.ui.filter.text.toLowerCase()
-            ) ||
-              o.data.GL_Descrizione.toLowerCase().includes(
-                s.ui.filter.text.toLowerCase()
-              ) ||
-              o.data.GL_Indirizzo.toLowerCase().includes(s.ui.filter.text.toLowerCase())) &&
+            (
+              ((o.data.GL_CommittenteDesc) && o.data.GL_CommittenteDesc.toLowerCase().includes(s.ui.filter.text.toLowerCase())) ||
+              ((o.data.GL_Oggetto) && o.data.GL_Oggetto.toLowerCase().includes(s.ui.filter.text.toLowerCase())) ||
+              ((o.data.GL_Indirizzo) && o.data.GL_Indirizzo.toLowerCase().includes(s.ui.filter.text.toLowerCase()))) &&
             o.data.isPreferito === s.ui.filter.preferito
           )
         }
@@ -280,10 +285,12 @@ export const getters = {
             o.data.GL_CommittenteDesc.toLowerCase().includes(
               s.ui.filter.text.toLowerCase()
             ) ||
-            o.data.GL_Descrizione.toLowerCase().includes(
+            o.data.GL_Oggetto.toLowerCase().includes(
               s.ui.filter.text.toLowerCase()
             ) ||
-            o.data.GL_Indirizzo.toLowerCase().includes(s.ui.filter.text.toLowerCase())
+            o.data.GL_Indirizzo.toLowerCase().includes(
+              s.ui.filter.text.toLowerCase()
+            )
           )
         }
       }

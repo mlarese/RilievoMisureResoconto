@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import ListLavori from '../../components/GestioneLavori/Lista'
+import ListLavori from '../../components/gestione_lavori/Lista'
 
 export default {
   components: {
