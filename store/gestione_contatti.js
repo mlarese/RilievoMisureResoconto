@@ -102,7 +102,7 @@ export const actions = {
       // Una modifica deve per forza prima essere sincronizzata con il ws
       // Se tutto va a buon fine provvede a salvarla localmente
       try {
-        // await dispatch('sync/UPLOAD', { table, data: state.$record }, root)
+        await dispatch('sync/UPLOAD', { table, data: state.$record }, root)
         await dispatch(actionName, { table, data: state.$record }, root)
       } catch (error) {
         console.error()
