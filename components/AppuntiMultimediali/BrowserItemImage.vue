@@ -9,7 +9,7 @@
     </div>
 
   </div>
-</template>
+</template>bkstash
 <script>
 import {appuntimm} from './browsermx'
 let curDate = null
