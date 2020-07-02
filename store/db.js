@@ -91,13 +91,14 @@ export const actions = {
     }
   },
 
-  async getAttachment({ commit, dispatch, rootState }, {table, record, itemName}) {
-    const {_id} = record
+  getAttachment({ commit, dispatch, rootState }, { table, docID, fileName }) {
     const db = new PouchDb(rootState.auth.azienda + '_' + table)
-
-    console.clear()
-    console.log(record, itemName)
-    return db.getAttachment(_id, itemName)
+    return db
+      .getAttachment(docID, fileName)
+      .then((blob) => {
+        return blob
+      })
+      .catch((err) => console.log(err))
   },
   async update(
     { commit, dispatch, rootState },

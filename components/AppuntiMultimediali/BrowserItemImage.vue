@@ -24,6 +24,7 @@ export default {
   },
   methods: {
     async onLoadAttachments (itemName) {
+
       this.getAttachment({record: this.appunto, itemName})
       .then(ret => {
         try {
