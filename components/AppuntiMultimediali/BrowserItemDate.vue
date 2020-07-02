@@ -1,5 +1,5 @@
 <template>
-  <div class="align-center">
+  <div class="text-align-center">
     <v-chip class="ma-2" color="green lighten-4" >
       <div>{{appunto.date | dmy}}</div>
     </v-chip>

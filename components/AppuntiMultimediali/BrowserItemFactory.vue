@@ -1,7 +1,7 @@
 <template>
   <v-card  class="pa-2" _height="200px" rounded >
     <component  :is="currentType" :appunto="appunto" />
-    <div class="caption align-right">
+    <div class="caption text-align-right">
       {{appunto.date | time}}
     </div>
   </v-card>

@@ -24,6 +24,7 @@ export const state = () => {
     record: {},
     dbName,
     ui: {
+      viewerStatus: 'view', //loadimage view
       message: '',
       title: 'Appunti multimediali',
       filter: ''
@@ -32,7 +33,7 @@ export const state = () => {
 }
 export const actions = {
   getAttachment ({ commit, dispatch, state }, {record, itemName}) {
-    return dispatch('db/getAttachment', { table: dbName, record, itemName},{ root: true })
+    return dispatch('db/getAttachment', { table: dbName, docID: record._id, fileName: itemName},{ root: true })
   },
   setDemo ({ commit, dispatch, state }, data) {
     return dispatch('db/bulkInsertInto', { table: dbName, data},{ root: true })
@@ -41,6 +42,18 @@ export const actions = {
     let comment = state.ui.message
     const table = state.dbName
     let data = newRec({...state.lavoroCorrente, note: comment, description: comment})
+    return dispatch('db/insertInto', { table, data}, root)
+      .then(() => {
+        dispatch('load')
+        commit('setMessage')
+      })
+  },
+  addImage ({ commit, dispatch, state }, {note = '', description = '', photo}) {
+    const table = state.dbName
+    let data = newRec({...state.lavoroCorrente, note, description})
+
+    console.dir(photo)
+    return
     return dispatch('db/insertInto', { table, data}, root)
       .then(() => {
         dispatch('load')
@@ -69,6 +82,9 @@ export const actions = {
 }
 
 export const mutations = {
+  setViewerStatusView(state) { state.ui.viewerStatus = 'view' },
+  setViewerStatusLoadImage(state) { state.ui.viewerStatus = 'loadimage' },
+  setViewerStatus(state, payload = 'view') { state.viewerStatus = payload },
   setLavoroCorrente(state, payload = {}) { state.lavoroCorrente = payload },
   setMessage(state, payload = '') { state.ui.message = payload },
   setList(state, payload = []) { state.list = payload },

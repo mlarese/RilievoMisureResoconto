@@ -1,17 +1,17 @@
 <template>
-    <div style="text-align: center">
-
+    <div class="text-align-center">
         <div>Aggiungi Foto</div>
-        <v-layout rows wrap>
-            <v-flex s12 >
+        <v-row>
+            <v-col :cols="12" >
                 <div class="align-center" style="overflow:hidden; margin:auto; padding: 4px; border: 0px solid silver;height:250px;width:300px">
                     <img :src="imgUrl" ref="camimg" style="max-width:90%" />
                 </div>
-            </v-flex>
-        </v-layout>
+            </v-col>
+        </v-row>
 
-        <v-layout rows wrap>
-            <v-flex class="align-center">
+
+        <v-row>
+            <v-col :cols="12" class="text-align-center">
                 <v-btn class="elevation-0" small>
                     <v-icon>mdi-camera</v-icon>
                     <input
@@ -27,8 +27,8 @@
                             ref="inputfile" @change="onImgUploaded" type="file" accept="image/*"  />
                     Carica
                 </v-btn>
-            </v-flex>
-        </v-layout>
+            </v-col>
+        </v-row>
 
     </div>
 </template>

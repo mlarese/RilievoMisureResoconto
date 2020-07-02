@@ -1,5 +1,9 @@
 <template>
-    <v-card class="overflow-hidden" :elevation="0" >
+  <div>
+    <v-card v-if="ui.viewerStatus === 'loadimage'">
+      <BrowserLoadImages />
+    </v-card>
+    <v-card v-if="ui.viewerStatus === 'view'" class="overflow-hidden viewer" :elevation="0" >
 
       <!-- FILTRO -->
       <v-row dense>
@@ -20,10 +24,11 @@
         </v-col>
       </v-row>
     </v-card>
-
+  </div>
 </template>
 
 <script>
+  import BrowserLoadImages from "~/components/AppuntiMultimediali/BrowserLoadImages"
   import BrowserSearch from "~/components/AppuntiMultimediali/BrowserSearch"
   import BrowserInput from "~/components/AppuntiMultimediali/BrowserInput"
   import BrowserView from "~/components/AppuntiMultimediali/BrowserView"
@@ -32,7 +37,7 @@
   export default {
     props: ['job'],
     mixins: [appuntimm],
-    components: {BrowserSearch, BrowserInput, BrowserView},
+    components: {BrowserSearch, BrowserInput, BrowserView, BrowserLoadImages},
     created() {
       this.setLavoroCorrente(this.job)
     }

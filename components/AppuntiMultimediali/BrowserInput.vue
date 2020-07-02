@@ -33,9 +33,8 @@ export default {
     },
     sendOrEdit () {
       if(this.isEmpty) {
-        this.$nextTick(() => {
-          this.$refs.inputRef.$refs.input.focus();
-        });
+        // this.$nextTick(() => {  this.$refs.inputRef.$refs.input.focus();  });
+        this.setViewerStatusLoadImage()
       } else {
         this.addComment()
       }
@@ -49,7 +48,7 @@ export default {
       return false
     },
     icon () {
-      return (this.isEmpty) ? 'edit' : 'send'
+      return (this.isEmpty) ? 'camera_enhance' : 'send'
     }
   }
 }

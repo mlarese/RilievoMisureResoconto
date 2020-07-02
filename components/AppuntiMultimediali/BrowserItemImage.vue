@@ -1,11 +1,10 @@
 <template>
-  <div class="align-center">
+  <div class="text-align-center overflow-x-hidden">
 
-      <div  v-for="(record, itemName) in appunto._attachments">
-        <span v-show="false">{{ onLoadAttachments(itemName) }}</span>
+      <div class="text-align-center">
         <img ref="imageItem" :height="180" :src="image" />
       </div>
-      <div class="caption align-left mt-2">{{appunto.note}}</div>
+      <div class="caption align-left mt-2">{{appunto.description}}</div>
     </div>
 
   </div>
@@ -17,6 +16,12 @@ let curDate = null
 export default {
   mixins: [appuntimm],
   props: ['appunto'],
+  created () {
+    for(let img in this.appunto._attachments) {
+      this.onLoadAttachments(img)
+      break
+    }
+  },
   methods: {
     async onLoadAttachments (itemName) {
       this.getAttachment({record: this.appunto, itemName})

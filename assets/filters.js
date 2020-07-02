@@ -38,7 +38,7 @@ export const dmy = (date) => {
   return formatSt(ldate, 'dd/MM/yyyy')
 }
 
-export const time = (date, pattern='HH:mm') => {
+
 export const currentFullTime = () => {
   return formatSt(new Date(), 'HH:mm:ss') + ' '
 }

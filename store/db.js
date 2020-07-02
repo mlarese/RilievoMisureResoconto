@@ -108,11 +108,6 @@ export const actions = {
     }
   },
 
-  async getAttachment({ commit, dispatch, rootState }, {table, record, itemName}) {
-    const {_id} = record
-    const db = new PouchDb(rootState.auth.azienda + '_' + table)
-    return db.getAttachment(_id, itemName)
-  },
   async update(
     { commit, dispatch, rootState },
     { table, data, options = { force: true }, callback = emptyFn }

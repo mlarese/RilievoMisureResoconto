@@ -111,8 +111,6 @@ export default {
   },
   methods: {
     ...mapActions('gestione_lavori', { caricaLavoro: 'getById' }),
-  methods: {
-    ...mapActions('gestione_lavori', {caricaLavoro: 'getById'} ),
     onAdd() {
       this.$router.push(`/gestione_lavori/add`)
     },

@@ -49,6 +49,8 @@
             </v-btn>
             <v-btn slot="right" @click="syncRisorse"  :disabled="!syncBtnVisible" :loading="synchronizing">
                 <span>risorse</span>
+              <v-icon>mdi-database-sync</v-icon>
+            </v-btn>
               <v-btn slot="right" @click="syncAll"  :disabled="synchronizing" :loading="synchronizing">
                 <span>Sincronizza</span>
                 <v-icon>mdi-database-sync</v-icon>
@@ -71,15 +73,17 @@
   export default {
     components: {Panel},
     methods: {
-      ...mapActions('sync', ['syncAll'])
-      ...mapActions('sync', ['importAll', 'exportAll', 'syncRisorse']),
+      ...mapActions('sync', ['importAll', 'exportAll', 'syncRisorse', 'syncAll']),
       ...mapActions('appuntimm', ['setDemo']),
       syncAppuntiDemo () {
         this.setDemo(appuntimmJson)
       }
     },
     computed: {
-      ...mapState('sync', ['synchronizing', 'syncLog'])
+      ...mapState('sync', ['synchronizing', 'syncLog']),
+      syncBtnVisible () {
+        return true
+      }
     }
   }
 </script>
