@@ -3,7 +3,7 @@ const namespace = 'appuntimm'
 
 export const appuntimm = {
     methods: {
-      ...mapActions(namespace, ['addComment']),
+      ...mapActions(namespace, ['addComment', 'getAttachment']),
       ...mapMutations(namespace, ['setLavoroCorrente'])
     },
     computed: {

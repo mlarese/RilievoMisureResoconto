@@ -31,6 +31,9 @@ export const state = () => {
   }
 }
 export const actions = {
+  getAttachment ({ commit, dispatch, state }, {record, itemName}) {
+    return dispatch('db/getAttachment', { table: dbName, record, itemName},{ root: true })
+  },
   setDemo ({ commit, dispatch, state }, data) {
     return dispatch('db/bulkInsertInto', { table: dbName, data},{ root: true })
   },
