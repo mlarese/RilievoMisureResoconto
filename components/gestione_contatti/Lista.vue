@@ -20,29 +20,11 @@
 
     <!-- LISTA CONTATTI -->
     <v-row dense>
-      <v-col
-        v-for="(item, i) in getfilteredList"
-        :key="i"
-        xs="12"
-        md="6"
-        lg="4"
-      >
-        <v-card
-          color="white"
-          @click="openEditForm(item._id)"
-          min-width="300"
-          max-height="200"
-        >
+      <v-col v-for="(item, i) in getfilteredList" :key="i" xs="12" md="6" lg="4">
+        <v-card color="white" @click="openEditForm(item._id)" min-width="300" max-height="200">
           <div class="d-flex flex-no-wrap">
-            <v-avatar class="ma-3" size="60" tile>
-              <v-img
-                :src="getImgPric_asURL(item)"
-                v-if="getImgPric_asURL(item)"
-              ></v-img>
-              <v-img
-                :src="require('../../assets/images/contact-placeholder.jpg')"
-                v-else
-              ></v-img>
+            <v-avatar class="mt-6 ml-3" size="60" tile>
+              <v-img :src="item.imgURL || require('../../assets/images/contact.jpg')" />
             </v-avatar>
             <div class="flex-grow-1 flex-shrink-1">
               <v-card-title
@@ -60,24 +42,13 @@
               v-if="item.data.isPreferito"
               color="primary"
               class="align-self-end pa-1"
-              >favorite</v-icon
-            >
+            >favorite</v-icon>
           </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
 
-    <v-btn
-      fab
-      color="primary"
-      class="mx-2 mb-12"
-      dark
-      fixed
-      absolute
-      bottom
-      right
-      @click="onAdd"
-    >
+    <v-btn fab color="primary" class="mx-2 mb-12" dark fixed absolute bottom right @click="onAdd">
       <v-icon>mdi-plus</v-icon>
     </v-btn>
   </v-container>
@@ -97,28 +68,37 @@ export default {
     ...mapState('gestione_contatti', { ui: 'ui', listLavori: 'list' }),
     ...mapGetters('gestione_contatti', { getfilteredList: 'filteredList' })
   },
-  methods: {    
-    ...mapActions('gestione_contatti', {caricaLavoro: 'getById'} ),
+  methods: {
+    ...mapActions('gestione_contatti', { caricaLavoro: 'getById' }),
+    ...mapActions('dm_resources', { getRisorsa: 'getById' }),
     onAdd() {
       this.$router.push(`/gestione_contatti/add`)
     },
     openEditForm(id) {
       this.$router.push(`/gestione_contatti/${id}`)
     },
-    getImgPric_asURL(record) {
+    getImgURL(id) {
+      // const allegatiDelRecord = record._attachments
+      // const fileNameImmagineLavoro = record.data.imgFileName
+      // if (allegatiDelRecord && fileNameImmagineLavoro) {
+      //   if (allegatiDelRecord.hasOwnProperty(fileNameImmagineLavoro)) {
+      //     const myAllegato = allegatiDelRecord[fileNameImmagineLavoro]
+      //     if (myAllegato && myAllegato.data) {
+      //       imgUrl = URL.createObjectURL(myAllegato.data)
+      //       // imgUrl = 'data:' + myAllegato.content_type + ';base64,' + myAllegato.data
+      //     }
+      //   }
+      // }
       let imgUrl = ''
-      const allegatiDelRecord = record._attachments
-      const fileNameImmagineLavoro = record.data.imgFileName
-      if (allegatiDelRecord && fileNameImmagineLavoro) {
-        if (allegatiDelRecord.hasOwnProperty(fileNameImmagineLavoro)) {
-          const myAllegato = allegatiDelRecord[fileNameImmagineLavoro]
-          if (myAllegato && myAllegato.data) {
-            imgUrl = URL.createObjectURL(myAllegato.data)
-            // imgUrl = 'data:' + myAllegato.content_type + ';base64,' + myAllegato.data
-          }
-        }
-      }
-      return imgUrl
+      // if (id) {
+      //   this.getRisorsa(id).then((blob) => {
+      //     if (blob) {
+      //       imgUrl = URL.createObjectURL(blob)
+      //       return imgUrl
+      //     }
+      //   })
+      // }
+      // return imgUrl
     }
   }
 }

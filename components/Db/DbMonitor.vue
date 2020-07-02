@@ -20,7 +20,7 @@
 
       </v-flex>-->
       <v-flex xs12>
-        <v-textarea v-model="syncLog" label="Log" dense readonly />
+        <v-textarea reverse v-model="syncLog" label="Log" dense readonly />
       </v-flex>
       <v-flex>
         <v-btn slot="right" @click="syncAll" :disabled="synchronizing" :loading="synchronizing">

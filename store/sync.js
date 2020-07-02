@@ -6,7 +6,9 @@ const root = { root: true }
 export const state = () => {
   return {
     synchronized: false, // la app sta sincronizzando i dati
-    syncLog: ''
+    syncLog: '',
+    listaOggettiLocali: [],
+    listaRisorseLocali: []
   }
 }
 
@@ -34,31 +36,48 @@ export const actions = {
       commit('setSynchronizing', true)
       commit('newLog', 'Inizio sincronizzazione')
 
+      commit('logMe', 'Carica le risorse locali')
+      const risorseLocali = await dispatch('dm_resources/load', {}, root)
+      commit('logMe', `Ottenute ${risorseLocali.length} risorse locali`)
+
+      if (!risorseLocali) risorseLocali = []
+      commit('setListaRisorseLocali', risorseLocali)
+
       // Crea la lista di tutti gli oggetti da inviare al WS
       commit('logMe', 'Ottenimento oggetti locali')
-      var listaOggettiLocali = await dispatch('getElencoOggettiLocali')
+      const listaOggettiLocali = await dispatch('getElencoOggettiLocali')
       commit('logMe', `Ottenuti ${listaOggettiLocali.length} oggetti locali`)
+
+      if (!listaOggettiLocali) listaOggettiLocali = []
+      commit('setListaOggettiLocali', listaOggettiLocali)
 
       var listaDaInviare = []
       // Preleva solamente l'header
-      // ottimizzato nel caso di nuovi oggetti: invia subito i dati (senza files)
+      // TODO ottimizzato nel caso di nuovi oggetti: invia subito i dati (senza files)
       listaOggettiLocali.forEach((obj) => {
 
         // la lista delle risorse potrebbe trarre in inganno
         // rappresenta la lista delle risorse necessarie 
         // e non quelle effettivamente sincronizzate
+        // al ws inviamo invece la lista dlle risorse effettive
+        // Così se ne mancano ce lo dice
         var risorseEffettive = []
         if (obj.listaRisorse) {
-          obj.listaRisorse.forEach((res) => {
-            if (obj._attachments && Object.keys(obj._attachments).includes(res))
-              risorseEffettive.push(res)
-          })
+          if (risorseLocali) {
+            obj.listaRisorse.forEach((res) => {
+              risorseLocali.forEach((element) => {
+                if (element._id == res) {
+                  risorseEffettive.push(res)
+                }
+              })
+            })
+          }
         }
 
         let objToSend = {
           _id: obj._id,
           tipo: obj.tipo,
-          lastUpdateDate: obj.lastUpdateDate,
+          lastUpdate_UTCDate: obj.lastUpdate_UTCDate,
           listaRisorse: risorseEffettive
         }
 
@@ -124,10 +143,6 @@ export const actions = {
         commit('logMe', `---> Lettura dell'oggetto locale da db`)
         localDoc = await dispatch('db/selectById', { table, id: docID }, root)
 
-        // Aggiorna il record con i dati interni
-        if (localDoc._attachments)
-          remoteDoc._attachments = localDoc._attachments
-
         // Aggiorna il record
         commit('logMe', `---> Aaggiornamento dell'oggetto locale nel db`)
         await dispatch('db/update', { table, data: remoteDoc }, root)
@@ -142,27 +157,28 @@ export const actions = {
       }
       // Imposta il flag come dato parziale
       // verrà reimpostato quando saranno sincronizzate tutte le risorse
-      // await dispatch('db/selectById', { table, id: docID }, root)
 
       // Verifica se sono presenti tutte le risorse
-      if (remoteDoc.listaRisorse) {
+      if (remoteDoc.listaRisorse && remoteDoc.listaRisorse.length > 0) {
         for (var fileName of remoteDoc.listaRisorse) {
-          if (remoteDoc._attachments) {
-            if (remoteDoc._attachments.hasOwnProperty(fileName)) {
-              const myAllegato = remoteDoc._attachments[fileName]
-              if (myAllegato && myAllegato.data) {
-                // risorsa già presente
-                continue
-              }
+          if (!fileName) continue
+
+          let risorsaPresente = false
+          for (var element of state.listaRisorseLocali) {
+            if (element._id == fileName) {
+              // presente
+              risorsaPresente = true
             }
           }
+          if (risorsaPresente) continue
+
           commit('logMe', `--->> Inizio DOWNLOAD risorsa  ${fileName}`)
           var urlGet = `/api/sincronizza/downloadSingleRes?fileName=${fileName}`
           var responseFile = await dispatch('api/getFile', { url: urlGet }, root)
           var file = responseFile.data
 
           commit('logMe', `--->> Salvataggio locale della risorsa`)
-          await dispatch('db/putAttachment', { table, docID, file, fileName }, root)
+          await dispatch('dm_resources/save', { id: fileName, file }, root)
         }
       }
 
@@ -194,14 +210,10 @@ export const actions = {
         commit('logMe', `---> Lettura oggetto locale`)
         localDoc = await dispatch('db/selectById', { table, id: docID }, root)
       }
-      // Attenzione: localDoc contiene sia la lista di attachment sia i file
-      // Per mantenere l'invio leggero vengono tolti
-      let docToSend = _clone(localDoc)
-      delete docToSend._attachments
 
       // Carica l'oggetto nel cloud
       commit('logMe', `---> Invio oggetto al ws`)
-      const response = await dispatch('api/post', { url, data: docToSend }, root)
+      const response = await dispatch('api/post', { url, data: localDoc }, root)
 
       // I dati sono stati caaricati correttamente
       // Viene salvato il record come parzialmente sincronizzato
@@ -213,7 +225,7 @@ export const actions = {
         for (var fileName of response.data) {
 
           commit('logMe', `--->> Lettura della risorsa localmente - ${fileName}`)
-          const file = await dispatch('db/getAttachment', { table, docID, fileName }, root)
+          const file = await dispatch('dm_resources/getById', fileName, root)
 
           commit('logMe', `--->> Invio al ws della risorsa`)
           const responseFile = await dispatch('api/postFile', { url: urlFile, data: { data, file, fileName } }, root)
@@ -241,10 +253,10 @@ export const actions = {
   async randomInsert({ dispatch, commit, state }) {
     const table = 'contatti'
     let fileName = ''
-    var passi;
-    for (passi = 0; passi < 100; passi++) {
-      
-      var url = `https://picsum.photos/600`
+    var i;
+    for (i = 0; i < 10; i++) {
+      let passi = Math.floor(Math.random() * 100) + 100;
+      var url = `https://picsum.photos/1000`
       var responseFile = await dispatch('api/getFile', { url }, root)
       fileName = `randomFile${passi}`
 
@@ -252,7 +264,7 @@ export const actions = {
         _id: null,
         tipo: 'CONTATTO',
         syncStatus: syncStates['NOT_SYNC'],
-        lastUpdateDate: null,
+        lastUpdate_UTCDate: new Date(),
         data: {
           CONDescrizione: `random contact ${passi}`,
           CONIndirizzo: `random indirizzo ${passi}`,
@@ -266,15 +278,20 @@ export const actions = {
 
       let res = await dispatch('db/insertInto', { table, data }, root)
 
-
       var file = responseFile.data
-      await dispatch('db/putAttachment', { table, docID: res.id, file, fileName }, root)
+      await dispatch('dm_resources/save', { id: fileName, file }, root)
     }
 
   }
 }
 
 export const mutations = {
+  setListaRisorseLocali(s, p) {
+    s.listaRisorseLocali = p
+  },
+  setListaOggettiLocali(s, p) {
+    s.listaOggettiLocali = p
+  },
   newLog(s, p) {
     s.syncLog = ''
     s.syncLog = p
