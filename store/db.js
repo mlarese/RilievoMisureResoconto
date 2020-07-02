@@ -91,7 +91,18 @@ export const actions = {
     }
   },
 
-  async update({ rootState }, { table, data, options = { force: true } }) {
+  async getAttachment({ commit, dispatch, rootState }, {table, record, itemName}) {
+    const {_id} = record
+    const db = new PouchDb(rootState.auth.azienda + '_' + table)
+
+    console.clear()
+    console.log(record, itemName)
+    return db.getAttachment(_id, itemName)
+  },
+  async update(
+    { commit, dispatch, rootState },
+    { table, data, options = { force: true }, callback = emptyFn }
+  ) {
     if (!data.internalStatus) Vue.set(data, 'internalStatus', 'updated')
     const db = new PouchDb(rootState.auth.azienda + '_' + table)
     const doc = await db.get(data._id)
