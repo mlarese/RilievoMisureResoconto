@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import Form from '../../components/GestioneLavori/Form'
+import Form from '../../components/GestioneLavori/FormLavori'
 
 export default {
   layout: 'fullPage',
@@ -11,7 +11,7 @@ export default {
     Form
   },
   fetch({ store, params }) {
-    store.commit('gestione_lavori/setEditMode', { root: true })
+    store.commit('gestione_lavori/setNewMode', { root: true })
     store.commit('gestione_lavori/resetRecord', null, { root: true })
   }
 }

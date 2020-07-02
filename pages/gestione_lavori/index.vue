@@ -11,8 +11,14 @@ export default {
   components: {
     ListLavori
   },
-  fetch({ store }) {
-    store.dispatch('gestione_lavori/load', {}, { root: true })
+  async fetch({ store }) {
+    // store.dispatch('gestione_lavori/load', {}, { root: true })
+
+    const all = [
+      store.dispatch('gestione_lavori/load', {}, { root: true })
+    ]
+
+    await Promise.all(all)
   }
 }
 </script>

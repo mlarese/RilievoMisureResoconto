@@ -6,6 +6,7 @@ import { mapState } from 'vuex'
 export const dbList = []
 export const systemDBList = {
   auth: new PouchDb('auth'), //DB di sistema - contiene l'utente attualmente loggato, NON dipende da azienda
+  appuntimm: new PouchDb('appuntimm'),
   // lavori: new PouchDb('lavori'),
   // allegati: new PouchDb('allegati'),
   // rilievi: new PouchDb('rilievi'),
@@ -80,6 +81,11 @@ export const actions = {
     }
   },
 
+  async getAttachment({ commit, dispatch, rootState }, {table, record, itemName}) {
+    const {_id} = record
+    const db = new PouchDb(rootState.auth.azienda + '_' + table)
+    return db.getAttachment(_id, itemName)
+  },
   async update(
     { commit, dispatch, rootState },
     { table, data, options = { force: true }, callback = emptyFn }
@@ -147,7 +153,7 @@ export const actions = {
     const db = new PouchDb(rootState.auth.azienda + '_' + table)
     return db.remove(data, options, callback)
   },
-  async delete_system( { commit, dispatch }, { table, data, options = null, callback = emptyFn }) 
+  async delete_system( { commit, dispatch }, { table, data, options = null, callback = emptyFn })
   {
     console.log(table, data)
     const db = new PouchDb(table)

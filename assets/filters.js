@@ -38,7 +38,7 @@ export const dmy = (date) => {
   return formatSt(ldate, 'dd/MM/yyyy')
 }
 
-export const time = (date, pattern='HH:mm:ss') => {
+export const time = (date, pattern='HH:mm') => {
   if (!date) return ''
   let ldate = null
 

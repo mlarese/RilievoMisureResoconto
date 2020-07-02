@@ -3,6 +3,7 @@
     <v-layout rows wrap>
       <v-flex s6>
         <DbMonitor />
+
         <pre v-if="false">
            {{errors}}
         </pre>
@@ -17,7 +18,6 @@ import { fs, previewFile } from '../assets/filesystem'
 import { mapState } from 'vuex'
 export default {
   components: { DbMonitor },
-  methods: {},
   data() {
     return {}
   },

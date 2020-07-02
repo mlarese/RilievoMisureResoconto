@@ -90,7 +90,7 @@ export default {
     ...mapState('gestione_contatti', { ui: 'ui', listLavori: 'list' }),
     ...mapGetters('gestione_contatti', { getfilteredList: 'filteredList' })
   },
-  methods: {    
+  methods: {
     ...mapActions('gestione_contatti', {caricaLavoro: 'getById'} ),
     onAdd() {
       this.$router.push(`/gestione_contatti/add`)

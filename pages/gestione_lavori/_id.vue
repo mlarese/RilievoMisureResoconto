@@ -10,6 +10,7 @@ export default {
     Form
   },
   fetch({ store, params }) {
+    console.dir(arguments)
     store.commit('gestione_lavori/setViewMode', { root: true })
     store.dispatch('gestione_lavori/getById', params.id, { root: true })
   }

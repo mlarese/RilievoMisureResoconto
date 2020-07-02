@@ -25,10 +25,20 @@
 
             </v-flex>
             <v-flex>
-              <v-btn slot="right" @click="importAll"  :disabled="!syncBtnVisible" :loading="synchronizing">
-                <span>download</span>
-                <v-icon>mdi-database-sync</v-icon>
-            </v-btn>
+
+
+              <v-tooltip top>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    v-bind="attrs"
+                    v-on="on"
+                    @click="importAll"  :disabled="!syncBtnVisible" :loading="synchronizing">
+                    <span>download</span>
+                    <v-icon>mdi-database-sync</v-icon>
+                  </v-btn>
+                </template>
+                <span>Download dei dati da server</span>
+              </v-tooltip>
 
             <v-btn slot="right" @click="exportAll"  :disabled="!syncBtnVisible" :loading="synchronizing">
                 <span>upload</span>
@@ -38,6 +48,12 @@
                 <span>risorse</span>
                 <v-icon>mdi-database-sync</v-icon>
             </v-btn>
+
+              <v-btn slot="right" @click="syncAppuntiDemo"  :disabled="!syncBtnVisible" :loading="synchronizing">
+                <span>appunti demo</span>
+                <v-icon>mdi-database-sync</v-icon>
+              </v-btn>
+
             </v-flex>
         </v-layout>
     </v-card>
@@ -46,11 +62,15 @@
 <script>
   import {mapGetters, mapState, mapActions} from 'vuex'
   import Panel from '../Containers/Panel'
-
+  import appuntimmJson from '../../storeimp/fixtures/appuntimm.json'
   export default {
     components: {Panel},
     methods: {
-      ...mapActions('sync', ['importAll', 'exportAll', 'syncRisorse'])
+      ...mapActions('sync', ['importAll', 'exportAll', 'syncRisorse']),
+      ...mapActions('appuntimm', ['setDemo']),
+      syncAppuntiDemo () {
+        this.setDemo(appuntimmJson)
+      }
     },
     computed: {
       ...mapState('sync', ['updatingStatus', 'statusUpdated', 'dbStatus', 'synchronized', 'synchronizing']),

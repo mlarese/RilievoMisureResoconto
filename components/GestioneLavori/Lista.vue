@@ -99,7 +99,7 @@ export default {
     ...mapState('gestione_lavori', { ui: 'ui', listLavori: 'list' }),
     ...mapGetters('gestione_lavori', { getfilteredList: 'filteredList' })
   },
-  methods: {    
+  methods: {
     ...mapActions('gestione_lavori', {caricaLavoro: 'getById'} ),
     onAdd() {
       this.$router.push(`/gestione_lavori/add`)

@@ -60,17 +60,17 @@ export const actions = {
         if (apiResponse.data == null || apiResponse.data.lengh == 0) {
           // Sul server non sono presenti dati da scaricare
         }
- 
+
         // Ha ricevuto gli header
         apiResponse.data.forEach((remote) => {
           // Differenzia in funzione del tipo
           let tableName
           switch (remote.tipo){
             case "LAVORO":
-              tableName = 'lavori'              
+              tableName = 'lavori'
               break;
             case "CATALOGO":
-              tableName = 'cataloghi'              
+              tableName = 'cataloghi'
               break;
             }
 
@@ -80,7 +80,7 @@ export const actions = {
               // Record trovato
               // Verifica se la data di ogni singolo remote è maggiore di quella memorizzata
               if (Date.parse(remote.lastUpdateDate) > Date.parse(res.lastUpdateDate)) {
-                // Importante per il DB per capire di quale revione stiamo parlando 
+                // Importante per il DB per capire di quale revione stiamo parlando
                 remote._rev = res._rev
                 // Record da aggiornare
                 dispatch('db/update', { table: tableName, data: remote },{ root: true })
@@ -113,7 +113,7 @@ export const actions = {
         })
       })
       .catch((err) => {
-        // Errore durante la chiamata al server 
+        // Errore durante la chiamata al server
         console.log(err)
       })
 
@@ -138,13 +138,19 @@ export const actions = {
         // Invia solamente i lavori che non hanno AgileID
         //  in quanto le modifiche su lavori già sincronizzati
         //  vengono direttamente caricare sul server
-        if (lavoro.agileID == 0){         
+        if (lavoro.agileID == 0){
           // Imposta il record dell'attuale lavoro
           commit('gestione_lavori/setRecord', lavoro, { root: true })
           // Invia il lavoro al ws e lo salva (senza aggiungere data e use ultima modifica )
           dispatch('gestione_lavori/save', {doUpload: true, saveLacalAnyway: false, rawData: true}, { root: true })
         }
       })
+    })
+  },
+  syncAppunti({ commit, dispatch }, listaAppunti){
+    // Carica gli appunti
+    listaAppunti.forEach((appunto) => {
+      dispatch('appunti/update', appunto, {root: true})
     })
   },
   syncRisorse({ commit, dispatch }){
@@ -176,8 +182,8 @@ export const actions = {
           })
           .catch((err) => {
             if (err.status && err.status === 404) {
-              // Risorsa non presente localmente, si deve scaricare             
-              dispatch('resourceManager/update', { risorsa: risorsaNecessaria }, { root: true})              
+              // Risorsa non presente localmente, si deve scaricare
+              dispatch('resourceManager/update', { risorsa: risorsaNecessaria }, { root: true})
             }else{
               throw err
             }
@@ -222,7 +228,7 @@ export const actions = {
   //           'Content-Type': 'application/json'
   //         }
   //       }
-    
+
   //       const url = '/api/Sincronizza/uploadSingleData'
 
   //   return dispatch('api/post', { url, data, options }, { root: true })
@@ -237,8 +243,8 @@ export const actions = {
   //     })
   // },
 
-  
-  
+
+
 }
 
 export const mutations = {
