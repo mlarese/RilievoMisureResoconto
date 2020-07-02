@@ -5,7 +5,7 @@ export const notifyError = (err, translate = null) => {
   let title = 'Error'
   let type = 'error'
 
-  if (!err.response){
+  if (!err.response) {
     return { title, text: 'Errore di connessione al server: nessuna risposta dal server', type }
   }
 
@@ -29,15 +29,15 @@ export const notifySuccess = ({ title, text }) => ({
   text,
   type: 'success'
 })
-export const baseURL = 'https://localhost:44397'
 
-// if (Vue.config.performance) {
-//   baseURL = 'https://localhost:44397'
-// } else {
-//   baseURL = 'https://agile4work.4innovation.srl:1002'
-// }
+export const baseURL = (() => {
+  if (process.env.NODE_ENV === 'production') {
+    return 'https://agile4work.4innovation.srl:1002'
+  } else {
+    return 'https://localhost:44397'
+  }
+})()
 
-// export const baseURL = 'https://agile4work.4innovation.srl:1002';
 const instance = axios.create({
   baseURL,
   timeout: 180000,

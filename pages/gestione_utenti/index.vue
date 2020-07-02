@@ -1,8 +1,6 @@
 <template>
   <div>
-    <v-container>
-      <ListaUtenti :utenti="utenti" />
-    </v-container>
+    <ListaUtenti :utenti="utenti" />
   </div>
 </template>
 
@@ -10,6 +8,7 @@
 import ListaUtenti from '../../components/gestione_utenti/Lista'
 
 export default {
+  layout: 'fullPage',
   components: {
     ListaUtenti
   },

@@ -1,6 +1,5 @@
 import _clone from 'lodash/clone'
 import _filter from 'lodash/filter'
-import { v4 as uuidv4 } from 'uuid'
 import { visibleRecord, syncStates, internalStates } from './db'
 import { repoFilename } from '../assets/filters'
 
@@ -9,7 +8,7 @@ const emptyRecord = () => ({
   _id: null,
   tipo: 'LAVORO',
   syncStatus: syncStates['NOT_SYNC'],
-  lastUpdateDate: null,
+  lastUpdate_UTCDate: null,
   data: {
     GL_CommittenteDesc: null,
     GL_Oggetto: null,
@@ -71,12 +70,11 @@ export const actions = {
       actionName = 'db/insertInto'
     }
 
-    commit('setLastUpdateDate', new Date().toJSON())
+    commit('setLastUpdate_UTCDate', new Date().toJSON())
     commit('setLastUpdateUser', rootState.auth.utente)
 
     if (isInsert) {
       commit('setSyncStatus', syncStates['NOT_SYNC'])
-      commit('setLocalID', uuidv4())
       commit('setInsertDate', new Date().toJSON())
       commit('setInsertUser', rootState.auth.utente)
 
@@ -110,47 +108,23 @@ export const actions = {
   async addImgPrinc({ dispatch, commit, state }, file) {
     const docID = state.$record._id
     const table = state.dbName
-    const oldFileName = state.$record.data.imgFileName
 
     // Genera un nuovo filename per la risorsa
-    const newFileName = repoFilename(file.name)
+    const fileName = repoFilename(file.name)
 
-    // Salva fisicamente il file come allegato
-    await dispatch(
-      'db/putAttachment',
-      {
-        table,
-        docID,
-        file,
-        fileName: newFileName
-      },
-      root
-    )
-
-    // Ricarica il record dopo aver salvato l'allegato
-    // (necessario per ottenere la nuova versione del record)
-    await dispatch('getById', docID)
+    // Salva fisicamente il file come risorsa
+    await dispatch('dm_resources/save', { id: fileName, file }, root)
 
     // Aggiorna il nuovo nome del file
-    let listaRis = []
-    listaRis.push(newFileName)
+    let listaRis = [fileName]
 
     // Aggiorna i riferimenti alla risorsa
-    commit('setImgFileName', newFileName)
+    commit('setImgFileName', fileName)
     commit('setListaRisorse', listaRis)
 
     // Salva il documento
-    await dispatch('save', {
-      doUpload: false,
-      saveLacalAnyway: true,
-      rawData: true
-    })
+    await dispatch('save')
 
-  },
-  async addAllegato({ dispatch, commit, state }, { file, fileName }) {
-    const table = state.dbName
-    const docID = state.$record._id
-    await dispatch('db/putAttachment', { table, docID, file, fileName }, root)
   },
   safeDelete({ dispatch, commit, state }, rec) {
     const table = state.dbName
@@ -211,9 +185,9 @@ export const mutations = {
     state.record.syncStatus = payload
     state.$record.syncStatus = payload
   },
-  setLastUpdateDate(state, payload = {}) {
-    state.record.lastUpdateDate = payload
-    state.$record.lastUpdateDate = payload
+  setLastUpdate_UTCDate(state, payload = {}) {
+    state.record.lastUpdate_UTCDate = payload
+    state.$record.lastUpdate_UTCDate = payload
   },
   setLastUpdateUser(state, payload = {}) {
     state.record.lastUpdateUser = payload

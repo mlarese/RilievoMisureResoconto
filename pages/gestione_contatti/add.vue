@@ -11,7 +11,7 @@ export default {
     Form
   },
   fetch({ store, params }) {
-    store.commit('gestione_contatti/setEditMode', { root: true })
+    store.commit('gestione_contatti/setNewMode', { root: true })
     store.commit('gestione_contatti/resetRecord', null, { root: true })
   }
 }

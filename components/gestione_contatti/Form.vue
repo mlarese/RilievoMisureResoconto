@@ -6,7 +6,7 @@
           <v-row no-gutters>
             <v-col cols="2">
               <v-avatar size="40">
-                <v-img :src="require('../../assets/images/contact-placeholder.jpg')"></v-img>
+                <v-img :src="require('../../assets/images/contact.jpg')"></v-img>
               </v-avatar>
             </v-col>
             <v-col cols="10">
@@ -34,8 +34,7 @@
           <v-row class="mx-2">
             <v-col cols="auto">
               <v-avatar size="75" class="pb-0">
-                <v-img :src="getImgPric_asURL()" v-if="getImgPric_asURL()"></v-img>
-                <v-img :src="require('../../assets/images/contact-placeholder.jpg')" v-else></v-img>
+                <v-img :src="getImgPric_asURL()" ></v-img>
                 <input
                   type="file"
                   @change="
@@ -220,6 +219,11 @@ export default {
     ...mapGetters(storeName, ['isEdit', 'isAdd', 'isView'])
   },
   methods: {
+    ...mapActions('dm_resources', { getRisorsa: 'getById' }),
+    ...mapActions(storeName, {
+      salvaRecord: 'save',
+      aggiungiImmagine: 'addImgPrinc'
+    }),
     openEditForm() {
       // Un nuovo record può essere inserito e modificato anche se offline
       // Ad oggi, se un record è stato sincronizzato, la sua modifica può avvenire solamnte se siamo online
@@ -274,10 +278,6 @@ export default {
         }
       }
     },
-    ...mapActions(storeName, {
-      salvaRecord: 'save',
-      aggiungiImmagine: 'addImgPrinc'
-    }),
     ...mapMutations(storeName, ['setEditMode', 'setNewMode', 'setViewMode']),
 
     exit() {
@@ -289,19 +289,30 @@ export default {
       this.aggiungiImmagine(myFile)
     },
     getImgPric_asURL() {
-      let imgUrl = ''
-      const allegatiDelRecord = this.$record._attachments
-      const fileNameImmagineLavoro = this.$record.data.imgFileName
-      if (allegatiDelRecord && fileNameImmagineLavoro) {
-        if (allegatiDelRecord.hasOwnProperty(fileNameImmagineLavoro)) {
-          const myAllegato = allegatiDelRecord[fileNameImmagineLavoro]
-          if (myAllegato && myAllegato.data) {
-            imgUrl =
-              'data:' + myAllegato.content_type + ';base64,' + myAllegato.data
-          }
-        }
+      // let imgUrl = ''
+      // const allegatiDelRecord = this.$record._attachments
+      // const fileNameImmagineLavoro = this.$record.data.imgFileName
+      // if (allegatiDelRecord && fileNameImmagineLavoro) {
+      //   if (allegatiDelRecord.hasOwnProperty(fileNameImmagineLavoro)) {
+      //     const myAllegato = allegatiDelRecord[fileNameImmagineLavoro]
+      //     if (myAllegato && myAllegato.data) {
+      //       imgUrl =
+      //         'data:' + myAllegato.content_type + ';base64,' + myAllegato.data
+      //     }
+      //   }
+      // }
+      // return imgUrl
+      const id = this.$record.data.imgFileName
+      if (id) {
+        this.getRisorsa(id)
+          .then((blob) => {
+            if (blob) {
+              let imgUrl = ''
+              imgUrl = URL.createObjectURL(blob)
+              return imgUrl
+            }
+          })
       }
-      return imgUrl
     }
   },
 
