@@ -7,7 +7,7 @@ export const appuntimm = {
       ...mapMutations(namespace, ['setLavoroCorrente', 'setViewerStatusLoadImage', 'setViewerStatusView'])
     },
     computed: {
-      ...mapGetters(namespace, ['appuntiByDate']),
+      ...mapGetters(namespace, ['appuntiByDate', 'appuntiFiltered']),
       ...mapState(namespace, ['ui', 'lavoroCorrente', 'viewerStatus']),
       ...mapState(namespace, {'appuntiList': 'list'})
     }

@@ -11,10 +11,11 @@ body{
 .overflow-x-hidden { overflow-x: hidden;}
 .overflow-y-hidden { overflow-y: hidden;}
 
-.align-left {
-  text-align: left;
-}
+.align-left {text-align: left;}
+
+.text--grey {color: grey;}
 
 .text-align-left {   text-align: left; }
 .text-align-center {   text-align: center; }
 .text-align-right {   text-align: right; }
+

@@ -53,6 +53,8 @@
       </slot>
       <v-spacer />
       <slot name="header-right">
+        <portal-target name="app-bar-right"> </portal-target>
+
         <v-badge
           v-if="isBadgeMessageVisibile"
           :content="countMessages"
@@ -60,22 +62,24 @@
           color="primary"
           medium
           overlap
-          class="ma-4"
+          class="ml-0 mr-1"
         >
           <v-icon medium>mdi-email</v-icon>
         </v-badge>
-        <v-avatar color="primary" class="ma-4" size="36px" @click="openProfile">
+        <v-avatar color="primary" class="ma-0" size="36px" @click="openProfile">
           <v-icon dark>person</v-icon>
         </v-avatar>
       </slot>
       <template v-slot:extension v-if="$vuetify.breakpoint.xsOnly">
-        <v-tabs v-model="tab" fixed-tabs>
-          <v-tabs-slider color="accent"></v-tabs-slider>
-          <v-tab v-for="(item, i) in getMenuItems_Tab" :key="i" :to="item.to">
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-tab>
-        </v-tabs>
+
+          <v-tabs v-model="tab" fixed-tabs>
+            <v-tabs-slider color="accent"></v-tabs-slider>
+            <v-tab v-for="(item, i) in getMenuItems_Tab" :key="i" :to="item.to">
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-tab>
+          </v-tabs>
       </template>
+
     </v-app-bar>
 
     <v-tabs-items v-model="tab" @change="tabChanged" v-if="$vuetify.breakpoint.xsOnly">

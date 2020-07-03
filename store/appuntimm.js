@@ -1,5 +1,6 @@
 import _clone from 'lodash/clone'
 import _orderBy from 'lodash/orderBy'
+import _isNumber from 'lodash/isNumber'
 import _dateFormat from 'date-fns/format'
 const root = { root: true }
 
@@ -95,6 +96,50 @@ export const mutations = {
 }
 
 export const getters = {
-  appuntiFiltered: (s, g) => _orderBy(s.list, 'date'),
-  appuntiByDate: (s, g) => _orderBy(s.list, 'date')
+  appuntiFiltered: (s, g) => {
+    if(s.ui.filter === null || s.ui.filter === '' ) return g.appuntiByDate
+    let dateFilter = null
+    let textFilter = null
+
+    if(s.ui.filter.includes('/')) {
+      let aDateFilter = s.ui.filter.split('/')
+
+      if(aDateFilter.length === 2) {
+        if(s.ui.filter.includes(' ')) {
+          let af = aDateFilter[1].split(' ')
+          textFilter = af[1]
+          aDateFilter[1] = af[0]
+        }
+        dateFilter = aDateFilter[1] + '-' + aDateFilter[0]
+      }
+
+      else if(aDateFilter.length === 3) {
+        if(s.ui.filter.includes(' ')) {
+          let af = aDateFilter[2].split(' ')
+          textFilter = af[1]
+          aDateFilter[2] = af[0]
+        }
+        dateFilter = aDateFilter[2] + '-' + aDateFilter[1] + '-' + aDateFilter[0]
+      }
+    } else {
+      if(_isNumber(s.ui.filter * 0))
+        dateFilter = s.ui.filter
+      else
+        textFilter = s.ui.filter
+    }
+
+    // console.log('---- dateFilter ',dateFilter)
+    // console.log('---- textFilter ',textFilter)
+
+    return g.appuntiByDate.filter(o => {
+      let dateBool = true
+      let textBool = true
+
+      if(dateFilter !== null) dateBool = o.date.includes(dateFilter)
+      if(textFilter !== null) textBool =  (o.note.includes(textFilter) || o.description.includes(textFilter))
+
+      return (dateBool && textBool)
+    })
+  },
+  appuntiByDate: (s, g) => _orderBy(s.list.filter(o => o.job_id === s.lavoroCorrente.job_id), 'date')
 }

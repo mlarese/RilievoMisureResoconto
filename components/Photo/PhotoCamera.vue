@@ -9,7 +9,6 @@
             </v-col>
         </v-row>
 
-
         <v-row>
             <v-col :cols="12" class="text-align-center">
                 <v-btn class="elevation-0" small>

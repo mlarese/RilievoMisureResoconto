@@ -1,6 +1,6 @@
 <template>
   <span>
-    {{appunto.note}}
+    {{appunto.description}}
   </span>
 
 </template>

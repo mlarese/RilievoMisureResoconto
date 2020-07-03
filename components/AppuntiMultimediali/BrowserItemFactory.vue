@@ -1,10 +1,29 @@
 <template>
-  <v-card  class="pa-2" _height="200px" rounded >
-    <component  :is="currentType" :appunto="appunto" />
-    <div class="caption text-align-right">
-      {{appunto.date | time}}
-    </div>
-  </v-card>
+
+
+  <v-hover v-slot:default="{ hover }">
+
+      <v-card  class="pa-2"  rounded  >
+        <component  :is="currentType" :appunto="appunto" />
+        <div class="caption text-align-right mt-2 grey--text ">
+          <span class="mr-2">{{appunto.date | dmy}}</span> {{appunto.date | time}}
+        </div>
+
+        <v-expand-transition>
+          <v-row  v-if="hover" class="d-flex transition-fast-in-fast-out text-align-left v-card--reveal caption  pl-5 mt-2"  style="height: 100%;"  >
+              <table style="color:black">
+                <tr><td valign="top" nowrap="nowrap"><b>Lavoro:</b></td> <td>{{appunto.job_description}}</td></tr>
+                <tr><td valign="top" nowrap="nowrap"><b>Note:</b></td> <td>{{appunto.note}}</td></tr>
+              </table>
+
+          </v-row>
+        </v-expand-transition>
+
+
+      </v-card>
+
+  </v-hover>
+
 </template>
 <script>
 import BrowserItemComment from './BrowserItemComment'
@@ -25,3 +44,14 @@ export default {
   props: ['appunto']
 }
 </script>
+
+<style>
+.v-card--reveal {
+  align-items: center;
+  bottom: 0;
+  justify-content: center;
+  opacity: .5;
+  _position: absolute;
+  width: 100%;
+}
+</style>

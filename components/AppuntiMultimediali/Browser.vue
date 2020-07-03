@@ -1,29 +1,33 @@
 <template>
   <div>
-    <v-card v-if="ui.viewerStatus === 'loadimage'">
+    <v-card :elevation="0" v-if="ui.viewerStatus === 'loadimage'" >
       <BrowserLoadImages />
     </v-card>
-    <v-card v-if="ui.viewerStatus === 'view'" class="overflow-hidden viewer" :elevation="0" >
 
-      <!-- FILTRO -->
+    <v-card v-if="ui.viewerStatus === 'view'" class="overflow-hidden viewer pb-5" :elevation="0" >
+
       <v-row dense>
         <v-col cols="12">
           <BrowserSearch />
         </v-col>
       </v-row>
 
-      <v-row dense>
+      <v-row dense class="pb-5">
         <v-col cols="12">
-          <BrowserView />
+          <BrowserView class="pb-5"/>
         </v-col>
       </v-row>
 
-      <v-row dense>
-        <v-col cols="12">
+    </v-card>
+
+    <v-footer color="white" app inset v-if="ui.viewerStatus === 'view'">
+      <v-row dense >
+        <v-col cols="12" class="pb-0">
           <BrowserInput />
         </v-col>
       </v-row>
-    </v-card>
+    </v-footer>
+
   </div>
 </template>
 
@@ -38,6 +42,11 @@
     props: ['job'],
     mixins: [appuntimm],
     components: {BrowserSearch, BrowserInput, BrowserView, BrowserLoadImages},
+    mounted () {
+      this.$nextTick(() => {
+        this.$vuetify.goTo('#end-appunti-browser-view', {offset: -1000})
+      })
+    },
     created() {
       this.setLavoroCorrente(this.job)
     }

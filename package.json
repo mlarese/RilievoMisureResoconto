@@ -30,6 +30,7 @@
     "numeral": "^2.0.6",
     "nuxt": "^2.0.0",
     "nuxt-material-design-icons": "^1.0.4",
+    "portal-vue": "^2.1.7",
     "pouchdb": "^7.2.1",
     "qs": "^6.9.1",
     "uuid": "^7.0.2",

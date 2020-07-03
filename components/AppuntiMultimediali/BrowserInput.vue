@@ -1,6 +1,7 @@
 <template>
 
   <v-card class="elevation-0" height="50px" >
+
     <div class="d-flex ">
       <v-text-field
         @keydown="onKeydown"
@@ -37,6 +38,7 @@ export default {
         this.setViewerStatusLoadImage()
       } else {
         this.addComment()
+        .then(() => this.$vuetify.goTo(99999999999))
       }
 
 

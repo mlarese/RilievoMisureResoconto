@@ -25,7 +25,7 @@
 
       <v-row>
         <v-col>
-          <div class="caption align-left">{{appunto.note}}</div>
+          <div class="caption align-left">{{appunto.description}}</div>
         </v-col>
 
       </v-row>
