@@ -1,6 +1,5 @@
 import _clone from 'lodash/clone'
 import _filter from 'lodash/filter'
-import { v4 as uuidv4 } from 'uuid'
 import { visibleRecord, syncStates, internalStates } from './db'
 import { repoFilename } from '../assets/filters'
 import Vue from 'vue'
@@ -11,6 +10,9 @@ const emptyRecord = () => ({
   tipo: 'CONTATTO',
   syncStatus: syncStates['NOT_SYNC'],
   lastUpdate_UTCDate: null,
+  insert_UTCDate: null,
+  lastUpdateUser: null,
+  insertUser: null,
   data: {
     CONDescrizione: null,
     CONIndirizzo: null,
@@ -38,6 +40,7 @@ export const state = () => {
     dbName: 'contatti',
     modalita: 'FIND',
     ui: {
+      imgURL: '',
       title: 'Gestione contatti',
       formTitleSuffix: 'Contatto',
       filter: { text: '' }
@@ -65,7 +68,13 @@ export const actions = {
     const table = state.dbName
     const rec = await dispatch('db/selectById', { table, id }, root)
     commit('setRecord', rec)
-    console.log(rec)
+
+    if (rec.data.imgFileName) {
+      dispatch('dm_resources/getUrlById', rec.data.imgFileName, root)
+        .then((url) => Vue.set(state.ui, 'imgURL', url))
+    } else {
+      Vue.set(state.ui, 'imgURL', null)
+    }
   },
   async save({ dispatch, commit, state, rootState }) {
     const isInsert = !state.$record._id
@@ -75,13 +84,13 @@ export const actions = {
     if (isInsert) {
       actionName = 'db/insertInto'
     }
-    
+
     commit('setLastUpdate_UTCDate', new Date().toJSON())
     commit('setLastUpdateUser', rootState.auth.utente)
 
     if (isInsert) {
       commit('setSyncStatus', syncStates['NOT_SYNC'])
-      commit('setInsertDate', new Date().toJSON())
+      commit('setInsert_UTCDate', new Date().toJSON())
       commit('setInsertUser', rootState.auth.utente)
 
       // Salva localmente
@@ -198,9 +207,9 @@ export const mutations = {
     state.record.lastUpdateUser = payload
     state.$record.lastUpdateUser = payload
   },
-  setInsertDate(state, payload = {}) {
-    state.record.insertDate = payload
-    state.$record.insertDate = payload
+  setInsert_UTCDate(state, payload = {}) {
+    state.record.insert_UTCDate = payload
+    state.$record.insert_UTCDate = payload
   },
   setInsertUser(state, payload = {}) {
     state.record.insertUser = payload

@@ -34,7 +34,7 @@ export const baseURL = (() => {
   if (process.env.NODE_ENV === 'production') {
     return 'https://agile4work.4innovation.srl:1002'
   } else {
-    return 'https://localhost:44397'
+    return 'https://agile4work.4innovation.srl:1002' //'https://localhost:44397'
   }
 })()
 

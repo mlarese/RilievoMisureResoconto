@@ -7,6 +7,9 @@ import { DxButton, DxButtonGroup } from 'devextreme-vue'
 import BottomNavigation from '../layouts/BottomNavigation'
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import {dmy, time, truncate,number} from '../assets/filters'
+import Lightbox from 'vue-easy-lightbox'
+
+Vue.use(Lightbox)
 
 // import VueTouch from 'vue-touch';
 // Vue.use(VueTouch);

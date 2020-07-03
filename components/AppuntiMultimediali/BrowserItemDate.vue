@@ -1,7 +1,7 @@
 <template>
   <div class="text-align-center">
     <v-chip class="ma-2" color="green lighten-4" >
-      <div>{{appunto.date | dmy}}</div>
+      <div>{{appunto.insert_UTCDate | dmy}}</div>
     </v-chip>
   </div>
 </template>

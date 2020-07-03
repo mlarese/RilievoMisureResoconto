@@ -23,7 +23,7 @@
       <v-col v-for="(item, i) in getfilteredList" :key="i" xs="12" md="6" lg="4">
         <v-card color="white" @click="openEditForm(item._id)" min-width="300" max-height="200">
           <div class="d-flex flex-no-wrap">
-            <v-avatar class="mt-6 ml-3" size="60" tile>
+            <v-avatar class="mt-6 ml-3" size="60">
               <v-img :src="item.imgURL || require('../../assets/images/contact.jpg')" />
             </v-avatar>
             <div class="flex-grow-1 flex-shrink-1">
@@ -76,29 +76,6 @@ export default {
     },
     openEditForm(id) {
       this.$router.push(`/gestione_contatti/${id}`)
-    },
-    getImgURL(id) {
-      // const allegatiDelRecord = record._attachments
-      // const fileNameImmagineLavoro = record.data.imgFileName
-      // if (allegatiDelRecord && fileNameImmagineLavoro) {
-      //   if (allegatiDelRecord.hasOwnProperty(fileNameImmagineLavoro)) {
-      //     const myAllegato = allegatiDelRecord[fileNameImmagineLavoro]
-      //     if (myAllegato && myAllegato.data) {
-      //       imgUrl = URL.createObjectURL(myAllegato.data)
-      //       // imgUrl = 'data:' + myAllegato.content_type + ';base64,' + myAllegato.data
-      //     }
-      //   }
-      // }
-      let imgUrl = ''
-      // if (id) {
-      //   this.getRisorsa(id).then((blob) => {
-      //     if (blob) {
-      //       imgUrl = URL.createObjectURL(blob)
-      //       return imgUrl
-      //     }
-      //   })
-      // }
-      // return imgUrl
     }
   }
 }
