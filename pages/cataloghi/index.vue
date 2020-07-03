@@ -1,23 +1,17 @@
 <template>
   <div>
-    <v-layout rows wrap>
-      <v-flex s6>
-        <v-card>
-          <v-card-title class="headline" style>Cataloghi</v-card-title>
-        </v-card>
-      </v-flex>
-    </v-layout>
+    <listaArticoli />
   </div>
 </template>
 
 <script>
-
+import listaArticoli from '../../components/gestione_cataloghi/listaArticoli'
 export default {
   components: {
-    
+    listaArticoli
   },
-  fetch({ store }) {
-    store.dispatch('gestione_lavori/load', {}, { root: true })
+  async fetch({ store }) {
+    await store.dispatch('articoli/load', {}, { root: true })
   }
 }
 </script>
