@@ -3,20 +3,29 @@
 
   <v-hover v-slot:default="{ hover }">
 
-      <v-card  class="pa-2"  rounded  >
+      <v-card  class="pa-2 black--text"  rounded  >
         <component  :is="currentType" :appunto="appunto" />
         <div class="caption text-align-right mt-2 grey--text ">
           <span class="mr-2">{{appunto.date | dmy}}</span> {{appunto.date | time}}
         </div>
 
+        <v-divider v-if="hover" class="mt-3" />
+
         <v-expand-transition>
-          <v-row  v-if="hover" class="d-flex transition-fast-in-fast-out text-align-left v-card--reveal caption  pl-5 mt-2"  style="height: 100%;"  >
-              <table style="color:black">
-                <tr><td valign="top" nowrap="nowrap"><b>Lavoro:</b></td> <td>{{appunto.job_description}}</td></tr>
+          <div  v-if="hover" class="d-flex transition-fast-in-fast-out text-align-left v-card--reveal caption  pl-5 mt-2"  style="height: 100%;"  >
+
+              <table style="width:100%">
+                <tr>
+                  <td  class="black--text" valign="top" nowrap="nowrap">
+                    <b>Lavoro:</b>
+                  </td>
+                  <td class="black--text">{{appunto.job_description}}</td>
+                </tr>
+
                 <tr><td valign="top" nowrap="nowrap"><b>Note:</b></td> <td>{{appunto.note}}</td></tr>
               </table>
 
-          </v-row>
+          </div>
         </v-expand-transition>
 
 

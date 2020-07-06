@@ -122,9 +122,6 @@ export const getters = {
         dateFilter = aDateFilter[2] + '-' + aDateFilter[1] + '-' + aDateFilter[0]
       }
     } else {
-      if(_isNumber(s.ui.filter * 0))
-        dateFilter = s.ui.filter
-      else
         textFilter = s.ui.filter
     }
 
