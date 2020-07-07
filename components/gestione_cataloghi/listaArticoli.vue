@@ -8,7 +8,7 @@
             <v-text-field
               outlined
               dense
-              label="Cerca contatto..."
+              label="Cerca articolo..."
               append-icon="search"
               background-color="white"
               v-model="ui.filter.text"
@@ -18,32 +18,24 @@
       </v-col>
     </v-row>
 
-    <!-- LISTA CONTATTI -->
+    <!-- LISTA LAVORI -->
     <v-row dense>
-      <v-col v-for="(item, i) in getfilteredList" :key="i" xs="12" md="6" lg="4">
+      <v-col v-for="(item, i) in listaArticoli" :key="i" xs="12" md="6" lg="4">
         <v-card color="white" @click="openEditForm(item._id)" min-width="300" max-height="200">
           <div class="d-flex flex-no-wrap">
-            <v-avatar class="mt-6 ml-3" size="60">
-              <v-img :src="item.imgURL || require('../../assets/images/contact.jpg')" />
+            <v-avatar class="ma-3" size="60" tile>
+              <v-img :src="item.imgURL || require('../../assets/images/lavoro.png')"></v-img>
             </v-avatar>
             <div class="flex-grow-1 flex-shrink-1">
               <v-card-title
-                v-text="item.data.CONDescrizione"
+                v-text="item.JSDescrizione"
                 class="headline"
                 style="word-break: normal;"
               />
-              <v-card-subtitle v-text="item.data.CONTelefono" />
-              <v-card-text v-text="item.data.CONIndirizzo" />
+              <!-- <v-card-subtitle v-text="item.data.GL_Oggetto" />
+              <v-card-text v-text="item.data.GL_Indirizzo" /> -->
             </div>
           </div>
-          <v-card-actions class="py-0">
-            <v-spacer></v-spacer>
-            <v-icon
-              v-if="item.data.isPreferito"
-              color="primary"
-              class="align-self-end pa-1"
-            >favorite</v-icon>
-          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
@@ -65,17 +57,15 @@ import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
 
 export default {
   computed: {
-    ...mapState('gestione_contatti', { ui: 'ui', listLavori: 'list' }),
-    ...mapGetters('gestione_contatti', { getfilteredList: 'filteredList' })
+    ...mapState('articoli', { ui: 'ui', listaArticoli: 'list' })
   },
   methods: {
-    ...mapActions('gestione_contatti', { caricaLavoro: 'getById' }),
-    ...mapActions('dm_resources', { getRisorsa: 'getById' }),
+    ...mapActions('articoli', { caricaLavoro: 'getById' }),
     onAdd() {
-      this.$router.push(`/gestione_contatti/add`)
+      this.$router.push(`/articoli/add`)
     },
     openEditForm(id) {
-      this.$router.push(`/gestione_contatti/${id}`)
+      this.$router.push(`/cataloghi/${id}`)
     }
   }
 }

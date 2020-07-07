@@ -9,6 +9,9 @@ const emptyRecord = () => ({
   tipo: 'LAVORO',
   syncStatus: syncStates['NOT_SYNC'],
   lastUpdate_UTCDate: null,
+  insert_UTCDate: null,
+  lastUpdateUser: null,
+  insertUser: null,
   data: {
     GL_CommittenteDesc: null,
     GL_Oggetto: null,
@@ -75,7 +78,7 @@ export const actions = {
 
     if (isInsert) {
       commit('setSyncStatus', syncStates['NOT_SYNC'])
-      commit('setInsertDate', new Date().toJSON())
+      commit('setInsert_UTCDate', new Date().toJSON())
       commit('setInsertUser', rootState.auth.utente)
 
       // Salva localmente
@@ -193,9 +196,9 @@ export const mutations = {
     state.record.lastUpdateUser = payload
     state.$record.lastUpdateUser = payload
   },
-  setInsertDate(state, payload = {}) {
-    state.record.insertDate = payload
-    state.$record.insertDate = payload
+  setInsert_UTCDate(state, payload = {}) {
+    state.record.insert_UTCDate = payload
+    state.$record.insert_UTCDate = payload
   },
   setInsertUser(state, payload = {}) {
     state.record.insertUser = payload

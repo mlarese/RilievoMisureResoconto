@@ -1,6 +1,6 @@
 <template>
   <span>
-    {{appunto.description}}
+    {{appunto.appunto.data.EV_Note}}
   </span>
 
 </template>

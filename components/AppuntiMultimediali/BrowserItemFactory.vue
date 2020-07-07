@@ -1,12 +1,11 @@
 <template>
 
-
   <v-hover v-slot:default="{ hover }">
 
       <v-card  class="pa-2 black--text"  rounded  >
         <component  :is="currentType" :appunto="appunto" />
         <div class="caption text-align-right mt-2 grey--text ">
-          <span class="mr-2">{{appunto.date | dmy}}</span> {{appunto.date | time}}
+          <span class="mr-2">{{appunto.insert_UTCDate | dmy}}</span> {{appunto.insert_UTCDate | time}}
         </div>
 
         <v-divider v-if="hover" class="mt-3" />
@@ -44,10 +43,10 @@ export default {
   components: {BrowserItemComment, BrowserItemImage, BrowserItemSet},
   computed: {
     currentType () {
-      if(this.appunto.type==='comment') return 'BrowserItemComment'
-      else if(this.appunto.type==='image') return 'BrowserItemImage'
-      else if(this.appunto.type==='set') return 'BrowserItemSet'
-      else return 'BrowserItemComment'
+      if (this.appunto.data.EV_Type==='comment') return 'BrowserItemComment'
+      else if(this.appunto.data.EV_Type==='image') return 'BrowserItemImage'
+      else if(this.appunto.data.EV_Type==='set') return 'BrowserItemSet'
+      else return 'BrowserItemSet'
     }
   },
   props: ['appunto']

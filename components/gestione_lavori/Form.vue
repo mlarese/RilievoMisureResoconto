@@ -6,8 +6,7 @@
           <v-row no-gutters>
             <v-col cols="2">
               <v-avatar size="40">
-                <v-img v-if="getImgPric_asURL()" :src="getImgPric_asURL()"></v-img>
-                <v-img v-else :src="require('../../assets/images/lavoro.png')"></v-img>
+                <v-img :src="ui.imgURL || require('../../assets/images/lavoro.png')"></v-img>
               </v-avatar>
             </v-col>
             <v-col cols="10">
@@ -36,8 +35,7 @@
           <v-row class="mx-2">
             <v-col cols="auto">
               <v-avatar size="75" class="pb-0">
-                <v-img :src="getImgPric_asURL()" v-if="getImgPric_asURL()"></v-img>
-                <v-img :src="require('../../assets/images/lavoro.png')" v-else></v-img>
+                <v-img :src="ui.imgURL || require('../../assets/images/lavoro.png')"></v-img>
                 <input
                   type="file"
                   @change="
@@ -84,10 +82,11 @@
         <v-tabs centered>
           <v-tab>INFO</v-tab>
           <v-tab>RILIEVI</v-tab>
-          <v-tab>DOCS</v-tab>
-          <v-tab>FOTO</v-tab>
+          <v-tab>MEDIA</v-tab>
+          <!-- <v-tab>FOTO</v-tab> -->
 
           <v-tab-item
+          :touchless="true"
             :class="
               $vuetify.breakpoint.xsOnly
                 ? 'tabs__content_small'
@@ -98,6 +97,7 @@
           </v-tab-item>
 
           <v-tab-item
+          :touchless="true"
             :class="
               $vuetify.breakpoint.xsOnly
                 ? 'tabs__content_small'
@@ -107,23 +107,18 @@
             <ListaRilievi :rifLavoroID="$record._id" />
           </v-tab-item>
           <v-tab-item
+          :touchless="true"
             :class="
               $vuetify.breakpoint.xsOnly
                 ? 'tabs__content_small'
                 : 'tabs__content_large'
             "
           >
-            <v-container>
-              <EmptyList
-                :title="'Nessun documento'"
-                :subtitle="
-                  'Premere il pulsante in basso per aggiungere nuovi documenti'
-                "
-                class="mx-auto"
-              />
+          <v-container>
+            <Browser class="overflow-hidden" :job="{ job_id: $record._id }" />
             </v-container>
           </v-tab-item>
-          <v-tab-item
+          <!-- <v-tab-item
             :class="
               $vuetify.breakpoint.xsOnly
                 ? 'tabs__content_small'
@@ -139,7 +134,7 @@
                 class="mx-auto"
               />
             </v-container>
-          </v-tab-item>
+          </v-tab-item> -->
         </v-tabs>
       </div>
     </Panel>
@@ -217,6 +212,7 @@ import EmptyList from '../General/EmptyList'
 import DatiAnagrafici from '../gestione_lavori/DatiAnagrafici'
 import DatiAnagraficiEdit from '../gestione_lavori/DatiAnagrafici_Edit'
 import ListaRilievi from '../GestioneRilievo/listaRilievi'
+import Browser from "~/components/AppuntiMultimediali/Browser"
 const storeName = 'gestione_lavori'
 
 export default {
@@ -225,7 +221,8 @@ export default {
     EmptyList,
     DatiAnagrafici,
     DatiAnagraficiEdit,
-    ListaRilievi
+    ListaRilievi,
+    Browser
   },
   data() {
     return {

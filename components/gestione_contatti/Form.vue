@@ -6,7 +6,7 @@
           <v-row no-gutters>
             <v-col cols="2">
               <v-avatar size="40">
-                <v-img :src="require('../../assets/images/contact.jpg')"></v-img>
+                <v-img :src="ui.imgURL || require('../../assets/images/contact.jpg')"></v-img>
               </v-avatar>
             </v-col>
             <v-col cols="10">
@@ -34,7 +34,7 @@
           <v-row class="mx-2">
             <v-col cols="auto">
               <v-avatar size="75" class="pb-0">
-                <v-img :src="getImgPric_asURL()" ></v-img>
+                <v-img :src="ui.imgURL || require('../../assets/images/contact.jpg')" ></v-img>
                 <input
                   type="file"
                   @change="
@@ -215,7 +215,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(storeName, ['$record']),
+    ...mapState(storeName, ['$record', 'ui']),
     ...mapGetters(storeName, ['isEdit', 'isAdd', 'isView'])
   },
   methods: {
