@@ -1,6 +1,8 @@
 <template>
 
     <v-container fluid>
+
+
       <vue-easy-lightbox
         :visible="showPreviewImages"
         :imgs="appunto.files"

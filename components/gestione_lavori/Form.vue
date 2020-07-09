@@ -35,7 +35,8 @@
           <v-row class="mx-2">
             <v-col cols="auto">
               <v-avatar size="75" class="pb-0">
-                <v-img :src="ui.imgURL || require('../../assets/images/lavoro.png')"></v-img>
+                <v-img :src="getImgPric_asURL()" v-if="getImgPric_asURL()"></v-img>
+                <v-img :src="require('../../assets/images/lavoro.png')" v-else></v-img>
                 <input
                   type="file"
                   @change="
@@ -114,8 +115,9 @@
                 : 'tabs__content_large'
             "
           >
+
           <v-container>
-            <Browser class="overflow-hidden" :job="{job_id: $record._id}" />
+            <Browser class="overflow-hidden" :job="{ job_id: $record._id }" />
             </v-container>
           </v-tab-item>
           <!-- <v-tab-item

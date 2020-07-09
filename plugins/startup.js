@@ -8,11 +8,11 @@ import BottomNavigation from '../layouts/BottomNavigation'
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import {dmy, time, truncate,number} from '../assets/filters'
 import PortalVue from 'portal-vue'
-
-Vue.use(PortalVue)
 import Lightbox from 'vue-easy-lightbox'
 
 Vue.use(Lightbox)
+
+Vue.use(PortalVue)
 // import VueTouch from 'vue-touch';
 // Vue.use(VueTouch);
 

@@ -39,50 +39,13 @@ export const state = () => {
   }
 }
 export const actions = {
-  getAttachment () {
-     // solo per test
+  getAttachment ({ commit, dispatch, state }, {record, itemName}) {
+    return dispatch('db/getAttachment', { table: dbName, docID: record._id, fileName: itemName},{ root: true })
   },
-  async setDemo({ commit, dispatch, state }, data) {
-    const table = state.dbName
-
-    for (let i = 0; i < 10; i++) {
-
-      let rndDate = new Date(2020, 6, Math.floor(Math.random() * 29) + 1)
-      let random = Math.floor(Math.random() * 100)
-
-      let data = {
-        _id: null,
-        tipo: 'EVENTO',
-        syncStatus: syncStates['NOT_SYNC'],
-        lastUpdate_UTCDate: rndDate,
-        insert_UTCDate: rndDate,
-        lastUpdateUser: null,
-        insertUser: null,
-        data: {
-          EV_Type: 'set',
-          EV_RifLavoroID: '7f55fb72-26b3-4977-ada8-de71952c3847',
-          EV_Descrizione: `descrizione random ${random}`,
-          EV_Note: null,
-          EV_Classificazione: null,
-        },
-        listaRisorse: []
-      }
-
-      let fileIndex
-      let maxFiles = Math.floor(Math.random() * 6)
-      for (fileIndex = 0; fileIndex < maxFiles; fileIndex++) {
-        let responseFile = await dispatch('api/getFile', { url: `https://picsum.photos/1000` }, root)
-
-        let file = responseFile.data
-        let fileName = uuidv4()
-        await dispatch('dm_resources/save', { id: fileName, file }, root)
-
-        data.listaRisorse.push(fileName)
-      }
-      await dispatch('db/insertInto', { table, data }, root)
-    }
+  setDemo ({ commit, dispatch, state }, data) {
+    return dispatch('db/bulkInsertInto', { table: dbName, data},{ root: true })
   },
-  addComment({ commit, dispatch, state, rootState }) {
+  addComment ({ commit, dispatch, state }) {
     let comment = state.ui.message
     const table = state.dbName
 

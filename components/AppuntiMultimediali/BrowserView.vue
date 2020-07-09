@@ -1,13 +1,12 @@
 <template>
-  <v-card class="elevation-0 overflow-x-hidden"  >
-    <v-row align="stretch" >
-      <template v-for="appunto in appuntiFiltered">
 
-          <v-col :cols="12" v-if="show(appunto.date)">
-              <BrowserItemDate :appunto="appunto" />
-          </v-col>
-
-
+  <v-card class="elevation-0 overflow-x-hidden" :height="getHeight + 'px'">
+    <v-row align="stretch">
+      <template v-for="appunto in appuntiByDate">
+        <v-col :cols="12" v-if="show(appunto.insert_UTCDate)">
+          <BrowserItemDate :appunto="appunto" />
+        </v-col>
+        
           <v-col :cols="12" :xs="12" :sm="6"  :md="4" :id="'ap_' + appunto._id">
             <a :name="'ap_' + appunto._id" :href="'ap_' + appunto._id" />
             <BrowserItemFactory  :appunto="appunto" />

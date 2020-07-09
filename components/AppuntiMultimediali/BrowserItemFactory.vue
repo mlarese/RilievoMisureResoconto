@@ -5,7 +5,7 @@
       <v-card  class="pa-2 black--text"  rounded  >
         <component  :is="currentType" :appunto="appunto" />
         <div class="caption text-align-right mt-2 grey--text ">
-          <span class="mr-2">{{appunto.insert_UTCDate | dmy}}</span> {{appunto.insert_UTCDate | time}}
+            {{appunto.insert_UTCDate | time}}
         </div>
 
         <v-divider v-if="hover" class="mt-3" />
