@@ -20,13 +20,19 @@
 
     </v-card>
 
-    <v-footer color="white" app inset v-if="ui.viewerStatus === 'view'">
+    <v-footer color="white" app inset v-if="ui.viewerStatus === 'view' && $vuetify.breakpoint.xs">
       <v-row dense >
         <v-col cols="12" class="pb-0">
           <BrowserInput />
         </v-col>
       </v-row>
     </v-footer>
+
+    <v-row dense v-if="ui.viewerStatus === 'view' && !$vuetify.breakpoint.xs" >
+      <v-col cols="12" class="pb-0">
+        <BrowserInput />
+      </v-col>
+    </v-row>
 
   </div>
 </template>

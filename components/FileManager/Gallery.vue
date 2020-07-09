@@ -50,7 +50,7 @@
       'icons' () {
         for(let icon in this.icons) {
           var img = this.$refs[icon]
-          console.dir(img)
+          // console.dir(img)
           const imgName = `${appDir}/${icon}`
           previewFile(imgName, img)
         }

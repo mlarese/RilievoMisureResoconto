@@ -7,9 +7,7 @@
               <BrowserItemDate :appunto="appunto" />
           </v-col>
 
-        <v-col :cols="12" :xs="12" :sm="4">
-          <BrowserItemFactory :appunto="appunto" />
-        </v-col>
+
           <v-col :cols="12" :xs="12" :sm="6"  :md="4" :id="'ap_' + appunto._id">
             <a :name="'ap_' + appunto._id" :href="'ap_' + appunto._id" />
             <BrowserItemFactory  :appunto="appunto" />

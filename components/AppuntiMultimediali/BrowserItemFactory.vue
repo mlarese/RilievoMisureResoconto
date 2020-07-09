@@ -14,14 +14,8 @@
           <div  v-if="hover" class="d-flex transition-fast-in-fast-out text-align-left v-card--reveal caption  pl-5 mt-2"  style="height: 100%;"  >
 
               <table style="width:100%">
-                <tr>
-                  <td  class="black--text" valign="top" nowrap="nowrap">
-                    <b>Lavoro:</b>
-                  </td>
-                  <td class="black--text">{{appunto.job_description}}</td>
-                </tr>
-
-                <tr><td valign="top" nowrap="nowrap"><b>Note:</b></td> <td>{{appunto.note}}</td></tr>
+                <tr><td valign="top" nowrap="nowrap"><b>Note:</b></td> <td>{{appunto.data.EV_Note}}</td></tr>
+                <tr><td valign="top" nowrap="nowrap"><b>Descrizione:</b></td> <td>{{appunto.data.EV_Descrizione}}</td></tr>
               </table>
 
           </div>

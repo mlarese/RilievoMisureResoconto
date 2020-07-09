@@ -1,5 +1,6 @@
 import _clone from 'lodash/clone'
 import _orderBy from 'lodash/orderBy'
+import _get from 'lodash/get'
 import _dateFormat from 'date-fns/format'
 import { repoFilename } from '../assets/filters'
 import Vue from 'vue'
@@ -27,6 +28,7 @@ export const state = () => {
     lavoroCorrente: {},
     $record: {},
     record: {},
+    browserFilter: {},
     dbName,
     ui: {
       viewerStatus: 'view', //loadimage view
@@ -43,8 +45,7 @@ export const actions = {
   async setDemo({ commit, dispatch, state }, data) {
     const table = state.dbName
 
-    var i
-    for (i = 0; i < 10; i++) {
+    for (let i = 0; i < 10; i++) {
 
       let rndDate = new Date(2020, 6, Math.floor(Math.random() * 29) + 1)
       let random = Math.floor(Math.random() * 100)
@@ -70,10 +71,10 @@ export const actions = {
       let fileIndex
       let maxFiles = Math.floor(Math.random() * 6)
       for (fileIndex = 0; fileIndex < maxFiles; fileIndex++) {
-        var responseFile = await dispatch('api/getFile', { url: `https://picsum.photos/1000` }, root)
+        let responseFile = await dispatch('api/getFile', { url: `https://picsum.photos/1000` }, root)
 
-        var file = responseFile.data
-        var fileName = uuidv4()
+        let file = responseFile.data
+        let fileName = uuidv4()
         await dispatch('dm_resources/save', { id: fileName, file }, root)
 
         data.listaRisorse.push(fileName)
@@ -95,7 +96,7 @@ export const actions = {
       insertUser: rootState.auth.utente,
       data: {
         EV_Type: 'comment',
-        EV_RifLavoroID: state.lavoroCorrente,
+        EV_RifLavoroID: state.lavoroCorrente.job_id,
         EV_Descrizione: comment,
         EV_Note: null,
         EV_Classificazione: null,
@@ -177,6 +178,7 @@ export const mutations = {
   setViewerStatusLoadImage(state) { state.ui.viewerStatus = 'loadimage' },
   setViewerStatus(state, payload = 'view') { state.viewerStatus = payload },
   setLavoroCorrente(state, payload = {}) { state.lavoroCorrente = payload },
+  setBrowserFilter(state, payload = null) { state.lavoroCorrente = payload },
   setMessage(state, payload = '') { state.ui.message = payload },
   setList(state, payload = []) { state.list = payload },
   setRecord(state, payload = {}) {
@@ -194,7 +196,6 @@ export const getters = {
     if(s.ui.filter === null || s.ui.filter === '' ) return g.appuntiByDate
     let dateFilter = null
     let textFilter = null
-
     if(s.ui.filter.includes('/')) {
       let aDateFilter = s.ui.filter.split('/')
 
@@ -219,18 +220,23 @@ export const getters = {
         textFilter = s.ui.filter
     }
 
-    console.log('---- dateFilter ',dateFilter)
-    console.log('---- textFilter ',textFilter)
-
+    // console.log('---- dateFilter ',dateFilter)
+    // console.log('---- textFilter ',textFilter)
     return g.appuntiByDate.filter(o => {
       let dateBool = true
       let textBool = true
 
-      if(dateFilter !== null) dateBool = o.date.includes(dateFilter)
-      if(textFilter !== null) textBool =  (o.note.includes(textFilter) || o.description.includes(textFilter))
+
+      if(dateFilter !== null) dateBool = o.insert_UTCDate.includes(dateFilter)
+      if(textFilter !== null) textBool =  (
+        _get(o.data, 'EV_NOTE', '').includes(textFilter) ||
+        _get(o.data, 'EV_Descrizione', '').includes(textFilter)
+      )
 
       return (dateBool && textBool)
     })
   },
-  appuntiByDate: (s, g) => _orderBy(s.list.filter(o => o.job_id === s.lavoroCorrente.job_id), 'date')
+  appuntiByDate: (s, g) => _orderBy(s.list.filter(o => {
+    return o.data.EV_RifLavoroID === s.lavoroCorrente.job_id
+  }), 'lastUpdate_UTCDate')
 }

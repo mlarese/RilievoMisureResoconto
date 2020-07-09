@@ -54,7 +54,7 @@ export const actions = {
   async selectById({ rootState }, { table, id, options = { include_docs: true }, callback = emptyFn }) {
     const db = new PouchDb(rootState.auth.azienda + '_' + table)
     const res = db.get(id, options, callback)
-    console.dir(res)
+    // console.dir(res)
     return res
   },
   async selectAll({ rootState }, { table, options = { include_docs: true } }) {

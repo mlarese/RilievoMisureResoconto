@@ -115,7 +115,7 @@
             "
           >
           <v-container>
-            <Browser class="overflow-hidden" :job="{ job_id: $record._id }" />
+            <Browser class="overflow-hidden" :job="{job_id: $record._id}" />
             </v-container>
           </v-tab-item>
           <!-- <v-tab-item

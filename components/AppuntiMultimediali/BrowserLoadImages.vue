@@ -34,6 +34,7 @@
                   dense
                   class="mt-2"
                   hide-details
+                  :height="30"
                   outlined
                   placeholder="Scrivi una nota"
                   v-model="note"/>
