@@ -6,7 +6,7 @@ import { repoFilename } from '../assets/filters'
 import Vue from 'vue'
 import { syncStates } from '../store/db'
 import { v4 as uuidv4 } from 'uuid'
-
+import strutturaClassificazioneJson from '../storeimp/fixtures/classificazione'
 const root = { root: true }
 
 // const newRec = ({ _attachments = {}, classification = {}, description = '', note = {}, job_id = '', job_description = '', type = 'comment', files = [] }) => ({
@@ -29,28 +29,44 @@ export const state = () => {
     $record: {},
     record: {},
     browserFilter: {},
+    strutturaDiClassificazione: {},
     dbName,
     ui: {
+      eventoEditStatus: 'none', // none editor
       viewerStatus: 'view', //loadimage view
       message: '',
+      showEditor: false,
       title: 'Appunti multimediali',
       filter: ''
     }
   }
 }
 export const actions = {
+  editAppunto ({commit, dispatch, state},appunto) {
+    commit('setRecord', appunto)
+    commit('setEventoEditStatusEditor')
+  },
+  async save({ dispatch, commit, state, rootState }) {
+    const table = state.dbName
+    let actionName = 'db/update'
+    // da terminare
+    commit('setEventoEditStatusNone')
+  },
+  getStrutturaDiClassificazione ({ commit }) {
+    commit('setStrutturaDiClassificazione', strutturaClassificazioneJson)
+  },
   getAttachment ({ commit, dispatch, state }, {record, itemName}) {
     return dispatch('db/getAttachment', { table: dbName, docID: record._id, fileName: itemName},{ root: true })
   },
   setDemo ({ commit, dispatch, state }, data) {
     return dispatch('db/bulkInsertInto', { table: dbName, data},{ root: true })
   },
-  addComment ({ commit, dispatch, state }) {
+  addComment ({ commit, dispatch, state, rootState }) {
     let comment = state.ui.message
     const table = state.dbName
 
     let data = {
-      _id: null,
+      _id: uuidv4(),
       tipo: 'EVENTO',
       syncStatus: syncStates['NOT_SYNC'],
       lastUpdate_UTCDate: new Date(),
@@ -62,7 +78,7 @@ export const actions = {
         EV_RifLavoroID: state.lavoroCorrente.job_id,
         EV_Descrizione: comment,
         EV_Note: null,
-        EV_Classificazione: null,
+        EV_Classificazione: {},
       },
       listaRisorse: []
     }
@@ -71,6 +87,7 @@ export const actions = {
       .then(() => {
         commit('addInList', data)
         commit('setMessage')
+        dispatch('editAppunto', data)
       })
   },
   addImage({ commit, dispatch, state, rootState }, { note = '', description = '', photo }) {
@@ -107,9 +124,6 @@ export const actions = {
           })
       })
   },
-  save({ commit, dispatch, state }) {
-    // TODO
-  },
   load({ commit, dispatch, state }) {
     const table = state.dbName
     commit('setList', [])
@@ -137,6 +151,15 @@ export const actions = {
 }
 
 export const mutations = {
+  setEventoEditStatusEditor(state) {
+    state.ui.showEditor = true
+    state.ui.eventoEditStatus = 'editor'
+  },
+  setEventoEditStatusNone(state) {
+    state.ui.showEditor = false
+    state.ui.eventoEditStatus = 'none'
+  },
+  setStrutturaDiClassificazione(state, payload) { state.strutturaDiClassificazione = payload },
   setViewerStatusView(state) { state.ui.viewerStatus = 'view' },
   setViewerStatusLoadImage(state) { state.ui.viewerStatus = 'loadimage' },
   setViewerStatus(state, payload = 'view') { state.viewerStatus = payload },
@@ -145,6 +168,9 @@ export const mutations = {
   setMessage(state, payload = '') { state.ui.message = payload },
   setList(state, payload = []) { state.list = payload },
   setRecord(state, payload = {}) {
+    if(!payload.data) payload.data = {}
+    if(!payload.data.EV_Classificazione) payload.data.EV_Classificazione = {}
+
     state.record = payload
     state.$record = _clone(payload)
   },
@@ -201,5 +227,6 @@ export const getters = {
   },
   appuntiByDate: (s, g) => _orderBy(s.list.filter(o => {
     return o.data.EV_RifLavoroID === s.lavoroCorrente.job_id
-  }), 'lastUpdate_UTCDate')
+  }), 'lastUpdate_UTCDate'),
+  showEditor: s => s.ui.eventoEditStatus === 'editor'
 }

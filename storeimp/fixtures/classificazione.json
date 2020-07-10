@@ -1,0 +1,14 @@
+{
+  "Contabilità": [
+    "Fattura di acconto",
+    "Fatture di saldo con spedizione",
+    "Fattura di saldo con ritiro merce",
+    "Invio Fattura dopo aver consegnato o spedito"
+  ],
+  "Offerta Cliente": "Tipo 1",
+  "Ordini Fornitore": [
+    "Legname",
+    "Vetri"
+  ],
+  "Richiesta Info": ["Generica"]
+}

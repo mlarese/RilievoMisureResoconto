@@ -1,14 +1,44 @@
 <template>
-    <Browser class="overflow-hidden" :job="{job_description: 'AUSTECH', job_id: '46e20be9-39e5-4675-bfb0-9d8d62c79dd7'}" />
+    <BrowserCompleteInput :appunto="appunto" @on-save="salvaAppunto" @on-undo="annullaAppunto"/>
 </template>
 
 <script>
-import Browser from "~/components/AppuntiMultimediali/Browser"
+import BrowserCompleteInput from "../../../components/AppuntiMultimediali/BrowserCompleteInput"
+import {syncStates} from "~/store/db";
 
 export default {
-  components: { Browser },
+  components: { BrowserCompleteInput },
+  methods: {
+    salvaAppunto () {
+
+    },
+    annullaAppunto () {
+
+    }
+  },
+  data () {
+    return {
+      appunto:  {
+        _id: null,
+        tipo: 'EVENTO',
+        syncStatus: syncStates['NOT_SYNC'],
+        lastUpdate_UTCDate: new Date(),
+        insert_UTCDate: new Date(),
+        lastUpdateUser: '',
+        insertUser: '',
+        data: {
+          EV_Type: 'comment',
+          EV_RifLavoroID: 'ddd-fff-ggg-rrr',
+          EV_Descrizione: 'comment',
+          EV_Note: null,
+          EV_Classificazione: null,
+        },
+        listaRisorse: []
+      }
+    }
+  },
   async fetch ({store}) {
-    await store.dispatch('appuntimm/load',null, {root: true})
+    await store.dispatch('appuntimm/getStrutturaDiClassificazione',null, {root: true})
   }
 }
 </script>

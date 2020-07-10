@@ -1,30 +1,16 @@
 <template>
 
-  <v-hover v-slot:default="{ hover }">
-
       <v-card  class="pa-2 black--text"  rounded  >
+
         <component  :is="currentType" :appunto="appunto" />
         <div class="caption text-align-right mt-2 grey--text ">
             {{appunto.insert_UTCDate | time}}
         </div>
 
-        <v-divider v-if="hover" class="mt-3" />
-
-        <v-expand-transition>
-          <div  v-if="hover" class="d-flex transition-fast-in-fast-out text-align-left v-card--reveal caption  pl-5 mt-2"  style="height: 100%;"  >
-
-              <table style="width:100%">
-                <tr><td valign="top" nowrap="nowrap"><b>Note:</b></td> <td>{{appunto.data.EV_Note}}</td></tr>
-                <tr><td valign="top" nowrap="nowrap"><b>Descrizione:</b></td> <td>{{appunto.data.EV_Descrizione}}</td></tr>
-              </table>
-
-          </div>
-        </v-expand-transition>
-
 
       </v-card>
 
-  </v-hover>
+
 
 </template>
 <script>

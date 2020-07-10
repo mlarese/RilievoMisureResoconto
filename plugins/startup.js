@@ -9,6 +9,9 @@ import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import {dmy, time, truncate,number} from '../assets/filters'
 import PortalVue from 'portal-vue'
 import Lightbox from 'vue-easy-lightbox'
+import ClassificazioneFactory from '../components/Classificazione/ClassificazioneFactory'
+import ClassificazioneCombo from '../components/Classificazione/ClassificazioneCombo'
+import ClassificazioneInput from '../components/Classificazione/ClassificazioneInput'
 
 Vue.use(Lightbox)
 
@@ -42,6 +45,9 @@ Vue.use(Notifications)
 Vue.component('DxButton', DxButton)
 Vue.component('DxButtonGroup', DxButtonGroup)
 Vue.component('BottomNavigation', BottomNavigation)
+Vue.component('ClassificazioneFactory', ClassificazioneFactory)
+Vue.component('ClassificazioneCombo', ClassificazioneCombo)
+Vue.component('ClassificazioneInput', ClassificazioneInput)
 
 export default async ({ app }) => {
   defineCustomElements(window)

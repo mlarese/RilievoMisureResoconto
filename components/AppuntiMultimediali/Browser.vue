@@ -1,5 +1,10 @@
 <template>
   <div>
+    <v-dialog v-model="ui.showEditor" persistent  >
+       
+      <BrowserCompleteInput class="pa-2" />
+    </v-dialog>
+
     <v-card :elevation="0" v-if="ui.viewerStatus === 'loadimage'" >
       <BrowserLoadImages />
     </v-card>
@@ -38,6 +43,7 @@
 </template>
 
 <script>
+import BrowserCompleteInput from '~/components/AppuntiMultimediali/BrowserCompleteInput'
 import BrowserLoadImages from '~/components/AppuntiMultimediali/BrowserLoadImages'
 import BrowserSearch from '~/components/AppuntiMultimediali/BrowserSearch'
 import BrowserInput from '~/components/AppuntiMultimediali/BrowserInput'
@@ -45,9 +51,9 @@ import BrowserView from '~/components/AppuntiMultimediali/BrowserView'
 import { appuntimm } from './browsermx'
 
   export default {
-    props: ['job'],
     mixins: [appuntimm],
-    components: {BrowserSearch, BrowserInput, BrowserView, BrowserLoadImages},
+    props: ['job'],
+    components: {BrowserSearch, BrowserInput, BrowserView, BrowserLoadImages, BrowserCompleteInput},
     mounted () {
       this.$nextTick(() => {
         this.$vuetify.goTo('#end-appunti-browser-view', {offset: -1000})
@@ -55,6 +61,7 @@ import { appuntimm } from './browsermx'
     },
     created() {
       this.setLavoroCorrente(this.job)
+      this.getStrutturaDiClassificazione()
     }
   };
 </script>
