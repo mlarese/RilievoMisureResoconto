@@ -1,7 +1,6 @@
 <template>
    <v-text-field
-     outlined
-     dense
+
      :label="label"
      v-model="record[label]"
    />

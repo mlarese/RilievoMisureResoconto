@@ -1,9 +1,5 @@
 <template>
   <div>
-    <v-dialog v-model="ui.showEditor" persistent  >
-       
-      <BrowserCompleteInput class="pa-2" />
-    </v-dialog>
 
     <v-card :elevation="0" v-if="ui.viewerStatus === 'loadimage'" >
       <BrowserLoadImages />

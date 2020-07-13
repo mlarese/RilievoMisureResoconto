@@ -1,8 +1,7 @@
 <template>
 
     <v-combobox
-      outlined
-      dense
+
       :label="label"
       :items="structure"
       v-model="record[label]"

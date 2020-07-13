@@ -29,7 +29,7 @@
         <v-icon>mdi-pencil</v-icon>
       </v-btn>
 
-      <div slot="mainContent" v-if="isView">
+      <div slot="mainContent" v-if="isView || !modalOpened">
         <div v-if="$vuetify.breakpoint.smAndUp">
           <v-row class="mx-2">
             <v-col cols="auto">
@@ -215,6 +215,7 @@ export default {
     }
   },
   computed: {
+    ...mapState('app', ['modalOpened']),
     ...mapState(storeName, ['$record', 'ui']),
     ...mapGetters(storeName, ['isEdit', 'isAdd', 'isView'])
   },

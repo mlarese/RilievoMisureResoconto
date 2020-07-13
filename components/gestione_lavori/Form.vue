@@ -19,6 +19,7 @@
           <v-spacer></v-spacer>
         </div>
         <div v-else>Gestione lavoro</div>
+
       </div>
       <v-btn
         icon
@@ -30,115 +31,117 @@
         <v-icon>mdi-pencil</v-icon>
       </v-btn>
 
-      <div slot="mainContent" v-if="isView">
-        <div v-if="$vuetify.breakpoint.smAndUp">
-          <v-row class="mx-2">
-            <v-col cols="auto">
-              <v-avatar size="75" class="pb-0">
-                <v-img :src="getImgPric_asURL()" v-if="getImgPric_asURL()"></v-img>
-                <v-img :src="require('../../assets/images/lavoro.png')" v-else></v-img>
-                <input
-                  type="file"
-                  @change="
-                    filesChange($event.target.name, $event.target.files)
-                    fileCount = $event.target.files.length
-                  "
-                  accept="image/*"
-                  class="input-file"
-                />
-              </v-avatar>
-            </v-col>
-            <v-col class="align-self-center">
-              <div class="title ellipseText">
-                <b>{{ $record.data.GL_CommittenteDesc }}</b>
-              </div>
-              <div class="subtitle-1 ellipseText">{{ $record.data.GL_Oggetto }}</div>
-            </v-col>
-            <v-col cols="auto" class="pb-0">
-              <v-row class="pb-0">
-                <v-col cols="2" class="align-self-center">
-                  <v-checkbox
-                    v-model="$record.data.isPreferito"
-                    color="primary"
-                    on-icon="favorite"
-                    off-icon="favorite_border"
+      <div v-show="!modalOpened" slot="mainContent">
+        <div  v-if="isView">
+          <div v-if="$vuetify.breakpoint.smAndUp">
+            <v-row class="mx-2">
+              <v-col cols="auto">
+                <v-avatar size="75" class="pb-0">
+                  <v-img :src="getImgPric_asURL()" v-if="getImgPric_asURL()"></v-img>
+                  <v-img :src="require('../../assets/images/lavoro.png')" v-else></v-img>
+                  <input
+                    type="file"
+                    @change="
+                      filesChange($event.target.name, $event.target.files)
+                      fileCount = $event.target.files.length
+                    "
+                    accept="image/*"
+                    class="input-file"
                   />
-                </v-col>
-                <v-col cols="2" class="align-self-center">
-                  <v-btn icon color="primary" @click="openEditForm()">
-                    <v-icon>mdi-pencil</v-icon>
-                  </v-btn>
-                </v-col>
-                <v-col cols="2" class="align-self-center">
-                  <v-btn icon color="primary">
-                    <v-icon>mdi-dots-vertical</v-icon>
-                  </v-btn>
-                </v-col>
-              </v-row>
-            </v-col>
-          </v-row>
-          <v-divider></v-divider>
-        </div>
+                </v-avatar>
+              </v-col>
+              <v-col class="align-self-center">
+                <div class="title ellipseText">
+                  <b>{{ $record.data.GL_CommittenteDesc }}</b>
+                </div>
+                <div class="subtitle-1 ellipseText">{{ $record.data.GL_Oggetto }}</div>
+              </v-col>
+              <v-col cols="auto" class="pb-0">
+                <v-row class="pb-0">
+                  <v-col cols="2" class="align-self-center">
+                    <v-checkbox
+                      v-model="$record.data.isPreferito"
+                      color="primary"
+                      on-icon="favorite"
+                      off-icon="favorite_border"
+                    />
+                  </v-col>
+                  <v-col cols="2" class="align-self-center">
+                    <v-btn icon color="primary" @click="openEditForm()">
+                      <v-icon>mdi-pencil</v-icon>
+                    </v-btn>
+                  </v-col>
+                  <v-col cols="2" class="align-self-center">
+                    <v-btn icon color="primary">
+                      <v-icon>mdi-dots-vertical</v-icon>
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
+            <v-divider></v-divider>
+          </div>
+          <v-tabs centered>
+            <v-tab>INFO</v-tab>
+            <v-tab>RILIEVI</v-tab>
+            <v-tab>MEDIA</v-tab>
+            <!-- <v-tab>FOTO</v-tab> -->
 
-        <v-tabs centered>
-          <v-tab>INFO</v-tab>
-          <v-tab>RILIEVI</v-tab>
-          <v-tab>MEDIA</v-tab>
-          <!-- <v-tab>FOTO</v-tab> -->
+            <v-tab-item
+            :touchless="true"
+              :class="
+                $vuetify.breakpoint.xsOnly
+                  ? 'tabs__content_small'
+                  : 'tabs__content_large'
+              "
+            >
+              <DatiAnagrafici />
+            </v-tab-item>
 
-          <v-tab-item
-          :touchless="true"
-            :class="
-              $vuetify.breakpoint.xsOnly
-                ? 'tabs__content_small'
-                : 'tabs__content_large'
-            "
-          >
-            <DatiAnagrafici />
-          </v-tab-item>
+            <v-tab-item
+            :touchless="true"
+              :class="
+                $vuetify.breakpoint.xsOnly
+                  ? 'tabs__content_small'
+                  : 'tabs__content_large'
+              "
+            >
+              <ListaRilievi :rifLavoroID="$record._id" />
+            </v-tab-item>
+            <v-tab-item
+            :touchless="true"
+              :class="
+                $vuetify.breakpoint.xsOnly
+                  ? 'tabs__content_small'
+                  : 'tabs__content_large'
+              "
+            >
 
-          <v-tab-item
-          :touchless="true"
-            :class="
-              $vuetify.breakpoint.xsOnly
-                ? 'tabs__content_small'
-                : 'tabs__content_large'
-            "
-          >
-            <ListaRilievi :rifLavoroID="$record._id" />
-          </v-tab-item>
-          <v-tab-item
-          :touchless="true"
-            :class="
-              $vuetify.breakpoint.xsOnly
-                ? 'tabs__content_small'
-                : 'tabs__content_large'
-            "
-          >
-
-          <v-container>
-            <Browser class="overflow-hidden" :job="{ job_id: $record._id }" />
-            </v-container>
-          </v-tab-item>
-          <!-- <v-tab-item
-            :class="
-              $vuetify.breakpoint.xsOnly
-                ? 'tabs__content_small'
-                : 'tabs__content_large'
-            "
-          >
             <v-container>
-              <EmptyList
-                :title="'Nessuna immagine'"
-                :subtitle="
-                  'Premere il pulsante in basso per aggiungere nuove immagini'
-                "
-                class="mx-auto"
-              />
-            </v-container>
-          </v-tab-item> -->
-        </v-tabs>
+              <Browser class="overflow-hidden" :job="{ job_id: $record._id }" />
+              </v-container>
+            </v-tab-item>
+            <!-- <v-tab-item
+              :class="
+                $vuetify.breakpoint.xsOnly
+                  ? 'tabs__content_small'
+                  : 'tabs__content_large'
+              "
+            >
+              <v-container>
+                <EmptyList
+                  :title="'Nessuna immagine'"
+                  :subtitle="
+                    'Premere il pulsante in basso per aggiungere nuove immagini'
+                  "
+                  class="mx-auto"
+                />
+              </v-container>
+            </v-tab-item> -->
+          </v-tabs>
+        </div>
       </div>
+
     </Panel>
 
     <v-dialog v-model="isDialogErrorVisible" persistent max-width="290">
@@ -177,6 +180,11 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-dialog :value="isBrowserCompleteInputVisible" persistent  :fullscreen="$vuetify.breakpoint.xsOnly"   max-width="700px" >
+      <BrowserCompleteInput class="pa-2" />
+    </v-dialog>
+
   </div>
 </template>
 
@@ -215,6 +223,8 @@ import DatiAnagrafici from '../gestione_lavori/DatiAnagrafici'
 import DatiAnagraficiEdit from '../gestione_lavori/DatiAnagrafici_Edit'
 import ListaRilievi from '../GestioneRilievo/listaRilievi'
 import Browser from "~/components/AppuntiMultimediali/Browser"
+import BrowserCompleteInput from "~/components/AppuntiMultimediali/BrowserCompleteInput"
+
 const storeName = 'gestione_lavori'
 
 export default {
@@ -224,6 +234,7 @@ export default {
     DatiAnagrafici,
     DatiAnagraficiEdit,
     ListaRilievi,
+    BrowserCompleteInput,
     Browser
   },
   data() {
@@ -237,7 +248,9 @@ export default {
     }
   },
   computed: {
+    ...mapState('app', ['modalOpened']),
     ...mapState(storeName, ['$record', 'ui']),
+    ...mapGetters('appuntimm', ['isBrowserCompleteInputVisible']),
     ...mapGetters(storeName, ['isEdit', 'isAdd', 'isView', 'getImg'])
   },
   methods: {

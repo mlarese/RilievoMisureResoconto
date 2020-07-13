@@ -30,12 +30,12 @@ export const state = () => {
     record: {},
     browserFilter: {},
     strutturaDiClassificazione: {},
+    modalita: 'VIEW',
     dbName,
     ui: {
       eventoEditStatus: 'none', // none editor
       viewerStatus: 'view', //loadimage view
       message: '',
-      showEditor: false,
       title: 'Appunti multimediali',
       filter: ''
     }
@@ -44,13 +44,22 @@ export const state = () => {
 export const actions = {
   editAppunto ({commit, dispatch, state},appunto) {
     commit('setRecord', appunto)
-    commit('setEventoEditStatusEditor')
+    commit('setEditMode')
+    commit('app/setModalOpened', true, {root: true})
+  },
+  cancelAppunto ({commit, dispatch, state}) {
+    commit('setRecord', {})
+    commit('setViewMode')
+    commit('app/setModalOpened', false, {root: true})
   },
   async save({ dispatch, commit, state, rootState }) {
     const table = state.dbName
     let actionName = 'db/update'
     // da terminare
-    commit('setEventoEditStatusNone')
+
+    commit('setViewMode')
+    commit('setRecord', {})
+    commit('app/setModalOpened', false, {root: true})
   },
   getStrutturaDiClassificazione ({ commit }) {
     commit('setStrutturaDiClassificazione', strutturaClassificazioneJson)
@@ -159,6 +168,15 @@ export const mutations = {
     state.ui.showEditor = false
     state.ui.eventoEditStatus = 'none'
   },
+  setEditMode(state) {
+    state.modalita = 'EDIT'
+  },
+  setNewMode(state) {
+    state.modalita = 'ADD'
+  },
+  setViewMode(state) {
+    state.modalita = 'VIEW'
+  },
   setStrutturaDiClassificazione(state, payload) { state.strutturaDiClassificazione = payload },
   setViewerStatusView(state) { state.ui.viewerStatus = 'view' },
   setViewerStatusLoadImage(state) { state.ui.viewerStatus = 'loadimage' },
@@ -228,5 +246,8 @@ export const getters = {
   appuntiByDate: (s, g) => _orderBy(s.list.filter(o => {
     return o.data.EV_RifLavoroID === s.lavoroCorrente.job_id
   }), 'lastUpdate_UTCDate'),
-  showEditor: s => s.ui.eventoEditStatus === 'editor'
+  isView: (s) => s.modalita === 'VIEW',
+  isEdit: (s) => s.modalita === 'EDIT',
+  isBrowserCompleteInputVisible: (s) => s.modalita === 'EDIT',
+  isAdd: (s) => s.modalita === 'ADD'
 }

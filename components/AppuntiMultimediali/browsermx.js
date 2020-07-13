@@ -3,11 +3,13 @@ const namespace = 'appuntimm'
 
 export const appuntimm = {
     methods: {
-      ...mapActions(namespace, ['addComment', 'getAttachment', 'addImage', 'editAppunto', 'getStrutturaDiClassificazione', 'save']),
-      ...mapMutations(namespace, ['setLavoroCorrente', 'setViewerStatusLoadImage', 'setViewerStatusView', 'setEventoEditStatusEditor', 'setEventoEditStatusNone'])
+      ...mapActions(namespace, ['addComment', 'getAttachment', 'addImage', 'editAppunto', 'getStrutturaDiClassificazione', 'save', 'cancelAppunto']),
+      ...mapMutations(namespace, ['setEditMode', 'setNewMode', 'setViewMode', 'setLavoroCorrente', 'setViewerStatusLoadImage', 'setViewerStatusView']),
+      ...mapMutations('app', ['setModalOpened'])
     },
     computed: {
-      ...mapGetters(namespace, ['appuntiByDate', 'appuntiFiltered']),
+      ...mapGetters('app', ['modalOpened']),
+      ...mapGetters(namespace, ['appuntiByDate', 'appuntiFiltered', 'isEdit', 'isAdd', 'isView']),
       ...mapState(namespace, ['ui', 'lavoroCorrente', 'viewerStatus', '$record']),
       ...mapState(namespace, {'appuntiList': 'list'})
     }
