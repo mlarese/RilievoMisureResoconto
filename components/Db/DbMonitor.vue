@@ -20,14 +20,14 @@
 
       </v-flex>-->
       <v-flex xs12>
-        <v-textarea reverse v-model="syncLog" label="Log" dense readonly />
+        <v-textarea clearable v-model="syncLog" label="Log" dense readonly />
       </v-flex>
       <v-flex>
         <v-btn slot="right" @click="syncAll" :disabled="synchronizing" :loading="synchronizing">
           <span>Sincronizza</span>
           <v-icon>mdi-database-sync</v-icon>
         </v-btn>
-        <v-btn slot="right" @click="randomInsert" :disabled="synchronizing" :loading="synchronizing">
+        <!-- <v-btn slot="right" @click="randomInsert" :disabled="synchronizing" :loading="synchronizing">
           <span>random</span>
           <v-icon>mdi-database-sync</v-icon>
         </v-btn>
@@ -35,7 +35,7 @@
         <v-btn slot="right" @click="syncAppuntiDemo"  :disabled="synchronizing" :loading="synchronizing">
           <span>appunti demo</span>
           <v-icon>mdi-database-sync</v-icon>
-        </v-btn>
+        </v-btn> -->
 
       </v-flex>
     </v-layout>
