@@ -1,19 +1,20 @@
 <template>
   <div class="containerDiv">
-    <v-app-bar
-      extended
-      extension-height="100"
-      dark
-      color="blue darken-2"
-      class="elevation-0"
-    >
+    <v-app-bar extended extension-height="100" dark color="blue darken-2" class="elevation-0">
       <v-app-bar-nav-icon>
-        <v-btn icon class="ml-1" @click="exit()">
+        <v-btn v-if="$vuetify.breakpoint.xsOnly" icon class="ml-1" @click="exit()">
+          <v-icon>mdi-arrow-left</v-icon>
+        </v-btn>
+        <v-btn v-if="$vuetify.breakpoint.smAndUp" fab small class="ml-1" @click="exit()" color="#2196F3">
           <v-icon>mdi-arrow-left</v-icon>
         </v-btn>
       </v-app-bar-nav-icon>
 
-      <v-toolbar-title style="width:100%" class="px-0">
+      <v-toolbar-title
+        style="width:100%"
+        class="px-0"
+        :class="$vuetify.breakpoint.smAndUp ? 'd-flex justify-center ml-n2' : 'px-0'"
+      >
         <slot name="toolbarTitle" />
       </v-toolbar-title>
 

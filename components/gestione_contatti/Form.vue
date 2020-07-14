@@ -3,19 +3,18 @@
     <Panel>
       <div slot="toolbarTitle">
         <div v-if="$vuetify.breakpoint.xsOnly">
-          <v-row no-gutters>
-            <v-col cols="2">
+          <div class="d-flex justify-start align-center">
+            <div>
               <v-avatar size="40">
                 <v-img :src="ui.imgURL || require('../../assets/images/contact.jpg')"></v-img>
               </v-avatar>
-            </v-col>
-            <v-col cols="10">
+            </div>
+            <div class="pl-1">
               <div class="subtitle-1 ellipseText">
                 <b>{{ $record.data.CONDescrizione }}</b>
               </div>
-            </v-col>
-          </v-row>
-          <v-spacer></v-spacer>
+            </div>
+          </div>
         </div>
         <div v-else>Gestione contatto</div>
       </div>
@@ -34,7 +33,7 @@
           <v-row class="mx-2">
             <v-col cols="auto">
               <v-avatar size="75" class="pb-0">
-                <v-img :src="ui.imgURL || require('../../assets/images/contact.jpg')" ></v-img>
+                <v-img :src="ui.imgURL || require('../../assets/images/contact.jpg')"></v-img>
                 <input
                   type="file"
                   @change="
@@ -305,14 +304,13 @@ export default {
       // return imgUrl
       const id = this.$record.data.imgFileName
       if (id) {
-        this.getRisorsa(id)
-          .then((blob) => {
-            if (blob) {
-              let imgUrl = ''
-              imgUrl = URL.createObjectURL(blob)
-              return imgUrl
-            }
-          })
+        this.getRisorsa(id).then((blob) => {
+          if (blob) {
+            let imgUrl = ''
+            imgUrl = URL.createObjectURL(blob)
+            return imgUrl
+          }
+        })
       }
     }
   },

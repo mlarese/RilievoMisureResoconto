@@ -3,7 +3,9 @@ export const state = () => ({
   loggedIn: false,
   token: '',
   utente: '',
-  azienda: ''
+  azienda: '',
+  utenteDesc: '',
+  aziendaDsc: ''
 })
 
 export const mutations = {
@@ -18,21 +20,29 @@ export const mutations = {
   },
   setAzienda(state, payload) {
     state.azienda = payload
+  },
+  setUtenteDesc(state, payload) {
+    state.utenteDesc = payload
+  },
+  setAziendaDesc(state, payload) {
+    state.aziendaDesc = payload
   }
 }
 
 const AUTH_RECORD_ID = 'auth_record_id'
 const table = 'auth'
+const root = { root: true }
 
 export const actions = {
   async persistentUser({ commit, dispatch }) {
     const id = AUTH_RECORD_ID
-    return await dispatch('db/selectById_system', { table, id }, { root: true })
+    return await dispatch('db/selectById_system', { table, id }, root)
       .then((res) => {
-        //console.log('found login', res)
         commit('setUtente', res.utente)
         commit('setAzienda', res.azienda)
         commit('setToken', res.token)
+        commit('setUtenteDesc', res.utenteDesc)
+        commit('setAziendaDesc', res.aziendaDesc)
         commit('setLoggedIn', true)
         return res
       })
@@ -46,11 +56,8 @@ export const actions = {
         'Content-Type': 'application/json'
       }
     }
-    return dispatch(
-      'api/post',
-      { url: '/api/Users/authenticate', data, options },
-      { root: true }
-    )
+    const url = '/api/Users/authenticate'
+    return dispatch('api/post', { url, data, options }, root)
       .then((res) => {
         return dispatch('setAuth', { token: res.data }) //(commit, dispatch, state, res.data)
       })
@@ -67,7 +74,7 @@ export const actions = {
     var jsonPayload = decodeURIComponent(
       atob(base64)
         .split('')
-        .map(function(c) {
+        .map(function (c) {
           return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
         })
         .join('')
@@ -77,20 +84,27 @@ export const actions = {
     commit('setToken', token)
     commit('setUtente', tokenJson.utente)
     commit('setAzienda', tokenJson.azienda)
+    commit('setUtenteDesc', tokenJson.utenteDesc)
+    commit('setAziendaDesc', tokenJson.aziendaDesc)
+
     const data = {
       _id: AUTH_RECORD_ID,
       token: state.token,
       utente: tokenJson.utente,
-      azienda: tokenJson.azienda
+      azienda: tokenJson.azienda,
+      utenteDesc: tokenJson.utenteDesc,
+      aziendaDesc: tokenJson.aziendaDesc
     }
 
     const id = AUTH_RECORD_ID
-    return dispatch('db/selectById_system', { table, id }, { root: true })
+    return dispatch('db/selectById_system', { table, id }, root)
       .then((res) => {
         console.log('found login')
 
         commit('setUtente', res.utente)
         commit('setAzienda', res.azienda)
+        commit('setUtenteDesc', res.utenteDesc)
+        commit('setAziendaDesc', res.aziendaDesc)
         commit('setToken', res.token)
         commit('setLoggedIn', true)
       })
@@ -98,20 +112,12 @@ export const actions = {
         console.log('selectById_system', e)
         if (e.status && e.status === 404) {
           console.log('--- adding auth record')
-          return dispatch(
-            'db/insertInto_system',
-            { table: 'auth', data },
-            { root: true }
-          )
+          return dispatch('db/insertInto_system', { table, data }, root)
             .catch((err) => {
               console.log(err)
             })
             .then((res1) => {
               // Inserito correttamente
-              // old
-              // commit('setUtente', res1.utente)
-              // commit('setAzienda', res1.azienda)
-              // commit('setToken', res1.token)
               commit('setLoggedIn', true)
             })
         }
@@ -121,20 +127,17 @@ export const actions = {
   doLogout({ commit, dispatch, state }) {
     const id = AUTH_RECORD_ID
 
-    return dispatch('db/selectById_system', { table, id }, { root: true })
+    return dispatch('db/selectById_system', { table, id }, root)
       .then((res) => {
         console.log(res)
 
-        return dispatch(
-          'db/delete_system',
-          { table, data: res },
-          { root: true }
-        ).then(() => {
-          commit('setLoggedIn', false)
-          commit('setToken', '')
-          commit('setUtente', '')
-          commit('setAzienda', '')
-        })
+        return dispatch('db/delete_system', { table, data: res }, root)
+          .then(() => {
+            commit('setLoggedIn', false)
+            commit('setToken', '')
+            commit('setUtente', '')
+            commit('setAzienda', '')
+          })
       })
       .catch((e) => {
         console.log('selectById', e)
