@@ -5,7 +5,7 @@
         <div v-if="$vuetify.breakpoint.xsOnly">
           <div class="d-flex justify-start align-center">
             <div>
-              <v-avatar size="40" class="pa-0 ma-0">
+              <v-avatar size="40" class="pa-0 ma-0" tile>
                 <v-img :src="ui.imgURL || require('../../assets/images/lavoro.png')"></v-img>
               </v-avatar>
             </div>
@@ -34,7 +34,7 @@
           <div v-if="$vuetify.breakpoint.smAndUp">
             <v-row class="mx-2">
               <v-col cols="auto">
-                <v-avatar size="75" class="pb-0">
+                <v-avatar size="75" class="pb-0" tile>
                   <v-img :src="getImgPric_asURL()" v-if="getImgPric_asURL()"></v-img>
                   <v-img :src="require('../../assets/images/lavoro.png')" v-else></v-img>
                   <input
