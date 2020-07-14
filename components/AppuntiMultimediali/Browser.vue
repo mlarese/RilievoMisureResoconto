@@ -1,11 +1,11 @@
 <template>
   <div>
 
-    <v-card :elevation="0" v-if="ui.viewerStatus === 'loadimage'" >
+    <v-card :elevation="0" v-if="false" >
       <BrowserLoadImages />
     </v-card>
 
-    <v-card v-if="ui.viewerStatus === 'view'" class="overflow-hidden viewer" :elevation="0">
+    <v-card class="overflow-hidden viewer" :elevation="0">
       <!-- FILTRO -->
       <v-row dense>
         <v-col cols="12">
@@ -21,7 +21,7 @@
 
     </v-card>
 
-    <v-footer color="white" app inset v-if="ui.viewerStatus === 'view' && $vuetify.breakpoint.xs">
+    <v-footer color="white" app inset v-if="$vuetify.breakpoint.xs">
       <v-row dense >
         <v-col cols="12" class="pb-0">
           <BrowserInput />
@@ -29,7 +29,7 @@
       </v-row>
     </v-footer>
 
-    <v-row dense v-if="ui.viewerStatus === 'view' && !$vuetify.breakpoint.xs" >
+    <v-row dense v-if="!$vuetify.breakpoint.xs" >
       <v-col cols="12" class="pb-0">
         <BrowserInput />
       </v-col>

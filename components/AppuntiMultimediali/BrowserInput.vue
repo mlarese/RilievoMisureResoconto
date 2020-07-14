@@ -35,7 +35,7 @@ export default {
     sendOrEdit () {
       if(this.isEmpty) {
         // this.$nextTick(() => {  this.$refs.inputRef.$refs.input.focus();  });
-        this.setViewerStatusLoadImage()
+        this.addPhotocamera()
       } else {
         this.addComment()
         .then(() => this.$vuetify.goTo(99999999999))

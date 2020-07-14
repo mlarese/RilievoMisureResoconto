@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-card-title>Classificazione</v-card-title>
+    <v-card-title class="pb-0 ">Classificazione</v-card-title>
     <v-card-text>
       <template v-for="(item, label, index) in strutturaDiClassificazione">
         <ClassificazioneFactory :record="record" :label="label" :structure="item" :key="index"/>

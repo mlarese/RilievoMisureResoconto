@@ -31,6 +31,7 @@ export const state = () => {
     browserFilter: {},
     strutturaDiClassificazione: {},
     modalita: 'VIEW',
+    prevModalita: '',
     dbName,
     ui: {
       eventoEditStatus: 'none', // none editor
@@ -49,6 +50,14 @@ export const actions = {
   },
   cancelAppunto ({commit, dispatch, state}) {
     commit('setRecord', {})
+    commit('setViewMode')
+    commit('app/setModalOpened', false, {root: true})
+  },
+  addPhotocamera ({commit, dispatch, state}) {
+    commit('setPhotocameraMode')
+    commit('app/setModalOpened', true, {root: true})
+  },
+  cancelPhotocamera ({commit, dispatch, state}) {
     commit('setViewMode')
     commit('app/setModalOpened', false, {root: true})
   },
@@ -168,14 +177,24 @@ export const mutations = {
     state.ui.showEditor = false
     state.ui.eventoEditStatus = 'none'
   },
+  setPhotocameraMode(state) {
+    state.prevModalita = state.modalita
+    state.modalita = 'PHOTOCAMERA'
+  },
   setEditMode(state) {
+    state.prevModalita = state.modalita
     state.modalita = 'EDIT'
   },
   setNewMode(state) {
+    state.prevModalita = state.modalita
     state.modalita = 'ADD'
   },
   setViewMode(state) {
+    state.prevModalita = state.modalita
     state.modalita = 'VIEW'
+  },
+  backToPrevModalita (state) {
+    state.modalita = state.prevModalita
   },
   setStrutturaDiClassificazione(state, payload) { state.strutturaDiClassificazione = payload },
   setViewerStatusView(state) { state.ui.viewerStatus = 'view' },
@@ -247,7 +266,9 @@ export const getters = {
     return o.data.EV_RifLavoroID === s.lavoroCorrente.job_id
   }), 'lastUpdate_UTCDate'),
   isView: (s) => s.modalita === 'VIEW',
+  isPhotocamera: (s) => s.modalita === 'PHOTOCAMERA',
   isEdit: (s) => s.modalita === 'EDIT',
   isBrowserCompleteInputVisible: (s) => s.modalita === 'EDIT',
+  isBrowserLoadImagesVisible: (s) => s.modalita === 'PHOTOCAMERA',
   isAdd: (s) => s.modalita === 'ADD'
 }

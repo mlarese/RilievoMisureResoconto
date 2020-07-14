@@ -3,8 +3,8 @@ const namespace = 'appuntimm'
 
 export const appuntimm = {
     methods: {
-      ...mapActions(namespace, ['addComment', 'getAttachment', 'addImage', 'editAppunto', 'getStrutturaDiClassificazione', 'save', 'cancelAppunto']),
-      ...mapMutations(namespace, ['setEditMode', 'setNewMode', 'setViewMode', 'setLavoroCorrente', 'setViewerStatusLoadImage', 'setViewerStatusView']),
+      ...mapActions(namespace, ['addPhotocamera', 'cancelPhotocamera', 'addComment', 'getAttachment', 'addImage', 'editAppunto', 'getStrutturaDiClassificazione', 'save', 'cancelAppunto']),
+      ...mapMutations(namespace, ['setEditMode', 'setNewMode', 'setViewMode', 'setLavoroCorrente']),
       ...mapMutations('app', ['setModalOpened'])
     },
     computed: {

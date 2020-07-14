@@ -4,9 +4,9 @@
         {{appunto.data.EV_Descrizione}}
       </v-col>
 
-      <v-col :cols="2" class="pa-0">
+      <v-col :cols="3" class="py-0 ">
         <div class="text-align-right">
-          <v-btn @click="onEditAppunto" text small fab><v-icon small>edit</v-icon></v-btn>
+          <v-btn height="20" width="20" @click="onEditAppunto" text small fab><v-icon small>edit</v-icon></v-btn>
         </div>
       </v-col>
   </v-row>

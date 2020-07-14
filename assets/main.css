@@ -19,3 +19,5 @@ body{
 .text-align-center {   text-align: center; }
 .text-align-right {   text-align: right; }
 
+.image-bottom-left {display: none !important;}
+.image-container{width: 100% !important}

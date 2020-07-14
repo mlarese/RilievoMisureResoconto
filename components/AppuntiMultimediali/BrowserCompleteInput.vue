@@ -1,8 +1,6 @@
 <template>
   <v-card>
-    <v-toolbar :elevation="1" v-if="false">
-      <v-toolbar-title>Evento</v-toolbar-title>
-    </v-toolbar>
+    <v-card-title class="pt-1 pl-1 pb-0">Evento</v-card-title>
     <v-card-actions>
       <v-row>
         <v-col cols="12">
