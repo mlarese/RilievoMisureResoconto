@@ -24,10 +24,10 @@ export const actions = {
     listaOggettiLocali.push(...listaLavori)
     const listaContatti = await dispatch('gestione_contatti/load', {}, { root: true })
     listaOggettiLocali.push(...listaContatti)
-    // const listaCataloghi = await dispatch('cataloghi/load', {}, { root: true })
-    // listaOggettiLocali.push(...listaCataloghi)
-    // const listaEventi = await dispatch('eventi/load', {}, { root: true })
-    // listaOggettiLocali.push(...listaEventi)
+    const listaCataloghi = await dispatch('cataloghi/load', {}, { root: true })
+    listaOggettiLocali.push(...listaCataloghi)
+    const listaEventi = await dispatch('appuntimm/load', {}, { root: true })
+    listaOggettiLocali.push(...listaEventi)
 
     return listaOggettiLocali
   },

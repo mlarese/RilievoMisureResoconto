@@ -5,22 +5,26 @@
         <b>Gestione utenti</b>
       </div>
       <div slot="mainContent">
-          <v-simple-table fixed-header height="80vH">
-            <template v-slot:default>
-              <thead>
-                <tr>
-                  <th class="text-left"><b>Codice</b></th>
-                  <th class="text-left"><b>Descrizione</b></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(usr, i) in utenti" :key="i" @click="onEdit(usr)" style="cursor: pointer;">
-                  <td>{{ usr.codice }}</td>
-                  <td>{{ usr.descrizione }}</td>
-                </tr>
-              </tbody>
-            </template>
-          </v-simple-table>
+        <v-simple-table fixed-header height="80vH">
+          <template v-slot:default>
+            <thead>
+              <tr>
+                <th class="text-left">
+                  <b>Codice</b>
+                </th>
+                <th class="text-left">
+                  <b>Descrizione</b>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(usr, i) in utenti" :key="i" @click="onEdit(usr)" style="cursor: pointer;">
+                <td>{{ usr.codice }}</td>
+                <td>{{ usr.descrizione }}</td>
+              </tr>
+            </tbody>
+          </template>
+        </v-simple-table>
         <v-btn
           fab
           color="primary"
@@ -144,6 +148,7 @@ export default {
   }),
   methods: {
     ...mapActions('api', ['post', 'get']),
+    ...mapActions('api', ['post', 'get']),
     onAdd() {
       this.isAdd = true
     },
@@ -161,10 +166,11 @@ export default {
         const resSave = await this.post({ url, data: this.utente })
         console.log(resSave)
 
-        const { data } = await get({ url: `api/users/getAllUsers` })
+        const { data } = await this.get({ url: `api/users/getAllUsers` })
         this.utenti = data
 
-        this.isAdd = this.isEdit = false
+        this.isAdd = false
+        this.isEdit = false
       } catch (error) {
         // Dovrà essere stampato da qualche parte
         console.error()

@@ -6,7 +6,8 @@ export const dbList = {
   LAVORO: 'lavori',
   CATALOGO: 'cataloghi',
   CONTATTO: 'contatti',
-  EVENTO: 'eventi'
+  EVENTO: 'appuntimm',
+  CFG: 'config'
 }
 
 export const syncStates = {
