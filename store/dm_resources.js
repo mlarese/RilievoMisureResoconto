@@ -47,7 +47,7 @@ export const actions = {
             urlImage = URL.createObjectURL(blob)
             break;
           case 'application/pdf':
-            // urlImage = '../../static/images/splash.jpg'
+            urlImage = '/images/pdf-icon.png'
           default:
             break;
         }
