@@ -28,6 +28,7 @@ export const state = () => {
     lavoroCorrente: {},
     $record: {},
     record: {},
+    $files: [],
     browserFilter: {},
     strutturaDiClassificazione: {},
     modalita: 'VIEW',
@@ -43,15 +44,15 @@ export const state = () => {
   }
 }
 export const actions = {
-  editAppunto ({commit, dispatch, state},appunto) {
+  editAppunto({ commit, dispatch, state }, appunto) {
     commit('setRecord', appunto)
     commit('setEditMode')
-    commit('app/setModalOpened', true, {root: true})
+    commit('app/setModalOpened', true, { root: true })
   },
-  cancelAppunto ({commit, dispatch, state}) {
+  cancelAppunto({ commit, dispatch, state }) {
     commit('setRecord', {})
     commit('setViewMode')
-    commit('app/setModalOpened', false, {root: true})
+    commit('app/setModalOpened', false, { root: true })
   },
   addPhotocamera ({commit, dispatch, state}) {
     commit('setPhotocameraMode')
@@ -68,18 +69,18 @@ export const actions = {
 
     commit('setViewMode')
     commit('setRecord', {})
-    commit('app/setModalOpened', false, {root: true})
+    commit('app/setModalOpened', false, { root: true })
   },
-  getStrutturaDiClassificazione ({ commit }) {
+  getStrutturaDiClassificazione({ commit }) {
     commit('setStrutturaDiClassificazione', strutturaClassificazioneJson)
   },
-  getAttachment ({ commit, dispatch, state }, {record, itemName}) {
-    return dispatch('db/getAttachment', { table: dbName, docID: record._id, fileName: itemName},{ root: true })
+  getAttachment({ commit, dispatch, state }, { record, itemName }) {
+    return dispatch('db/getAttachment', { table: dbName, docID: record._id, fileName: itemName }, { root: true })
   },
-  setDemo ({ commit, dispatch, state }, data) {
-    return dispatch('db/bulkInsertInto', { table: dbName, data},{ root: true })
+  setDemo({ commit, dispatch, state }, data) {
+    return dispatch('db/bulkInsertInto', { table: dbName, data }, { root: true })
   },
-  addComment ({ commit, dispatch, state, rootState }) {
+  addComment({ commit, dispatch, state, rootState }) {
     let comment = state.ui.message
     const table = state.dbName
 
@@ -107,6 +108,41 @@ export const actions = {
         commit('setMessage')
         dispatch('editAppunto', data)
       })
+  },
+  addSetImage({ commit, dispatch, state, rootState }) {
+    const table = state.dbName
+    let listaRisorse = []
+
+    state.$files.forEach(file => {
+      let id = uuidv4()
+      listaRisorse.push(id)
+      dispatch('dm_resources/save', { id, file }, root)
+    });
+
+    let data = {
+      _id: null,
+      tipo: 'EVENTO',
+      syncStatus: syncStates['NOT_SYNC'],
+      lastUpdate_UTCDate: new Date(),
+      insert_UTCDate: new Date(),
+      lastUpdateUser: rootState.auth.utente,
+      insertUser: rootState.auth.utente,
+      data: {
+        EV_Type: 'image',
+        EV_RifLavoroID: state.lavoroCorrente,
+        EV_Descrizione: state.ui.message,
+        EV_Classificazione: null,
+      },
+      listaRisorse
+    }
+    
+    return dispatch('db/insertInto', { table, data }, root)
+      .then(() => {
+        commit('addInList', data)
+        commit('setMessage')
+        commit('setViewerStatusView')
+      })
+
   },
   addImage({ commit, dispatch, state, rootState }, { note = '', description = '', photo }) {
     const fileName = uuidv4() //DA CONCORDARE repoFilename(photo.name)
@@ -151,8 +187,8 @@ export const actions = {
           Vue.set(element, 'files', [])
           if (element.listaRisorse) {
             element.listaRisorse.forEach((res) => {
-              dispatch('dm_resources/getById', res, root)
-                .then((file) => element.files.push(URL.createObjectURL(file)))
+              dispatch('dm_resources/getUrlById', res, root)
+                .then((url) => element.files.push(url))
             })
           }
           commit('addInList', element)
@@ -205,8 +241,8 @@ export const mutations = {
   setMessage(state, payload = '') { state.ui.message = payload },
   setList(state, payload = []) { state.list = payload },
   setRecord(state, payload = {}) {
-    if(!payload.data) payload.data = {}
-    if(!payload.data.EV_Classificazione) payload.data.EV_Classificazione = {}
+    if (!payload.data) payload.data = {}
+    if (!payload.data.EV_Classificazione) payload.data.EV_Classificazione = {}
 
     state.record = payload
     state.$record = _clone(payload)
@@ -219,14 +255,14 @@ export const mutations = {
 
 export const getters = {
   appuntiFiltered: (s, g) => {
-    if(s.ui.filter === null || s.ui.filter === '' ) return g.appuntiByDate
+    if (s.ui.filter === null || s.ui.filter === '') return g.appuntiByDate
     let dateFilter = null
     let textFilter = null
-    if(s.ui.filter.includes('/')) {
+    if (s.ui.filter.includes('/')) {
       let aDateFilter = s.ui.filter.split('/')
 
-      if(aDateFilter.length === 2) {
-        if(s.ui.filter.includes(' ')) {
+      if (aDateFilter.length === 2) {
+        if (s.ui.filter.includes(' ')) {
           let af = aDateFilter[1].split(' ')
           textFilter = af[1]
           aDateFilter[1] = af[0]
@@ -234,8 +270,8 @@ export const getters = {
         dateFilter = aDateFilter[1] + '-' + aDateFilter[0]
       }
 
-      else if(aDateFilter.length === 3) {
-        if(s.ui.filter.includes(' ')) {
+      else if (aDateFilter.length === 3) {
+        if (s.ui.filter.includes(' ')) {
           let af = aDateFilter[2].split(' ')
           textFilter = af[1]
           aDateFilter[2] = af[0]
@@ -243,7 +279,7 @@ export const getters = {
         dateFilter = aDateFilter[2] + '-' + aDateFilter[1] + '-' + aDateFilter[0]
       }
     } else {
-        textFilter = s.ui.filter
+      textFilter = s.ui.filter
     }
 
     // console.log('---- dateFilter ',dateFilter)
@@ -253,8 +289,8 @@ export const getters = {
       let textBool = true
 
 
-      if(dateFilter !== null) dateBool = o.insert_UTCDate.includes(dateFilter)
-      if(textFilter !== null) textBool =  (
+      if (dateFilter !== null) dateBool = o.insert_UTCDate.includes(dateFilter)
+      if (textFilter !== null) textBool = (
         _get(o.data, 'EV_NOTE', '').includes(textFilter) ||
         _get(o.data, 'EV_Descrizione', '').includes(textFilter)
       )

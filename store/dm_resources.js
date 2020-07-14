@@ -37,7 +37,23 @@ export const actions = {
     return db
       .getAttachment(id, id)
       .then((blob) => {
-        return URL.createObjectURL(blob)
+        // nel caso di immagine ritorna la miniatura dell'immagine
+        // Altrimenti ritorna un'icona relativa al tipo di file
+        let urlImage
+        switch (blob.type) {
+          case 'image/png':
+          case 'image/jpeg':
+          case 'image/gif':
+            urlImage = URL.createObjectURL(blob)
+            break;
+          case 'application/pdf':
+            urlImage = '/images/pdf-icon.png'
+          default:
+            break;
+        }
+
+        return urlImage
+        
       })
   }
 }

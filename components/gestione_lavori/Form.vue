@@ -3,23 +3,21 @@
     <Panel>
       <div slot="toolbarTitle">
         <div v-if="$vuetify.breakpoint.xsOnly">
-          <v-row no-gutters>
-            <v-col cols="2">
-              <v-avatar size="40">
+          <div class="d-flex justify-start align-center">
+            <div>
+              <v-avatar size="40" class="pa-0 ma-0">
                 <v-img :src="ui.imgURL || require('../../assets/images/lavoro.png')"></v-img>
               </v-avatar>
-            </v-col>
-            <v-col cols="10">
+            </div>
+            <div class="pl-1">
               <div class="subtitle-1 ellipseText">
                 <b>{{ $record.data.GL_CommittenteDesc }}</b>
               </div>
               <div class="caption ellipseText">{{ $record.data.GL_Oggetto }}</div>
-            </v-col>
-          </v-row>
-          <v-spacer></v-spacer>
+            </div>
+          </div>
         </div>
         <div v-else>Gestione lavoro</div>
-
       </div>
       <v-btn
         icon
@@ -32,7 +30,7 @@
       </v-btn>
 
       <div v-show="!modalOpened" slot="mainContent">
-        <div  v-if="isView">
+        <div v-if="isView">
           <div v-if="$vuetify.breakpoint.smAndUp">
             <v-row class="mx-2">
               <v-col cols="auto">
@@ -88,7 +86,7 @@
             <!-- <v-tab>FOTO</v-tab> -->
 
             <v-tab-item
-            :touchless="true"
+              :touchless="true"
               :class="
                 $vuetify.breakpoint.xsOnly
                   ? 'tabs__content_small'
@@ -99,7 +97,7 @@
             </v-tab-item>
 
             <v-tab-item
-            :touchless="true"
+              :touchless="true"
               :class="
                 $vuetify.breakpoint.xsOnly
                   ? 'tabs__content_small'
@@ -109,16 +107,15 @@
               <ListaRilievi :rifLavoroID="$record._id" />
             </v-tab-item>
             <v-tab-item
-            :touchless="true"
+              :touchless="true"
               :class="
                 $vuetify.breakpoint.xsOnly
                   ? 'tabs__content_small'
                   : 'tabs__content_large'
               "
             >
-
-            <v-container>
-              <Browser class="overflow-hidden" :job="{ job_id: $record._id }" />
+              <v-container>
+                <Browser class="overflow-hidden" :job="{ job_id: $record._id }" />
               </v-container>
             </v-tab-item>
             <!-- <v-tab-item
@@ -137,11 +134,10 @@
                   class="mx-auto"
                 />
               </v-container>
-            </v-tab-item> -->
+            </v-tab-item>-->
           </v-tabs>
         </div>
       </div>
-
     </Panel>
 
     <v-dialog v-model="isDialogErrorVisible" persistent max-width="290">
@@ -181,7 +177,12 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog :value="isBrowserCompleteInputVisible" persistent  :fullscreen="$vuetify.breakpoint.xsOnly"   max-width="700px" >
+    <v-dialog
+      :value="isBrowserCompleteInputVisible"
+      persistent
+      :fullscreen="$vuetify.breakpoint.xsOnly"
+      max-width="700px"
+    >
       <BrowserCompleteInput class="pa-2" />
     </v-dialog>
 
