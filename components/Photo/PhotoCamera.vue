@@ -1,34 +1,39 @@
 <template>
     <div class="text-align-center">
-        <v-row v-if="false">
+
+      <v-tabs v-model="ui.tabsCameraPhoto" fixed-tabs>
+        <v-tabs-slider color="accent"></v-tabs-slider>
+        <v-tab><v-icon class="mr-3">camera</v-icon>Fotocamera</v-tab>
+        <v-tab><v-icon  class="mr-3">image</v-icon>Foto</v-tab>
+
+      </v-tabs>
+
+      <v-tabs-items v-model="ui.tabsCameraPhoto">
+
+      <v-tab-item  >
+        <v-row v-if="ui.tabsCameraPhoto == 0">
             <v-col :cols="12" >
-                <div class="align-center" style="overflow:hidden; margin:auto; padding: 4px; border: 0px solid silver;height:250px;width:300px">
+                <div class="mt-2 align-center" style="overflow:hidden; margin:auto; padding: 4px; border: 0px solid silver;height:250px;width:300px">
                     <img :src="imgUrl" ref="camimg" style="max-width:90%" />
                 </div>
             </v-col>
         </v-row>
-
-        <v-row  v-if="false">
+        <v-row >
             <v-col :cols="12" class="text-align-center">
-                <v-btn class="elevation-0" small>
+                <v-btn class="elevation-0" small >
                     <v-icon>mdi-camera</v-icon>
                     <input
+                            style=" cursor:pointer"
                             class="camera"
-                            ref="inputcam" @change="onImgLoaded" type="file" accept="image/*" capture="user" />
-                            Scatta
+                            ref="inputcam" @change="onImgLoaded" type="file" accept="image/*" capture="user" /> <span class="ml-1">Scatta</span>
                 </v-btn>
 
-                <v-btn class="elevation-0" small>
-                    <v-icon>mdi-folder-image</v-icon>
-                    <input
-                            class="upload"
-                            ref="inputfile" @change="onImgUploaded" type="file" accept="image/*"  />
-                    Carica
-                </v-btn>
             </v-col>
         </v-row>
+      </v-tab-item>
 
-        <v-row>
+      <v-tab-item  >
+        <v-row v-if="ui.tabsCameraPhoto == 1">
           <v-col columns="12" class="pa-5">
             <vue-upload-multiple-image
               ref="imageUploader"
@@ -46,6 +51,8 @@
             />
           </v-col>
         </v-row>
+      </v-tab-item>
+      </v-tabs-items>
     </div>
 </template>
 
@@ -54,8 +61,18 @@
   import VueUploadMultipleImage from '../General/UploadMultipleImage'
 
   export default {
+    watch: {
+      'ui.tabsCameraPhoto' () {
+        this.imgUrl = null
+        this.$emit('snap-photo', null)
+        this.$emit('files-list-change', [])
+      }
+    },
     created () {
       this.$emit('snap-photo', null)
+    },
+    computed: {
+      ...mapState('photocamera', ['ui'])
     },
     data () {
       return {

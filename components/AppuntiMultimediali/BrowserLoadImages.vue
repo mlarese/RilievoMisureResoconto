@@ -1,6 +1,5 @@
 <template>
     <v-card :elevation="0">
-      <v-card-title  class="pb-0">Aggiungi foto</v-card-title>
       <v-row>
         <v-col class="pa-5" :cols="12" >
 
@@ -21,7 +20,7 @@
         <v-col cols="12" class="pa-2">
               <span class="float-right">
                 <v-btn color="blue darken-1" text @click="annulla()">Annulla</v-btn>
-                <v-btn :disabled="$files.length == 0" color="blue darken-1" text @click="salva()">Salva</v-btn>
+                <v-btn :disabled="$files.length == 0 && photo === null" color="blue darken-1" text @click="salva()">Salva</v-btn>
               </span>
         </v-col>
       </v-row>
@@ -33,6 +32,7 @@
 import {appuntimm} from './browsermx'
 import PhotoCamera from "~/components/Photo/PhotoCamera"
 import BrowserCompleteInput from "./BrowserCompleteInputLite"
+import {mapState, mapGetters} from "vuex";
 
 export default {
   mixins: [appuntimm],
@@ -44,7 +44,9 @@ export default {
       description: null
     }
   },
-
+  computed: {
+    ...mapGetters('photocamera', ['isPhotocamera', 'isPhotos'])
+  },
   methods: {
     onAddImage () {
       let {description, note, photo} = this
@@ -60,9 +62,8 @@ export default {
       this.cancelPhotocamera()
     },
     salva () {
-      this.addSetImage()
-      .then(() => this.cancelPhotocamera())
-
+      if(this.isPhotocamera) this.addSetImage().then(() => this.cancelPhotocamera())
+      else this.addImage({photo}).then(() => this.cancelPhotocamera())
     }
   }
 }

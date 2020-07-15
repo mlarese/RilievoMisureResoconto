@@ -161,10 +161,12 @@ export const actions = {
       })
 
   },
-  addImage({ commit, dispatch, state, rootState }, { note = '', description = '', photo }) {
+  addImage({ commit, dispatch, state, rootState }, { photo }) {
     const fileName = uuidv4() //DA CONCORDARE repoFilename(photo.name)
     const table = state.dbName
 
+    return
+    ///////
     let data = {
       _id: null,
       tipo: 'EVENTO',
