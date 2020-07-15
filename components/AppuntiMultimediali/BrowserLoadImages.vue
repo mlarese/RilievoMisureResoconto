@@ -44,9 +44,7 @@ export default {
       description: null
     }
   },
-  created () {
-    if(!this.$record.data) this.$record.data = {}
-  },
+
   methods: {
     onAddImage () {
       let {description, note, photo} = this

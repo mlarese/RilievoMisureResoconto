@@ -28,8 +28,8 @@ export const state = () => {
   return {
     list: [],
     lavoroCorrente: {},
-    $record: {},
-    record: {},
+    $record: {data: {}},
+    record: {data: {}},
     $files: [],
     browserFilter: {},
     strutturaDiClassificazione: {},
