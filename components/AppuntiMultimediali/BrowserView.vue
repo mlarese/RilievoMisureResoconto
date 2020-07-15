@@ -2,7 +2,7 @@
 
   <v-card class="elevation-0 overflow-x-hidden" :height="getHeight + 'px'">
     <v-row align="stretch">
-      <template v-for="appunto in appuntiByDate">
+      <template v-for="appunto in appuntiFiltered">
           <v-col :cols="12" v-if="show(appunto.insert_UTCDate)">
             <BrowserItemDate :appunto="appunto" />
           </v-col>

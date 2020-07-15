@@ -1,3 +1,4 @@
+import _isString from 'lodash/isString'
 import _isArray from 'lodash/isArray'
 import _clone from 'lodash/clone'
 import _orderBy from 'lodash/orderBy'
@@ -296,18 +297,20 @@ export const getters = {
     } else {
       textFilter = s.ui.filter
     }
-
-    // console.log('---- dateFilter ',dateFilter)
-    // console.log('---- textFilter ',textFilter)
+    textFilter = textFilter.toLowerCase()
+    //console.log('---- dateFilter ',dateFilter)
+    //console.log('---- textFilter ',textFilter)
     return g.appuntiByDate.filter(o => {
       let dateBool = true
       let textBool = true
-
+      let evClassificazione = o.data.EV_Classificazione
+      if(!_isString(evClassificazione)) evClassificazione = ''
 
       if (dateFilter !== null) dateBool = o.insert_UTCDate.includes(dateFilter)
       if (textFilter !== null) textBool = (
-        _get(o.data, 'EV_NOTE', '').includes(textFilter) ||
-        _get(o.data, 'EV_Descrizione', '').includes(textFilter)
+        evClassificazione.toLowerCase().includes(textFilter) ||
+        _get(o.data, 'EV_NOTE', '').toLowerCase().includes(textFilter) ||
+        _get(o.data, 'EV_Descrizione', '').toLowerCase().includes(textFilter)
       )
 
       return (dateBool && textBool)

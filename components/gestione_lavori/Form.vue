@@ -19,7 +19,7 @@
         </div>
         <div v-else>Gestione lavoro</div>
       </div>
-      <portal-target name="xs-bar-right"></portal-target>
+
       <v-btn
         icon
         class="mr-1"
@@ -57,6 +57,10 @@
               </v-col>
               <v-col cols="auto" class="pb-0">
                 <v-row class="pb-0">
+                  <v-col cols="3" class="align-self-center">
+                    <portal-target name="xs-bar-right"></portal-target>
+                  </v-col>
+
                   <v-col cols="2" class="align-self-center">
                     <v-checkbox
                       v-model="$record.data.isPreferito"
