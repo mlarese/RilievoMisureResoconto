@@ -17,6 +17,7 @@
                   append-icon="search"
                   background-color="white"
                   v-model="filterText"
+                  :loading="isLoadingList"
                 />
               </div>
             </v-card>
@@ -24,10 +25,14 @@
         </v-row>
 
         <!-- LISTA UTENTI -->
-        <v-container :style="fillHeightStyle" class="py-0 px-1">
+        <v-container v-if="isOnline()" :style="fillHeightStyle" class="py-0 px-1">
           <v-row dense>
-            <v-col v-for="usr in getfilteredList()" :key="usr.codice" xs="12" md="6" lg="6">
-              <v-card color="white" @click="onEdit(usr)" min-width="300" max-height="200">
+            <v-col v-for="(usr, i) in getfilteredList()" :key="i" xs="12" :sm="usr.header ? 12: 6">
+              <v-card flat v-if="usr.header" min-width="300">
+                <v-label>{{usr.header}}</v-label>
+              </v-card>
+
+              <v-card v-else color="white" @click="onEdit(usr)" min-width="300" max-height="200">
                 <div class="d-flex flex-no-wrap">
                   <v-avatar class="mt-3 ml-3" size="60">
                     <v-img :src="usr.imgURL || require('../../assets/images/user.png')" />
@@ -42,17 +47,30 @@
                     <!-- <v-card-text v-text="usr.codice" /> -->
                   </div>
                 </div>
-                <v-card-actions class="py-0">
+                <!-- <v-card-actions class="py-0">
                   <v-icon
                     v-if="!usr.abilitato"
                     color="primary"
                     class="align-self-end pa-1"
                   >mdi-account-off-outline</v-icon>
-                </v-card-actions>
+                </v-card-actions>-->
               </v-card>
             </v-col>
           </v-row>
         </v-container>
+
+        <v-container v-else class="d-flex" :style="fillHeightStyle" >
+          <v-alert
+            border="right"
+            colored-border
+            type="error"
+            elevation="2"
+            icon="mdi-wifi-off"
+            class="align-self-center"
+          >Questa funzionalità è disponibile solamente con connessione a internet.
+          </v-alert>
+        </v-container>
+
         <v-btn
           fab
           color="primary"
@@ -134,6 +152,7 @@
             text
             @click="salvaModifiche()"
             :readonly="!datiCorretti"
+            :loading="isLoadingSave"
           >Salva</v-btn>
         </v-card-actions>
       </v-card>
@@ -149,6 +168,8 @@
 
 <script>
 import _filter from 'lodash/filter'
+import _orderBy from 'lodash/orderBy'
+import _clone from 'lodash/clone'
 import { mapActions } from 'vuex'
 import Panel from '../Containers/Panel'
 
@@ -165,15 +186,18 @@ export default {
   components: {
     Panel
   },
-  props: { utenti: { default: [] } },
+  // props: { utenti: { default: [] } },
   data: () => ({
+    isLoadingList: true,
+    isLoadingSave: false,
+
     isAdd: false,
     isEdit: false,
     datiCorretti: false,
     passwordMatchError: false,
     filterText: '',
     fillHeightStyle: '',
-
+    utenti: [],
     utente: {},
 
     rules: {
@@ -208,7 +232,10 @@ export default {
     ...mapActions('api', ['post', 'get']),
     getfilteredList() {
       let filter = this.filterText
-      return _filter(this.utenti, function(o) {
+      let listaFiltrata = []
+
+      // Filtra la lista per filtro manuale
+      listaFiltrata = _filter(this.utenti, function(o) {
         if (filter == '') {
           return true
         } else {
@@ -219,13 +246,34 @@ export default {
           )
         }
       })
+      // Ordina la lista per utente descrizione
+      let listaAbil = []
+      listaAbil = _orderBy(
+        _filter(listaFiltrata, ['abilitato', true]),
+        ['descrizione'],
+        ['asc']
+      )
+      let listaDisab = []
+      listaDisab = _orderBy(
+        _filter(listaFiltrata, ['abilitato', false]),
+        ['descrizione'],
+        ['asc']
+      )
+
+      // Raggruppa gli utenti attivi e disattivati
+      let res = []
+      res.push({ header: `Attivi (${listaAbil.length})` })
+      res.push(...listaAbil)
+      res.push({ header: `Disabilitati (${listaDisab.length})` })
+      res.push(...listaDisab)
+      return res
     },
     onAdd() {
       this.utente = nuovoUtente
       this.isAdd = true
     },
     onEdit(usr) {
-      this.utente = usr
+      this.utente = _clone(usr)
       this.isEdit = true
     },
     annullaModifiche() {
@@ -234,13 +282,14 @@ export default {
     },
     async salvaModifiche() {
       try {
+        this.isLoadingSave = true
         const url = 'api/users/saveUser'
         const resSave = await this.post({ url, data: this.utente })
         console.log(resSave)
 
-        const { data } = await this.get({ url: `api/users/getAllUsers` })
-        this.utenti = data
+        await this.loadData()
 
+        this.isLoadingSave = false
         this.isAdd = false
         this.isEdit = false
       } catch (error) {
@@ -252,7 +301,19 @@ export default {
       let value1 = this.$refs['password1'].value
       let value2 = this.$refs['password2'].value
       this.passwordMatchError = !(value1 == value2)
+    },
+    async loadData() {
+      this.isLoadingList = true
+      const { data } = await this.get({ url: `api/users/getAllUsers` })
+      this.utenti = data
+      this.isLoadingList = false
+    },
+    isOnline(){
+      return navigator.onLine == true
     }
+  },
+  created() {
+    this.loadData()
   }
 }
 </script>

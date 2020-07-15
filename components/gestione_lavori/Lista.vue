@@ -2,7 +2,7 @@
   <v-container class="mainContainer">
     <!-- FILTRO -->
     <v-row dense>
-      <v-col cols="12">
+      <v-col xs="12" md="6" lg="4">
         <v-card class="elevation-0" height="50px">
           <div class="d-flex">
             <v-text-field

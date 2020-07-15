@@ -38,7 +38,7 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar app color="grey lighten-4" class="elevation-5 pl-1 mb-3">
+    <v-app-bar app clipped-left color="grey lighten-4" class="elevation-5 pl-1 mb-3">
       <slot name="header-left">
         <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
         <v-img

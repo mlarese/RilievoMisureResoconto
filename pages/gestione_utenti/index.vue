@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ListaUtenti :utenti="utenti" />
+    <ListaUtenti />
   </div>
 </template>
 
@@ -11,11 +11,6 @@ export default {
   layout: 'fullPage',
   components: {
     ListaUtenti
-  },
-  async asyncData({ store }) {
-    const url = `api/users/getAllUsers`
-    const { data } = await store.dispatch('api/get', { url }, { root: true })
-    return { utenti: data }
   }
 }
 </script>
