@@ -19,6 +19,7 @@
         </div>
         <div v-else>Gestione lavoro</div>
       </div>
+      <portal-target name="xs-bar-right"></portal-target>
       <v-btn
         icon
         class="mr-1"
@@ -186,7 +187,7 @@
       <BrowserCompleteInput class="pa-2" />
     </v-dialog>
 
-    <v-dialog :value="isBrowserLoadImagesVisible" persistent  :fullscreen="$vuetify.breakpoint.xsOnly"   max-width="700px" >
+    <v-dialog v-if="isBrowserLoadImagesVisible" :value="isBrowserLoadImagesVisible" persistent  :fullscreen="$vuetify.breakpoint.xsOnly"   max-width="700px" >
       <BrowserLoadImages class="pa-2" />
     </v-dialog>
 

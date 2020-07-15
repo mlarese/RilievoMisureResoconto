@@ -1,7 +1,7 @@
 <template>
   <v-card class="elevation-0">
 
-    <portal to="app-bar-right">
+    <portal to="xs-bar-right">
       <v-btn fab @click="gotoSearch" text class="pa-0 ma-0" small :width="30">
         <v-icon medium>search</v-icon>
       </v-btn>

@@ -1,3 +1,4 @@
+import _isArray from 'lodash/isArray'
 import _clone from 'lodash/clone'
 import _orderBy from 'lodash/orderBy'
 import _get from 'lodash/get'
@@ -43,6 +44,19 @@ export const state = () => {
     }
   }
 }
+
+const prepareClassificazione = (classificazione) => {
+  let ret = []
+  for(let key in classificazione) {
+    let items = classificazione[key]
+    // ret.push({type: 'header', name: key})
+
+    if(_isArray(items))
+      for(let i = 0; i < items.length; i++) ret.push({type: 'item', name: items[i], group: key})
+      else ret.push({type: 'item', name: items, group: key})
+  }
+  return ret
+}
 export const actions = {
   editAppunto({ commit, dispatch, state }, appunto) {
     commit('setRecord', appunto)
@@ -72,7 +86,9 @@ export const actions = {
     commit('app/setModalOpened', false, { root: true })
   },
   getStrutturaDiClassificazione({ commit }) {
-    commit('setStrutturaDiClassificazione', strutturaClassificazioneJson)
+
+    const payload = prepareClassificazione(strutturaClassificazioneJson)
+    commit('setStrutturaDiClassificazione', payload)
   },
   getAttachment({ commit, dispatch, state }, { record, itemName }) {
     return dispatch('db/getAttachment', { table: dbName, docID: record._id, fileName: itemName }, { root: true })
@@ -97,7 +113,7 @@ export const actions = {
         EV_RifLavoroID: state.lavoroCorrente.job_id,
         EV_Descrizione: comment,
         EV_Note: null,
-        EV_Classificazione: {},
+        EV_Classificazione: null,
       },
       listaRisorse: []
     }
@@ -106,7 +122,7 @@ export const actions = {
       .then(() => {
         commit('addInList', data)
         commit('setMessage')
-        dispatch('editAppunto', data)
+        // dispatch('editAppunto', data)
       })
   },
   addSetImage({ commit, dispatch, state, rootState }) {
@@ -135,7 +151,7 @@ export const actions = {
       },
       listaRisorse
     }
-    
+
     return dispatch('db/insertInto', { table, data }, root)
       .then(() => {
         commit('addInList', data)
@@ -240,10 +256,9 @@ export const mutations = {
   setBrowserFilter(state, payload = null) { state.lavoroCorrente = payload },
   setMessage(state, payload = '') { state.ui.message = payload },
   setList(state, payload = []) { state.list = payload },
-  setRecord(state, payload = {}) {
-    if (!payload.data) payload.data = {}
-    if (!payload.data.EV_Classificazione) payload.data.EV_Classificazione = {}
-
+  setFiles(state, payload = []) { state.$files = payload },
+  setRecord(state, payload = {data: {}}) {
+    if(!payload.data) payload.data = {}
     state.record = payload
     state.$record = _clone(payload)
   },

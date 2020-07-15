@@ -30,15 +30,12 @@
 
         <v-row>
           <v-col columns="12" class="pa-5">
-
-            {{$attachments}}
-
             <vue-upload-multiple-image
               ref="imageUploader"
               @before-remove="beforeRemove"
               @upload-success="uploadSuccess"
               @edit-image="editImage"
-              dragText="Trascina File"
+              dragText=" "
               browseText="Scegli File"
               label="immagini"
               dropText="Rilascia file"
@@ -64,26 +61,33 @@
       return {
         pictures: [],
         file: null,
-        imgUrl: null
+        imgUrl: null,
+        files: []
       }
     },
     components: {
       VueUploadMultipleImage
     },
     methods: {
+      reduceFiles (fileList) {
+        let ret = []
+
+        for(let i = 0; i < fileList.length; i++)
+          ret.push(fileList[i]['file'])
+        return ret
+      },
       editImage(formData, index, fileList) {
-        this.$attachments = fileList
+        this.files = this.reduceFiles(fileList)
+        this.$emit('files-list-change', this.files)
       },
       uploadSuccess(formData, index, fileList) {
-        this.$attachments = fileList
+        this.files = this.reduceFiles(fileList)
+        this.$emit('files-list-change', this.files)
       },
       beforeRemove (index, done, fileList) {
-        // let r = confirm("remove image")
-        let r = true
-        if (r == true) {
           done()
-          this.$attachments = fileList
-        }
+          this.files = this.reduceFiles(fileList)
+          this.$emit('files-list-change', this.files)
       },
       displayAsImage(file, ref) {
         this.imgUrl = URL.createObjectURL(file)

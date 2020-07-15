@@ -1,6 +1,20 @@
 <template>
   <div>
-    <component   :is="currentComponent" :label="label" :structure="structure" :record="record" />
+
+    <v-autocomplete v-model="record.EV_Classificazione" label="Classificazione" :items="structure" item-text="name" item-value="name">
+
+      <template slot="item" slot-scope="{item}">
+
+        <template>
+          <v-list-item-content>
+            <v-list-item-title v-text="item.name"></v-list-item-title>
+            <v-list-item-subtitle v-text="item.group"></v-list-item-subtitle>
+          </v-list-item-content>
+
+        </template>
+      </template>
+    </v-autocomplete>
+
   </div>
 
 </template>
