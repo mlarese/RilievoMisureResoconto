@@ -1,6 +1,6 @@
 <template>
 
-  <v-card class="elevation-0 overflow-x-hidden" :height="getHeight + 'px'">
+  <v-card class="elevation-0 overflow-x-hidden px-1" :height="getHeight + 'px'">
     <v-row align="stretch">
       <template v-for="appunto in appuntiFiltered">
           <v-col :cols="12" v-if="show(appunto.insert_UTCDate)">
@@ -70,7 +70,7 @@ export default {
   },
   computed: {
     getHeight() {
-      let offset = 0
+      let offset = -10
       if (this.$el) offset = this.$el.offsetTop
       if (this.$vuetify.breakpoint.xsOnly) {
         return this.$vuetify.breakpoint.height - 250 + offset

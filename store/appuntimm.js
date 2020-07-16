@@ -28,8 +28,8 @@ export const state = () => {
   return {
     list: [],
     lavoroCorrente: {},
-    $record: {data: {}},
-    record: {data: {}},
+    $record: { data: {} },
+    record: { data: {} },
     $files: [],
     browserFilter: {},
     strutturaDiClassificazione: {},
@@ -48,13 +48,13 @@ export const state = () => {
 
 const prepareClassificazione = (classificazione) => {
   let ret = []
-  for(let key in classificazione) {
+  for (let key in classificazione) {
     let items = classificazione[key]
     // ret.push({type: 'header', name: key})
 
-    if(_isArray(items))
-      for(let i = 0; i < items.length; i++) ret.push({type: 'item', name: items[i], group: key})
-      else ret.push({type: 'item', name: items, group: key})
+    if (_isArray(items))
+      for (let i = 0; i < items.length; i++) ret.push({ type: 'item', name: items[i], group: key })
+    else ret.push({ type: 'item', name: items, group: key })
   }
   return ret
 }
@@ -69,13 +69,13 @@ export const actions = {
     commit('setViewMode')
     commit('app/setModalOpened', false, { root: true })
   },
-  addPhotocamera ({commit, dispatch, state}) {
+  addPhotocamera({ commit, dispatch, state }) {
     commit('setPhotocameraMode')
-    commit('app/setModalOpened', true, {root: true})
+    commit('app/setModalOpened', true, { root: true })
   },
-  cancelPhotocamera ({commit, dispatch, state}) {
+  cancelPhotocamera({ commit, dispatch, state }) {
     commit('setViewMode')
-    commit('app/setModalOpened', false, {root: true})
+    commit('app/setModalOpened', false, { root: true })
   },
   async save({ dispatch, commit, state, rootState }) {
     const table = state.dbName
@@ -110,11 +110,10 @@ export const actions = {
       lastUpdateUser: rootState.auth.utente,
       insertUser: rootState.auth.utente,
       data: {
-        EV_Type: 'comment',
+        EV_Type: 'Nota',
         EV_RifLavoroID: state.lavoroCorrente.job_id,
         EV_Descrizione: comment,
-        EV_Note: null,
-        EV_Classificazione: null,
+        EV_Classificazione: null
       },
       listaRisorse: []
     }
@@ -126,18 +125,18 @@ export const actions = {
         // dispatch('editAppunto', data)
       })
   },
-  addSetImage({ commit, dispatch, state, rootState }) {
+  async addSetImage({ commit, dispatch, state, rootState }) {
     const table = state.dbName
     let listaRisorse = []
 
-    state.$files.forEach(file => {
+    for (const file of state.$files) {
       let id = uuidv4()
       listaRisorse.push(id)
-      dispatch('dm_resources/save', { id, file }, root)
-    });
+      await dispatch('dm_resources/save', { id, file }, root)
+    }
 
     let data = {
-      _id: null,
+      _id: state.$record._id,
       tipo: 'EVENTO',
       syncStatus: syncStates['NOT_SYNC'],
       lastUpdate_UTCDate: new Date(),
@@ -145,10 +144,10 @@ export const actions = {
       lastUpdateUser: rootState.auth.utente,
       insertUser: rootState.auth.utente,
       data: {
-        EV_Type: 'image',
-        EV_RifLavoroID: state.lavoroCorrente,
-        EV_Descrizione: state.ui.message,
-        EV_Classificazione: null,
+        EV_Type: 'Immagine',
+        EV_RifLavoroID: state.lavoroCorrente.job_id,
+        EV_Descrizione: state.$record.data.EV_Descrizione,
+        EV_Classificazione: state.$record.data.EV_Classificazione,
       },
       listaRisorse
     }
@@ -161,14 +160,15 @@ export const actions = {
       })
 
   },
-  addImage({ commit, dispatch, state, rootState }, { photo }) {
-    const fileName = uuidv4() //DA CONCORDARE repoFilename(photo.name)
+  async addImage({ commit, dispatch, state, rootState }, photo) {
     const table = state.dbName
 
-    return
-    ///////
+    let id = uuidv4()
+    let listaRisorse = [id]
+    await dispatch('dm_resources/save', { id, file: photo }, root)
+
     let data = {
-      _id: null,
+      _id: state.$record._id,
       tipo: 'EVENTO',
       syncStatus: syncStates['NOT_SYNC'],
       lastUpdate_UTCDate: new Date(),
@@ -176,25 +176,19 @@ export const actions = {
       lastUpdateUser: rootState.auth.utente,
       insertUser: rootState.auth.utente,
       data: {
-        EV_Type: 'image',
-        EV_RifLavoroID: state.lavoroCorrente,
-        EV_Descrizione: description,
-        EV_Note: note,
-        EV_Classificazione: null,
+        EV_Type: 'Immagine',
+        EV_RifLavoroID: state.lavoroCorrente.job_id,
+        EV_Descrizione: state.$record.data.EV_Descrizione,
+        EV_Classificazione: state.$record.data.EV_Classificazione,
       },
-      listaRisorse: [fileName]
+      listaRisorse
     }
-    Vue.set(data, 'files', [])
-    data.files.push(URL.createObjectURL(photo))
 
-    return dispatch('dm_resources/save', { id: fileName, file: photo }, root)
+    return dispatch('db/insertInto', { table, data }, root)
       .then(() => {
-        return dispatch('db/insertInto', { table, data }, root)
-          .then(() => {
-            commit('addInList', data)
-            commit('setMessage')
-            commit('setViewerStatusView')
-          })
+        commit('addInList', data)
+        commit('setMessage')
+        commit('setViewerStatusView')
       })
   },
   load({ commit, dispatch, state }) {
@@ -248,7 +242,7 @@ export const mutations = {
     state.prevModalita = state.modalita
     state.modalita = 'VIEW'
   },
-  backToPrevModalita (state) {
+  backToPrevModalita(state) {
     state.modalita = state.prevModalita
   },
   setStrutturaDiClassificazione(state, payload) { state.strutturaDiClassificazione = payload },
@@ -260,8 +254,8 @@ export const mutations = {
   setMessage(state, payload = '') { state.ui.message = payload },
   setList(state, payload = []) { state.list = payload },
   setFiles(state, payload = []) { state.$files = payload },
-  setRecord(state, payload = {data: {}}) {
-    if(!payload.data) payload.data = {}
+  setRecord(state, payload = { data: {} }) {
+    if (!payload.data) payload.data = {}
     state.record = payload
     state.$record = _clone(payload)
   },
@@ -306,7 +300,7 @@ export const getters = {
       let dateBool = true
       let textBool = true
       let evClassificazione = o.data.EV_Classificazione
-      if(!_isString(evClassificazione)) evClassificazione = ''
+      if (!_isString(evClassificazione)) evClassificazione = ''
 
       if (dateFilter !== null) dateBool = o.insert_UTCDate.includes(dateFilter)
       if (textFilter !== null) textBool = (
@@ -320,7 +314,7 @@ export const getters = {
   },
   appuntiByDate: (s, g) => _orderBy(s.list.filter(o => {
     return o.data.EV_RifLavoroID === s.lavoroCorrente.job_id
-  }), 'lastUpdate_UTCDate'),
+  }), 'insert_UTCDate'),
   isView: (s) => s.modalita === 'VIEW',
   isPhotocamera: (s) => s.modalita === 'PHOTOCAMERA',
   isEdit: (s) => s.modalita === 'EDIT',
