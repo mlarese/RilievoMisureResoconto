@@ -6,7 +6,6 @@
       <v-text-field
         @keydown="onKeydown"
         ref="inputRef"
-        autofocus
         placeholder="Scrivi un appunto"
         dense
         hide-details

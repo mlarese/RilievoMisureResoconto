@@ -92,6 +92,7 @@
       :showCaption="false"
       >
     </vue-image-lightbox-carousel>
+
   </div>
 </template>
 
@@ -203,7 +204,7 @@ export default {
       }
       forEach(files, (value, index) => {
         const ftype = value.type.split('/')[0]
-        if(ftype !== 'image') {
+        if(ftype !== 'image' || false) {
           alert('You can drop only images')
           return false
         }
@@ -284,6 +285,9 @@ export default {
       if (document.getElementById(this.idEdit)) {
         document.getElementById(this.idEdit).value = ''
       }
+    },
+    changeHighlightLast () {
+      this.changeHighlight(this.images.length - 1 )
     },
     changeHighlight (currentIndex) {
       this.currentIndexImage = currentIndex

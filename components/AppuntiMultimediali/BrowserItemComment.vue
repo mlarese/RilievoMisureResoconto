@@ -4,7 +4,7 @@
         {{appunto.data.EV_Descrizione}}
       </v-col>
 
-      <v-col :cols="3" class="py-0 ">
+      <v-col v-if="false" :cols="3" class="py-0 ">
         <div class="text-align-right">
           <v-btn height="20" width="20" @click="onEditAppunto" text small fab><v-icon small>edit</v-icon></v-btn>
         </div>
@@ -14,6 +14,7 @@
 </template>
 <script>
 import { appuntimm } from './browsermx'
+
 export default {
   mixins: [appuntimm],
   props: ['appunto'],

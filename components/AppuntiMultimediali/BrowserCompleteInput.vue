@@ -8,9 +8,6 @@
         </v-col>
 
         <v-col cols="12">
-          <v-text-field label="Note"   v-model="$record.data.EV_Note" hide-details  />
-        </v-col>
-        <v-col cols="12">
           <ClassificazioneForm :record="$record.data"/>
         </v-col>
         <v-col cols="12">
