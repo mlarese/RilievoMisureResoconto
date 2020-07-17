@@ -192,7 +192,7 @@
     </v-dialog>
 
     <v-dialog v-if="isBrowserLoadImagesVisible" :value="isBrowserLoadImagesVisible" persistent  :fullscreen="$vuetify.breakpoint.xsOnly"   max-width="700px" >
-      <BrowserLoadImages class="pa-2" />
+      <BrowserLoadImages class="pa-5" />
     </v-dialog>
 
   </div>
