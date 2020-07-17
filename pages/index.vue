@@ -15,7 +15,7 @@
 <script>
 import DbMonitor from '../components/Db/DbMonitor'
 import { fs, previewFile } from '../assets/filesystem'
-import { mapState } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 export default {
   components: { DbMonitor },
   data() {

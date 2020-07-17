@@ -204,6 +204,11 @@ export const actions = {
                 .then((url) => element.files.push(url))
             })
           }
+          let ClassID = element.data.EV_Classificazione
+          if (ClassID){
+            dispatch('classificazione/getDescrizioneById', ClassID, root)
+                .then((desc) => element.data.ClassificazioneDesc = desc)
+          }
           commit('addInList', element)
         })
         return lista
