@@ -62,8 +62,9 @@ export default {
       this.cancelPhotocamera()
     },
     salva () {
-      if(this.isPhotocamera) this.addImage(this.photo).then(() => this.cancelPhotocamera())
-      else this.addSetImage().then(() => this.cancelPhotocamera())
+      // if(this.isPhotocamera) this.addImage(this.photo).then(() => this.cancelPhotocamera())
+      // else this.addSetImage().then(() => this.cancelPhotocamera())
+      this.addSetImage().then(() => this.cancelPhotocamera())
     }
   }
 }
