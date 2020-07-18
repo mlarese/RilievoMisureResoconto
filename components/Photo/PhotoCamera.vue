@@ -28,8 +28,8 @@
             capture="environment"
             :debug="1"
             accept="video/*, image/*"
-            :quality="0.9"
-            :maxWidth="300"
+            :quality="0.8"
+            :maxWidth="200"
             :autoRotate="true"
             outputFormat="file"
             @input="setImage"
@@ -45,17 +45,6 @@
               </figure>
             </label>
           </image-uploader>
-
-
-
-
-          <v-btn class="elevation-0" small v-if="false">
-            <v-icon>mdi-camera</v-icon>
-            <input
-              style=" cursor:pointer"
-              class="camera"
-              ref="inputcam" @change="onImgLoaded" type="file" accept="image/*" capture="user" /> <span class="ml-1">Scatta</span>
-          </v-btn>
 
         </v-col>
       </v-row>
