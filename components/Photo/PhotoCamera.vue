@@ -26,12 +26,12 @@
           <image-uploader
             :preview="false"
             capture="environment"
-            :debug="1"
+            :debug="0"
             accept="video/*, image/*"
-            :quality="0.8"
+            :quality="0.7"
             :maxWidth="200"
             :autoRotate="true"
-            outputFormat="file"
+            outputFormat="blob"
             @input="setImage"
           >
             <label for="fileInput" slot="upload-label" class="photo-camera-label">

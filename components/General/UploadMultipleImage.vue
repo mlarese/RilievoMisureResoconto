@@ -223,14 +223,16 @@ export default {
     },
     /** @var File file **/
 
-    async createImage (file) {
+    async createImage (image) {
       let reader = new FileReader()
       let formData = new FormData()
 
-      console.dir(file)
+      const time = new Date().getTime()
 
+      let file = new File([image], "camshot_"+ time)
       formData.append('file', file)
 
+      console.dir(file)
       reader.onload = (e) => {
         let dataURI = e.target.result
         if (dataURI) {
