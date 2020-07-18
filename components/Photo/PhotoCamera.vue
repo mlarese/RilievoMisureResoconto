@@ -2,6 +2,7 @@
     <div class="text-align-center">
         <v-row >
           <v-col columns="12" class="pa-5">
+
             <vue-upload-multiple-image
               ref="imageUploader"
               @before-remove="beforeRemove"
@@ -21,7 +22,34 @@
 
       <v-row class="py-0">
         <v-col :cols="12" class="py-0 text-align-center">
-          <v-btn class="elevation-0" small >
+
+          <image-uploader
+            :preview="false"
+            capture="environment"
+            :debug="1"
+            accept="video/*, image/*"
+            :quality="0.9"
+            :maxWidth="300"
+            :autoRotate="true"
+            outputFormat="file"
+            @input="setImage"
+          >
+            <label for="fileInput" slot="upload-label" class="photo-camera-label">
+              <figure>
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="64" viewBox="0 0 32 32">
+                  <path
+                    class="path1"
+                    d="M9.5 19c0 3.59 2.91 6.5 6.5 6.5s6.5-2.91 6.5-6.5-2.91-6.5-6.5-6.5-6.5 2.91-6.5 6.5zM30 8h-7c-0.5-2-1-4-3-4h-8c-2 0-2.5 2-3 4h-7c-1.1 0-2 0.9-2 2v18c0 1.1 0.9 2 2 2h28c1.1 0 2-0.9 2-2v-18c0-1.1-0.9-2-2-2zM16 27.875c-4.902 0-8.875-3.973-8.875-8.875s3.973-8.875 8.875-8.875c4.902 0 8.875 3.973 8.875 8.875s-3.973 8.875-8.875 8.875zM30 14h-4v-2h4v2z"
+                  ></path>
+                </svg>
+              </figure>
+            </label>
+          </image-uploader>
+
+
+
+
+          <v-btn class="elevation-0" small v-if="false">
             <v-icon>mdi-camera</v-icon>
             <input
               style=" cursor:pointer"
@@ -94,6 +122,10 @@
         };
         img.src = this.imgUrl;
       },
+      setImage (file) {
+        this.$emit('snap-photo', file)
+        this.$refs.imageUploader.createImage(file)
+      },
       onImgLoaded (event) {
         this.file = event.target.files[0]
         if(!this.file) return
@@ -138,5 +170,11 @@
         cursor: pointer;
         opacity: 0;
         height: 25px;
+    }
+    .photo-camera-label{
+      cursor: pointer;
+    }
+    #fileInput {
+      display: none;
     }
 </style>

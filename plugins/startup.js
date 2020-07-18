@@ -12,7 +12,9 @@ import Lightbox from 'vue-easy-lightbox'
 import ClassificazioneFactory from '../components/Classificazione/ClassificazioneFactory'
 import ClassificazioneCombo from '../components/Classificazione/ClassificazioneCombo'
 import ClassificazioneInput from '../components/Classificazione/ClassificazioneInput'
+import ImageUploader from 'vue-image-upload-resize'
 
+Vue.use(ImageUploader);
 Vue.use(Lightbox)
 
 Vue.use(PortalVue)

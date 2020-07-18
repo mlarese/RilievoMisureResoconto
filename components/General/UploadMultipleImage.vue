@@ -102,10 +102,10 @@ import { forEach, findIndex, orderBy, cloneDeep } from 'lodash'
 import Popper from 'vue-popperjs'
 import 'vue-popperjs/dist/css/vue-popper.css'
 import VueImageLightboxCarousel from 'vue-image-lightbox-carousel'
+import resizeImg from 'resize-img'
+
 export default {
-
   name: 'UploadMultipleImage',
-
   props: {
     dragText: {
       type: String,
@@ -204,7 +204,7 @@ export default {
       }
       forEach(files, (value, index) => {
         const ftype = value.type.split('/')[0]
-        if(ftype !== 'image' || false) {
+        if(ftype !== 'image') {
           alert('You can drop only images')
           return false
         }
@@ -221,9 +221,14 @@ export default {
     onDragover () {
       this.isDragover = true
     },
-    createImage (file) {
+    /** @var File file **/
+
+    async createImage (file) {
       let reader = new FileReader()
       let formData = new FormData()
+
+      console.dir(file)
+
       formData.append('file', file)
 
       reader.onload = (e) => {
