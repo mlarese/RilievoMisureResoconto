@@ -123,7 +123,7 @@ export default {
       dark: false,
       themes: {
         dark: {
-          primary: colors.blue.accent3,     
+          primary: colors.blue.accent3,
           secondary: colors.blue.accent1,
           accent: colors.amber.base,
           info: colors.teal.lighten1,
@@ -141,11 +141,18 @@ export default {
     /*
      ** You can extend webpack config here
      */
-    extend(config, ctx) { 
+    extend(config, ctx) {
       // config.optimization.splitChunks.maxSize = 100000;
       if (ctx.isDev) {
         config.devtool = ctx.isClient ? 'source-map' : 'inline-source-map'
       }
+
+      // Web Worker support
+        // config.module.rules.push({
+        //   test: /\.worker\.js$/,
+        //   use: { loader: 'worker-loader' },
+        //   exclude: /(node_modules)/
+        // })
     }
   }
 }

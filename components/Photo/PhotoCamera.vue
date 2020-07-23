@@ -2,7 +2,6 @@
     <div class="text-align-center">
         <v-row >
           <v-col columns="12" class="pa-5">
-
             <vue-upload-multiple-image
               ref="imageUploader"
               @before-remove="beforeRemove"

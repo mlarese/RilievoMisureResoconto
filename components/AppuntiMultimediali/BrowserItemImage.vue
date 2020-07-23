@@ -1,44 +1,58 @@
 <template>
-  <div class="text-align-center overflow-x-hidden">
-    <div class="text-align-center">
-      <img ref="imageItem" :height="180" :src="appunto.files[0]" />
+  <div>
+    <vue-easy-lightbox
+      :visible="showPreviewImages"
+      :imgs="(risorsa) ? risorsa.thumbnailUrl : null"
+      @hide="handleHide()"
+    ></vue-easy-lightbox>
+
+    <v-dialog v-if="showPreviewVideo" :value="showPreviewVideo" max-width="800px" @click:outside="showPreviewVideo=false">
+      <video :style="{width: '100%'}" controls>
+        <source :src="risorsa.fileUrl" :type="risorsa.typeFile" />Your browser does not support HTML video.
+      </video>
+    </v-dialog>
+
+    <div class="text-align-center overflow-x-hidden">
+      <div class="text-align-center" style="height: 150px: max-height: 150px" @click="openFile()">
+        <img width="100%s" :src="(risorsa) ? risorsa.thumbnailUrl : '/images/img-placeholder.png'" />
+      </div>
+      <div class="body-2 align-left mt-1">{{ appunto.data.EV_Descrizione }}</div>
     </div>
-    <div class="caption align-left mt-2">{{ appunto.data.EV_Descrizione }}</div>
   </div>
 </template>
 
 <script>
+import ResourceAvatar from './ResourceAvatar'
+import { mapState, mapGetters, mapActions } from 'vuex'
 import { appuntimm } from './browsermx'
 let curDate = null
 
 export default {
   mixins: [appuntimm],
+  components: { ResourceAvatar },
   props: ['appunto'],
-  created() {
-    // for (let img in this.appunto._attachments) {
-    //   this.onLoadAttachments(img)
-    //   break
-    // }
+  data() {
+    return {
+      risorsa: this.appunto.files[0],
+      showPreviewImages: false,
+      showPreviewVideo: false,
+      showPreviewPDF: false
+    }
   },
   methods: {
-    // async onLoadAttachments(itemName) {
-    //   this.getAttachment({ record: this.appunto, itemName }).then((ret) => {
-    //     try {
-    //       let imgURL = URL.createObjectURL(ret)
-    //       let img = this.$refs.imageItem
-    //       img = img[0]
-    //       this.image = imgURL
-    //     } catch (e) {}
-
-    //     // let imgB64 = `data:${type};base64,`+ btoa(arrayBuffer.toString())
-
-    //     // img.src = imgB64
-    //   })
-    //   return ''
-    // }
-  },
-  data() {
-    return { image: '' }
+    openFile() {
+      if (this.risorsa.type === 'pdf') {
+        this.showPreviewPDF = true
+        window.open(this.risorsa.fileUrl)
+      } else if (this.risorsa.type === 'video') {
+        this.showPreviewVideo = true
+      } else {
+        this.showPreviewImages = true
+      }
+    },
+    handleHide() {
+      this.showPreviewImages = false
+    }
   }
 }
 </script>

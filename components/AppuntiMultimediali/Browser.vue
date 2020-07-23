@@ -1,9 +1,9 @@
 <template>
   <div>
 
-    <v-card :elevation="0" v-if="false" >
+    <!-- <v-card :elevation="0" v-if="false" >
       <BrowserLoadImages />
-    </v-card>
+    </v-card> -->
 
     <v-card class="overflow-hidden viewer" :elevation="0">
       <!-- FILTRO -->

@@ -1,7 +1,10 @@
 <template>
   <v-card class="pa-2 black--text" rounded>
     <component :is="currentType" :appunto="appunto" />
-    <div class="caption text-align-right mt-2 grey--text">{{appunto.insert_UTCDate | time}}</div>
+    <div class="d-flex flex-row pt-2">
+      <div class="caption text-align-lef grey--text text-truncate pr-1">{{appunto.data.ClassificazioneDesc}}</div>
+      <div class="ml-auto caption grey--text">{{appunto.insert_UTCDate | time}}</div>
+    </div>
   </v-card>
 </template>
 <script>
@@ -28,7 +31,7 @@ export default {
             return 'BrowserItemSet'
           }
         case 'File':
-          // TODO
+        // TODO
         default:
           return 'BrowserItemImage'
           break

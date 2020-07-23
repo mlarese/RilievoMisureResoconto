@@ -4,32 +4,23 @@ import _clone from 'lodash/clone'
 import _orderBy from 'lodash/orderBy'
 import _get from 'lodash/get'
 import _dateFormat from 'date-fns/format'
-import { repoFilename } from '../assets/filters'
 import Vue from 'vue'
 import { syncStates } from '../store/db'
 import { v4 as uuidv4 } from 'uuid'
 import strutturaClassificazioneJson from '../storeimp/fixtures/classificazione'
+
 const root = { root: true }
-
-// const newRec = ({ _attachments = {}, classification = {}, description = '', note = {}, job_id = '', job_description = '', type = 'comment', files = [] }) => ({
-//   "date": _dateFormat(new Date(), 'yyyy-MM-dd HH:mm:ss'),
-//   _attachments,
-//   type,
-//   job_id,
-//   job_description,
-//   description,
-//   note,
-//   classification,
-//   files
-// })
-
 const dbName = 'appuntimm'
+
 export const state = () => {
   return {
     list: [],
     lavoroCorrente: {},
     $record: { data: {} },
     record: { data: {} },
+    
+    // da vedere
+
     $files: [],
     browserFilter: {},
     strutturaDiClassificazione: {},
@@ -37,6 +28,8 @@ export const state = () => {
     prevModalita: '',
     dbName,
     ui: {
+      listaRisorse: [],
+
       eventoEditStatus: 'none', // none editor
       viewerStatus: 'view', //loadimage view
       message: '',
@@ -129,7 +122,8 @@ export const actions = {
     const table = state.dbName
     let listaRisorse = []
 
-    for (const file of state.$files) {
+    for (const risorsa of state.ui.listaRisorse) {
+      let file = await fetch(risorsa.fileUrl).then(r => r.blob());
       let id = uuidv4()
       listaRisorse.push(id)
       await dispatch('dm_resources/save', { id, file }, root)
@@ -154,6 +148,7 @@ export const actions = {
 
     return dispatch('db/insertInto', { table, data }, root)
       .then(() => {
+        data.files = state.$files
         commit('addInList', data)
         commit('setMessage')
         commit('setViewerStatusView')

@@ -1,62 +1,63 @@
 <template>
+  <v-container fluid class="pa-1">
+    <vue-easy-lightbox :index="index" :visible="showPreviewImages" :imgs="getimages()" @hide="handleHide()"></vue-easy-lightbox>
 
-    <v-container fluid>
-
-
-      <vue-easy-lightbox
-        :visible="showPreviewImages"
-        :imgs="appunto.files"
-        @hide="handleHide()"
-      ></vue-easy-lightbox>
-
-      <v-row>
-        <v-col v-for="(img, n) in appunto.files" :key="n"  class="d-flex child-flex pa-1"  cols="4" >
-          <v-card flat tile class="d-flex">
-            <v-img
-              :src="img"
-              aspect-ratio="1"
-              class="grey lighten-2"
-              @click="() => showImage(n)"
-            >
-              <template v-slot:placeholder>
-                <v-row
-                  class="fill-height ma-0"
-                  align="center"
-                  justify="center"
-                >
-                  <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
-                </v-row>
-              </template>
-            </v-img>
-          </v-card>
+    <v-card flat height="180px" style="overflow-x: scroll">
+      <v-row class="ma-0 pa-0 text-align-center">
+        <v-col class="pa-1 ma-0" cols="6" flat v-for="(ris, i) in appunto.files" :key="i" @click="showImage(i)">
+          <ResourceAvatar :risorsa="ris" :size="$vuetify.breakpoint.xsOnly ? 140 : 80" />
         </v-col>
       </v-row>
+    </v-card>
 
-      <v-row>
-        <v-col>
-          <div class="caption align-left">{{appunto.data.EV_Descrizione}}</div>
-        </v-col>
-
-      </v-row>
-    </v-container>
+    <v-row>
+      <v-col>
+        <div class="body-1 align-left">{{appunto.data.EV_Descrizione}}</div>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
+
+<style>
+.listFiles {
+  overflow-x: scroll;
+}
+::-webkit-scrollbar {
+  width: 0px; /* Remove scrollbar space */
+  background: transparent; /* Optional: just make scrollbar invisible */
+  height: 0px;
+}
+</style>
+
 <script>
 let curDate = null
-
+import ResourceAvatar from './ResourceAvatar'
 export default {
   props: ['appunto'],
-  data () {
+  components: { ResourceAvatar },
+  data() {
     return {
-      showPreviewImages: false
+      showPreviewImages: false,
+      index: 0
     }
   },
   methods: {
-    showImage(index){
+    showImage(index) {
+      this.index = index
       this.showPreviewImages = true
     },
-      handleHide () {
-        this.showPreviewImages = false
+    handleHide() {
+      this.showPreviewImages = false
+    },
+    getimages(){
+      var listaImg = []
+      for (const risorsa of this.appunto.files) {
+        if (risorsa.type === 'image'){
+          listaImg.push(risorsa.fileUrl)
+        } 
       }
+      return listaImg
+    }
   }
 }
 </script>

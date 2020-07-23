@@ -24,7 +24,7 @@
         <v-card color="white" @click="openEditForm(item._id)" min-width="300" max-height="200">
           <div class="d-flex flex-no-wrap">
             <v-avatar class="ma-3" size="60" tile>
-              <v-img :src="item.imgURL || require('../../assets/images/product.png')"></v-img>
+              <v-img :src="(item.risorsa) ? item.risorsa.thumbnailUrl : require('../../assets/images/product.png')"></v-img>
             </v-avatar>
             <div class="flex-grow-1 flex-shrink-1">
               <v-card-title
@@ -32,6 +32,7 @@
                 class="headline"
                 style="word-break: normal;"
               />
+              <v-card-subtitle v-text="item.catalogoDesc" />
             </div>
           </div>
         </v-card>

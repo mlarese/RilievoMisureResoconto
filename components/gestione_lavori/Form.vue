@@ -91,7 +91,6 @@
             <!-- <v-tab>FOTO</v-tab> -->
 
             <v-tab-item
-              :touchless="true"
               :class="
                 $vuetify.breakpoint.xsOnly
                   ? 'tabs__content_small'
@@ -102,7 +101,6 @@
             </v-tab-item>
 
             <v-tab-item
-              :touchless="true"
               :class="
                 $vuetify.breakpoint.xsOnly
                   ? 'tabs__content_small'
@@ -112,7 +110,6 @@
               <ListaRilievi :rifLavoroID="$record._id" />
             </v-tab-item>
             <v-tab-item
-              :touchless="true"
               :class="
                 $vuetify.breakpoint.xsOnly
                   ? 'tabs__content_small'
@@ -191,10 +188,15 @@
       <BrowserCompleteInput class="pa-2" />
     </v-dialog>
 
-    <v-dialog v-if="isBrowserLoadImagesVisible" :value="isBrowserLoadImagesVisible" persistent  :fullscreen="$vuetify.breakpoint.xsOnly"   max-width="700px" >
-      <BrowserLoadImages class="pa-5" />
+    <v-dialog
+      v-if="isBrowserLoadImagesVisible"
+      :value="isBrowserLoadImagesVisible"
+      persistent
+      :fullscreen="$vuetify.breakpoint.xsOnly"
+      max-width="800px"
+    >
+      <BrowserLoadImages />
     </v-dialog>
-
   </div>
 </template>
 
@@ -232,9 +234,9 @@ import EmptyList from '../General/EmptyList'
 import DatiAnagrafici from '../gestione_lavori/DatiAnagrafici'
 import DatiAnagraficiEdit from '../gestione_lavori/DatiAnagrafici_Edit'
 import ListaRilievi from '../GestioneRilievo/listaRilievi'
-import Browser from "~/components/AppuntiMultimediali/Browser"
-import BrowserCompleteInput from "~/components/AppuntiMultimediali/BrowserCompleteInput"
-import BrowserLoadImages from "~/components/AppuntiMultimediali/BrowserLoadImages"
+import Browser from '~/components/AppuntiMultimediali/Browser'
+import BrowserCompleteInput from '~/components/AppuntiMultimediali/BrowserCompleteInput'
+import BrowserLoadImages from '~/components/AppuntiMultimediali/BrowserLoadImages'
 
 const storeName = 'gestione_lavori'
 
@@ -262,7 +264,10 @@ export default {
   computed: {
     ...mapState('app', ['modalOpened']),
     ...mapState(storeName, ['$record', 'ui']),
-    ...mapGetters('appuntimm', ['isBrowserCompleteInputVisible', 'isBrowserLoadImagesVisible']),
+    ...mapGetters('appuntimm', [
+      'isBrowserCompleteInputVisible',
+      'isBrowserLoadImagesVisible'
+    ]),
     ...mapGetters(storeName, ['isEdit', 'isAdd', 'isView', 'getImg'])
   },
   methods: {

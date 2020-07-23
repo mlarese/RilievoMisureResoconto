@@ -125,6 +125,18 @@
 import { mapState, mapMutations, mapGetters, mapActions } from 'vuex'
 
 export default {
+  head() {
+    return {
+      meta: [
+        {
+          hid: 'vp',
+          name: 'viewport',
+          content:
+            'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'
+        }
+      ]
+    }
+  },
   data() {
     return {
       bottomNavActiveItem: '/',
