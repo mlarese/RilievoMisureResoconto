@@ -13,8 +13,8 @@
     </v-dialog>
 
     <div class="text-align-center overflow-x-hidden">
-      <div class="text-align-center" style="height: 150px: max-height: 150px" @click="openFile()">
-        <img width="100%s" :src="(risorsa) ? risorsa.thumbnailUrl : '/images/img-placeholder.png'" />
+      <div class="text-align-center" style="max-height: 250px; overflow: hidden" @click="openFile()">
+        <img width="100%" :src="risorsa.thumbnailUrl || '/images/img-placeholder.png'" />
       </div>
       <div class="body-2 align-left mt-1">{{ appunto.data.EV_Descrizione }}</div>
     </div>
@@ -27,13 +27,20 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 import { appuntimm } from './browsermx'
 let curDate = null
 
+const newRisorsa = {
+  fileUrl: '',
+  typeFile: '',
+  type: '',
+  thumbnailUrl: ''
+}
+
 export default {
   mixins: [appuntimm],
   components: { ResourceAvatar },
   props: ['appunto'],
   data() {
     return {
-      risorsa: this.appunto.files[0],
+      risorsa: newRisorsa,
       showPreviewImages: false,
       showPreviewVideo: false,
       showPreviewPDF: false
@@ -53,6 +60,9 @@ export default {
     handleHide() {
       this.showPreviewImages = false
     }
+  },
+  mounted(){
+    this.risorsa = this.appunto.files[0]
   }
 }
 </script>

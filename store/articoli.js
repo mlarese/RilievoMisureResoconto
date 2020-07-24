@@ -29,30 +29,29 @@ export const state = () => {
   }
 }
 export const actions = {
-  load({ commit, dispatch, state }) {
+  async load({ commit, dispatch, state }) {
     const table = state.dbName
     commit('setList')
-    return dispatch('db/selectAll', { table }, root)
-      .then((listaCataloghi) => {
-        listaCataloghi.forEach(cat => {
-          cat.data.JSArticoli.forEach(art => {
-            dispatch('dm_resources/getUrlById', art.JSImmagineRisID, root)
-              .then((res) => {
-                Vue.set(art, 'risorsa', res)
-                Vue.set(art, 'catalogoDesc', cat.data.JSCatalogoDesc)
-                Vue.set(art, 'aziendaDesc', cat.data.JSAzienda.JSDenominazione)
-              })
-            Vue.set(art, '_id', `${cat.data.JSAzienda.JSUID}.${cat.data.JSCatalogoID}.${art.JSCodice}`)
-            commit('addInList', art)
-          })
-        });
-        return listaCataloghi
-      })
-      .catch((e) => {
-        console.log(e)
-        return e
-      })
-  },
+    let listaCataloghi = await dispatch('db/selectAll', { table }, root)
+    
+    for (const cat of listaCataloghi) {
+      const listaArt = cat.data.JSArticoli
+      if (!listaArt) continue;
+
+      for (let art of listaArt) {
+
+        const res = await dispatch('dm_resources/getUrlById', art.JSImmagineRisID, root)
+        Vue.set(art, 'risorsa', res)
+        Vue.set(art, 'catalogoDesc', cat.data.JSCatalogoDesc)
+        Vue.set(art, 'aziendaDesc', cat.data.JSAzienda.JSDenominazione)
+
+        Vue.set(art, '_id', `${cat.data.JSAzienda.JSUID}.${cat.data.JSCatalogoID}.${art.JSCodice}`)
+        commit('addInList', art)
+
+      }
+    }
+    return listaCataloghi
+ },
   async getById({ dispatch, commit, state }, id) {
     const azienda = id.split('.')[0]
     const catCod = id.split('.')[1]

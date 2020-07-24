@@ -5,7 +5,7 @@
         <div v-if="$vuetify.breakpoint.xsOnly">
           <v-row no-gutters>
             <v-col cols="2">
-              <v-avatar size="40">
+              <v-avatar size="40" class="mt-1">
                 <v-img
                   :src="(ui.risorsaPrinc) ? ui.risorsaPrinc.thumbnailUrl : require('../../assets/images/product.png')"
                 ></v-img>
@@ -37,6 +37,7 @@
               <div class="title ellipseText">
                 <b>{{ record.JSDescrizione }}</b>
               </div>
+              <div class="caption ellipseText">{{ ui.catalogoDesc }}</div>
             </v-col>
           </v-row>
           <v-divider></v-divider>
@@ -61,7 +62,7 @@
 
         <!-- Elenco files dell'articolo -->
         <v-container>
-          <v-card flat :style="{ 'max-height': getMaxHeight(), 'overscroll-x': 'scroll' }">
+          <v-card flat :style="{ 'max-height': getMaxHeight() + 'px', 'overflow-y': 'scroll' }">
             <v-list three-line>
               <template v-for="item in record.JSRisorse">
                 <v-list-item :key="item.JSRisID" @click="openFile(item.risorsa)">
@@ -136,9 +137,9 @@ export default {
       let offset = -10
       if (this.$el) offset = this.$el.offsetTop
       if (this.$vuetify.breakpoint.xsOnly) {
-        return this.$vuetify.breakpoint.height - 800 + offset
+        return this.$vuetify.breakpoint.height - 100 + offset
       } else {
-        return this.$vuetify.breakpoint.height - 500 + offset
+        return this.$vuetify.breakpoint.height - 200 + offset
       }
     },
     openFile(risorsa) {

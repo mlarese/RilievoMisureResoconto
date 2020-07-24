@@ -9,8 +9,8 @@ export default {
   components: {
     Form
   },
-  async fetch({ store, params }) {
-    await store.dispatch('articoli/getById', params.id, { root: true })
+  fetch({ store, params }) {
+    store.dispatch('articoli/getById', params.id, { root: true })
   }
 }
 </script>

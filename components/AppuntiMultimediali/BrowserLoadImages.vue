@@ -92,6 +92,7 @@
         <span class="float-right">
           <v-btn
             :disabled="ui.listaRisorse.length == 0"
+            :loading="isSaving"
             color="blue darken-1"
             text
             @click="salva()"
@@ -130,7 +131,8 @@ export default {
   },
   data() {
     return {
-      indexRisorsa: 0
+      indexRisorsa: 0,
+      isSaving: false
     }
   },
   computed: {
@@ -174,7 +176,11 @@ export default {
       this.cancelPhotocamera()
     },
     salva() {
-      this.addSetImage().then(() => this.cancelPhotocamera())
+      this.isSaving = true
+      this.addSetImage().then(() => {
+        this.cancelPhotocamera()
+        this.isSaving = false
+      })
     },
     getHeightMedia() {
       let offset = -10

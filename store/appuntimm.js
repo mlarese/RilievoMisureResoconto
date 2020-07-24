@@ -18,7 +18,7 @@ export const state = () => {
     lavoroCorrente: {},
     $record: { data: {} },
     record: { data: {} },
-    
+
     // da vedere
 
     $files: [],
@@ -148,7 +148,7 @@ export const actions = {
 
     return dispatch('db/insertInto', { table, data }, root)
       .then(() => {
-        data.files = state.$files
+        data.files = state.ui.listaRisorse
         commit('addInList', data)
         commit('setMessage')
         commit('setViewerStatusView')
@@ -186,28 +186,31 @@ export const actions = {
         commit('setViewerStatusView')
       })
   },
-  load({ commit, dispatch, state }) {
+  async load({ commit, dispatch, state }) {
     const table = state.dbName
     commit('setList', [])
-    return dispatch('db/selectAll', { table }, root)
-      .then((lista) => {
-        lista.forEach((element) => {
-          Vue.set(element, 'files', [])
-          if (element.listaRisorse) {
-            element.listaRisorse.forEach((res) => {
-              dispatch('dm_resources/getUrlById', res, root)
-                .then((url) => element.files.push(url))
-            })
-          }
-          let ClassID = element.data.EV_Classificazione
-          if (ClassID){
-            dispatch('classificazione/getDescrizioneById', ClassID, root)
-                .then((desc) => element.data.ClassificazioneDesc = desc)
-          }
-          commit('addInList', element)
-        })
-        return lista
-      })
+    let lista = await dispatch('db/selectAll', { table }, root)
+
+    for (const element of lista) {
+      Vue.set(element, 'files', [])
+
+      if (element.listaRisorse) {
+        for (const res of element.listaRisorse) {
+          var risorsa = await dispatch('dm_resources/getUrlById', res, root)
+          element.files.push(risorsa)
+        }
+      }
+
+      let ClassID = element.data.EV_Classificazione
+      if (ClassID) {
+        var classDesc = await dispatch('classificazione/getDescrizioneById', ClassID, root)
+        element.data.ClassificazioneDesc = classDesc
+      }
+
+      commit('addInList', element)
+    }
+
+    return lista
   },
   getById({ dispatch, commit, state }, id) {
     const table = state.dbName
@@ -263,6 +266,12 @@ export const mutations = {
     if (!s.list) s.list = []
     s.list.push(p)
   },
+  clearEventRecord(s){
+    s.record = { data: {} }
+    s.$record = { data: {} }
+    s.ui.listaRisorse = []
+    s.ui.message = ''
+  }
 }
 
 export const getters = {

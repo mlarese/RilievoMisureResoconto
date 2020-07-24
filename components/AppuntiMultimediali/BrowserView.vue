@@ -1,12 +1,12 @@
 <template>
   <v-card class="elevation-0 overflow-x-hidden px-1" :height="getHeight + 'px'" id="scroll-target">
     <v-row align="stretch" id="scrolled-content">
-      <template v-for="(appunto, i) in appuntiFiltered">
-        <v-col :cols="12" v-if="show(appunto.insert_UTCDate)" :key="appunto._id">
+      <template v-for="appunto in appuntiFiltered">
+        <v-col :cols="12" v-if="show(appunto.insert_UTCDate)" :key="appunto._id + appunto.insert_UTCDate">
           <BrowserItemDate :appunto="appunto" />
         </v-col>
 
-        <v-col :cols="12" :xs="12" :sm="6" :md="4" :id="'ap_' + appunto._id" :key="i">
+        <v-col :cols="12" :xs="12" :sm="6" :md="4" :id="'ap_' + appunto._id" :key="appunto._id">
           <a :name="'ap_' + appunto._id" :href="'ap_' + appunto._id" />
           <BrowserItemFactory :appunto="appunto" />
         </v-col>
@@ -63,9 +63,10 @@ export default {
       return d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate()
     },
     scrollDown() {
-      var elem = document.getElementById('scrolled-content')
+      // var elem = document.getElementById('scrolled-content')
       var container = document.getElementById('scroll-target')
-      container.scrollTop = Math.floor(elem.offsetHeight)
+      if (!container) return
+      container.scrollTop = container.scrollHeight
     }
   },
   computed: {
@@ -79,8 +80,8 @@ export default {
       }
     }
   },
-  mounted: function() {
-    this.scrollDown()
+  mounted() {
+    setTimeout(this.scrollDown, 500)
   }
 }
 </script>
