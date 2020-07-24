@@ -7,6 +7,10 @@
         <pre v-if="false">
            {{errors}}
         </pre>
+
+        <v-btn @click="onClick">Chiama post message</v-btn>
+        <v-btn @click="onClickLoadEventi">Chiama load eventi</v-btn>
+
       </v-flex>
     </v-layout>
   </div>
@@ -16,7 +20,23 @@
 import DbMonitor from '../components/Db/DbMonitor'
 import { fs, previewFile } from '../assets/filesystem'
 import { mapState, mapGetters, mapActions } from 'vuex'
+import {serviceWorker} from '../plugins/swlisteners'
 export default {
+  methods: {
+    ...mapActions('swstore', ['loadEvents']),
+    onClickLoadEventi () {
+      this.loadEvents()
+    },
+    onClick () {
+      console.clear()
+
+      serviceWorker.active.postMessage({
+        type: 'caricaEventi',
+        token: 'kkkkkk',
+        message: 'caricamento in background'
+      })
+    }
+  },
   components: { DbMonitor },
   data() {
     return {}

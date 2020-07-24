@@ -55,9 +55,11 @@ export default {
   },
   pwa: {
     workbox: {
-      dev: false,
+      dev: true,
       workboxVersion: '0.0.2',
-      workboxURL: "importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js')",
+      importScripts: ['swextended.js'],
+      // __workboxURL: "importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js')",
+      workboxURL: "https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js",
       runtimeCaching: [
         {
           urlPattern: 'https://fonts.googleapis.com/.*',
@@ -84,7 +86,8 @@ export default {
   plugins: [
     '@/plugins/startup',
     '@/plugins/filesystem',
-    { src: '@/plugins/vuex-persist', ssr: false }
+    { src: '@/plugins/vuex-persist', ssr: false },
+    '@/plugins/swlisteners'
   ],
   /*
    ** Nuxt.js dev-modules
@@ -123,7 +126,7 @@ export default {
       dark: false,
       themes: {
         dark: {
-          primary: colors.blue.accent3,     
+          primary: colors.blue.accent3,
           secondary: colors.blue.accent1,
           accent: colors.amber.base,
           info: colors.teal.lighten1,
@@ -141,7 +144,7 @@ export default {
     /*
      ** You can extend webpack config here
      */
-    extend(config, ctx) { 
+    extend(config, ctx) {
       // config.optimization.splitChunks.maxSize = 100000;
       if (ctx.isDev) {
         config.devtool = ctx.isClient ? 'source-map' : 'inline-source-map'
