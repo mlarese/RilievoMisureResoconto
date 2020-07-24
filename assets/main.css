@@ -1,8 +1,8 @@
 .v-card__text, .v-card__title {
     word-break: normal; /* maybe !important  */
   }
-body{
-  overscroll-behavior: contain !important;
+html{
+  overscroll-behavior-y: none !important;
 }
 .overflow-hidden {
   overflow: hidden;

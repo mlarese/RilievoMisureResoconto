@@ -14,7 +14,6 @@ export const actions = {
     load({ commit, dispatch }) {
         return dispatch('db/selectById', { table, id: RECORD_ID }, root)
             .then((res) => {
-                console.log(res.data)
                 commit('setList', res.data)
                 return res.data
             })
@@ -37,8 +36,8 @@ export const mutations = {
 }
 
 export const getters = {
-    getListaClassEventi: (state) => {
-        return _filter(state.list, function(c) {
+    listaClassEventi: (state) => {
+        return _filter(state.list, function (c) {
             return c.CCTipo === 'EV_CLASSIFICAZIONE'
         })
     }

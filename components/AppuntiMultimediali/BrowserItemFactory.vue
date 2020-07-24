@@ -1,7 +1,10 @@
 <template>
   <v-card class="pa-2 black--text" rounded>
     <component :is="currentType" :appunto="appunto" />
-    <div class="caption text-align-right mt-2 grey--text">{{appunto.insert_UTCDate | time}}</div>
+    <div class="d-flex flex-row pt-2">
+      <div class="caption text-align-lef grey--text text-truncate pr-1">{{appunto.data.ClassificazioneDesc}}</div>
+      <div class="ml-auto caption grey--text">{{appunto.insert_UTCDate | time}}</div>
+    </div>
   </v-card>
 </template>
 <script>
@@ -14,23 +17,20 @@ export default {
   components: { BrowserItemComment, BrowserItemImage, BrowserItemSet },
   computed: {
     currentType() {
-      switch (this.appunto.data.EV_Type) {
-        case 'Nota':
-        case 'comment':
+
+      if (!this.appunto.listaRisorse){
+        return 'BrowserItemComment'
+      }
+
+      switch (this.appunto.listaRisorse.length) {
+        case 0:
           return 'BrowserItemComment'
           break
-        case 'Immagine':
-        case 'image':
-        case 'set':
-          if (this.appunto.listaRisorse.length == 1) {
-            return 'BrowserItemImage'
-          } else {
-            return 'BrowserItemSet'
-          }
-        case 'File':
-          // TODO
-        default:
+        case 1:
           return 'BrowserItemImage'
+          break
+        default:
+          return 'BrowserItemSet'
           break
       }
 

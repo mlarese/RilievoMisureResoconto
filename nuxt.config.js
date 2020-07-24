@@ -149,6 +149,13 @@ export default {
       if (ctx.isDev) {
         config.devtool = ctx.isClient ? 'source-map' : 'inline-source-map'
       }
+
+      // Web Worker support
+        // config.module.rules.push({
+        //   test: /\.worker\.js$/,
+        //   use: { loader: 'worker-loader' },
+        //   exclude: /(node_modules)/
+        // })
     }
   }
 }

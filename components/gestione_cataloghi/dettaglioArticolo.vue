@@ -1,18 +1,21 @@
 <template>
   <div>
-    <Panel>
+    <Panel style="heigh: 100vh">
       <div slot="toolbarTitle">
         <div v-if="$vuetify.breakpoint.xsOnly">
           <v-row no-gutters>
             <v-col cols="2">
-              <v-avatar size="40">
-                <v-img :src="ui.imgURL || require('../../assets/images/product.png')"></v-img>
+              <v-avatar size="40" class="mt-1">
+                <v-img
+                  :src="(ui.risorsaPrinc) ? ui.risorsaPrinc.thumbnailUrl : require('../../assets/images/product.png')"
+                ></v-img>
               </v-avatar>
             </v-col>
             <v-col cols="10">
               <div class="subtitle-1 ellipseText">
                 <b>{{ record.JSDescrizione }}</b>
               </div>
+              <div class="caption ellipseText">{{ ui.catalogoDesc }}</div>
             </v-col>
           </v-row>
           <v-spacer></v-spacer>
@@ -25,36 +28,56 @@
           <v-row class="mx-2">
             <v-col cols="auto">
               <v-avatar size="75" class="pb-0">
-                <v-img :src="ui.imgURL || require('../../assets/images/product.png')"></v-img>
+                <v-img
+                  :src="(ui.risorsaPrinc) ? ui.risorsaPrinc.thumbnailUrl : require('../../assets/images/product.png')"
+                ></v-img>
               </v-avatar>
             </v-col>
             <v-col class="align-self-center">
               <div class="title ellipseText">
                 <b>{{ record.JSDescrizione }}</b>
               </div>
+              <div class="caption ellipseText">{{ ui.catalogoDesc }}</div>
             </v-col>
           </v-row>
           <v-divider></v-divider>
         </div>
+
+        <vue-easy-lightbox
+          :visible="showPreviewImages"
+          :imgs="risorsaUrl"
+          @hide="handleHide()"
+        ></vue-easy-lightbox>
+
+        <v-dialog
+          v-if="showPreviewVideo"
+          :value="showPreviewVideo"
+          max-width="800px"
+          @click:outside="showPreviewVideo=false"
+        >
+          <video :style="{width: '100%'}" controls>
+            <source :src="risorsa.fileUrl" :type="risorsa.typeFile" />Your browser does not support HTML video.
+          </video>
+        </v-dialog>
+
         <!-- Elenco files dell'articolo -->
-
         <v-container>
-          <v-list three-line>
-            <template v-for="item in record.listaAllegati">
-              <v-list-item :key="item.fileName">
+          <v-card flat :style="{ 'max-height': getMaxHeight() + 'px', 'overflow-y': 'scroll' }">
+            <v-list three-line>
+              <template v-for="item in record.JSRisorse">
+                <v-list-item :key="item.JSRisID" @click="openFile(item.risorsa)">
+                  <v-list-item-avatar size="80" tile>
+                    <v-img :src="(item.risorsa) ? item.risorsa.thumbnailUrl : ''"></v-img>
+                  </v-list-item-avatar>
 
-                <v-list-item-avatar>
-                  <v-img :src="getUrlById(item.fileName)"></v-img>
-                </v-list-item-avatar>
-
-                <v-list-item-content>
-                  <v-list-item-title v-html="item.title"></v-list-item-title>
-                  <v-list-item-subtitle v-html="item.subtitle"></v-list-item-subtitle>
-                </v-list-item-content>
-
-              </v-list-item>
-            </template>
-          </v-list>
+                  <v-list-item-content>
+                    <v-list-item-title v-html="item.JSRisDesc"></v-list-item-title>
+                    <!-- <v-list-item-subtitle v-html="item.subtitle"></v-list-item-subtitle> -->
+                  </v-list-item-content>
+                </v-list-item>
+              </template>
+            </v-list>
+          </v-card>
         </v-container>
       </div>
     </Panel>
@@ -95,7 +118,12 @@ export default {
     Panel
   },
   data() {
-    return {}
+    return {
+      risorsaUrl: '',
+      showPreviewImages: false,
+      showPreviewVideo: false,
+      showPreviewPDF: false
+    }
   },
   computed: {
     ...mapState(storeName, ['record', 'ui'])
@@ -104,6 +132,29 @@ export default {
     ...mapActions('dm_resources', ['getUrlById']),
     exit() {
       this.$router.replace(`/${storeName}`)
+    },
+    getMaxHeight() {
+      let offset = -10
+      if (this.$el) offset = this.$el.offsetTop
+      if (this.$vuetify.breakpoint.xsOnly) {
+        return this.$vuetify.breakpoint.height - 100 + offset
+      } else {
+        return this.$vuetify.breakpoint.height - 200 + offset
+      }
+    },
+    openFile(risorsa) {
+      this.risorsaUrl = risorsa.fileUrl
+      if (risorsa.type === 'pdf') {
+        this.showPreviewPDF = true
+        window.open(risorsa.fileUrl)
+      } else if (risorsa.type === 'video') {
+        this.showPreviewVideo = true
+      } else {
+        this.showPreviewImages = true
+      }
+    },
+    handleHide() {
+      this.showPreviewImages = false
     }
   }
 }

@@ -179,6 +179,9 @@ export const actions = {
 
           commit('logMe', `--->> Salvataggio locale della risorsa`)
           await dispatch('dm_resources/save', { id: fileName, file }, root)
+
+          // una volta inserita la aggiunge anche alla lista delle risorse locali in modo da non riscaricarla
+          state.listaRisorseLocali.push(fileName)
         }
       }
 
