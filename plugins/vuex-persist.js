@@ -4,7 +4,7 @@ export default ({ store }) => {
   window.onNuxtReady(() => {
     new VuexPersistence({
       storage: window.localStorage,
-      reducer: (state) => ({ auth: state.auth, config: state.config }),
+      reducer: (state) => ({ auth: state.auth, classificazione: state.classificazione }),
     }).plugin(store);
   });
 }
