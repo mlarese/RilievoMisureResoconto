@@ -294,7 +294,8 @@ export default {
         this.isEdit = false
       } catch (error) {
         // Dovrà essere stampato da qualche parte
-        console.error()
+        this.isLoadingSave = false
+        console.error(error)
       }
     },
     matchPassword(v) {
