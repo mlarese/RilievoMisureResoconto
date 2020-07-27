@@ -55,7 +55,7 @@ export default {
   },
   pwa: {
     workbox: {
-      dev: true,
+      dev: false,
       workboxVersion: '0.0.2',
       importScripts: ['swextended.js'],
       // __workboxURL: "importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js')",
