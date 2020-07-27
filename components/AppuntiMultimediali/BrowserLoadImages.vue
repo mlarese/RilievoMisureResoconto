@@ -58,7 +58,8 @@
           <v-icon>mdi-paperclip</v-icon>
           <input
             type="file"
-            accept="application/*"
+            accept="*/*"
+            capture="filesystem"
             @change="filesChange($event.target.files)"
             multiple="true"
             class="input-file"
