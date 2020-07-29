@@ -5,7 +5,7 @@
         <div v-if="$vuetify.breakpoint.xsOnly">
           <div class="d-flex justify-start align-center">
             <div>
-              <v-avatar size="40" class="pa-0 ma-0" tile>
+               <v-avatar size="40" class="pb-0">
                 <v-img :src="ui.imgURL || require('../../assets/images/lavoro.png')"></v-img>
               </v-avatar>
             </div>
@@ -44,9 +44,11 @@
           <div v-if="$vuetify.breakpoint.smAndUp">
             <v-row class="mx-2">
               <v-col cols="auto">
-                <v-avatar size="75" class="pb-0" tile>
-                  <v-img :src="getImgPric_asURL()" v-if="getImgPric_asURL()"></v-img>
-                  <v-img :src="require('../../assets/images/lavoro.png')" v-else></v-img>
+                <!-- <v-avatar size="75" class="pb-0" tile> -->
+                <!--  <v-img :src="getImgPric_asURL()" v-if="getImgPric_asURL()"></v-img>
+                <v-img :src="require('../../assets/images/lavoro.png')" v-else></v-img>-->
+                <v-avatar size="75" class="pb-0">
+                  <v-img :src="ui.imgURL || require('../../assets/images/lavoro.png')"></v-img>
                   <input
                     type="file"
                     @change="
@@ -184,7 +186,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="annullaModifiche()">Annulla</v-btn>
-          <v-btn color="blue darken-1" text @click="salvaModifiche()" :disabled="!canSave()" >Salva</v-btn>
+          <v-btn color="blue darken-1" text @click="salvaModifiche()" :disabled="!canSave()">Salva</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -395,8 +397,10 @@ export default {
       }
       return imgUrl
     },
-    canSave(){
-      return this.$record.data.GL_Oggetto && this.$record.data.GL_CommittenteDesc
+    canSave() {
+      return (
+        this.$record.data.GL_Oggetto && this.$record.data.GL_CommittenteDesc
+      )
     }
   }
 }

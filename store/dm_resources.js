@@ -96,7 +96,7 @@ export const actions = {
     }
 
     const myRes = { typeFile, type, thumbnailUrl, fileUrl }
-    // console.dir(myRes)
+     //console.dir(myRes)
     return myRes
   }
 
