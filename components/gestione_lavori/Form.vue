@@ -20,15 +20,24 @@
         <div v-else>Gestione lavoro</div>
       </div>
 
-      <v-btn
-        icon
-        class="mr-1"
-        @click="openEditForm()"
-        slot="panelToolbarRight"
-        v-if="$vuetify.breakpoint.xsOnly"
-      >
-        <v-icon>mdi-pencil</v-icon>
-      </v-btn>
+      <div v-if="$vuetify.breakpoint.xsOnly" slot="panelToolbarRight" class="mr-1">
+        <v-row>
+          <v-col cols="2" class="align-self-center">
+            <v-checkbox
+              class="pt-5"
+              v-model="$record.data.isPreferito"
+              on-icon="favorite"
+              off-icon="favorite_border"
+              @change="salvaModifiche()"
+            />
+          </v-col>
+          <v-col cols="2" class="align-self-center">
+            <v-btn icon @click="openEditForm()">
+              <v-icon>mdi-pencil</v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
+      </div>
 
       <div v-show="!modalOpened" slot="mainContent">
         <div v-if="isView">
@@ -67,6 +76,7 @@
                       color="primary"
                       on-icon="favorite"
                       off-icon="favorite_border"
+                      @change="salvaModifiche()"
                     />
                   </v-col>
                   <v-col cols="2" class="align-self-center">
@@ -174,7 +184,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="annullaModifiche()">Annulla</v-btn>
-          <v-btn color="blue darken-1" text @click="salvaModifiche()">Salva</v-btn>
+          <v-btn color="blue darken-1" text @click="salvaModifiche()" :disabled="!canSave()" >Salva</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -296,6 +306,7 @@ export default {
         this.$router.back()
       } else {
         // Rimane nella schermata del lavoro
+        this.annullaModificheRecord()
       }
 
       // imposta comunque la modalità a sola visualizzazione come defaul
@@ -324,7 +335,8 @@ export default {
     ...mapActions(storeName, {
       salvaLavoro: 'save',
       UploadESaveLavoro: 'upload',
-      aggiungiImmagine: 'addImgPrinc'
+      aggiungiImmagine: 'addImgPrinc',
+      annullaModificheRecord: 'annullaModificheRecord'
     }),
 
     apriRilievo() {
@@ -382,6 +394,9 @@ export default {
         }
       }
       return imgUrl
+    },
+    canSave(){
+      return this.$record.data.GL_Oggetto && this.$record.data.GL_CommittenteDesc
     }
   }
 }

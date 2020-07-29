@@ -8,6 +8,7 @@
             <v-text-field
               outlined
               dense
+              clearable
               label="Cerca lavoro..."
               append-icon="search"
               background-color="white"
@@ -30,7 +31,7 @@
     <!-- LISTA LAVORI -->
     <v-row dense>
       <v-col v-for="(item, i) in getfilteredList" :key="i" xs="12" md="6" lg="4">
-        <v-card color="white" @click="openEditForm(item._id)" min-width="300" max-height="200">
+        <v-card color="white" @click="openEditForm(item._id)" min-width="300" min-height="120" max-height="200">
           <div class="d-flex flex-no-wrap">
             <v-avatar class="ma-3" size="60" tile>
               <v-img :src="item.imgURL || require('../../assets/images/lavoro.png')"></v-img>

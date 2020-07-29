@@ -1,5 +1,6 @@
-import _clone from 'lodash/clone'
+import _CloneDeep from 'lodash/cloneDeep'
 import _filter from 'lodash/filter'
+import _isEmpty from 'lodash/isEmpty'
 import { visibleRecord, syncStates, internalStates } from './db'
 import { repoFilename } from '../assets/filters'
 
@@ -72,6 +73,8 @@ export const actions = {
     if (isInsert) {
       actionName = 'db/insertInto'
     }
+
+    console.log('save actionname:' + actionName)
 
     commit('setLastUpdate_UTCDate', new Date().toJSON())
     commit('setLastUpdateUser', rootState.auth.utente)
@@ -165,6 +168,9 @@ export const actions = {
   },
   impostaModalitaVisualizzazione({ dispatch, commit, state }, modalita) {
     commit('setModalita', modalita)
+  },
+  annullaModificheRecord({ dispatch, commit, state }) {
+    commit('setRecord', state.record)
   }
 }
 
@@ -177,8 +183,8 @@ export const mutations = {
     state.$record = emptyRecord()
   },
   setRecord(state, payload = {}) {
-    state.record = payload
-    state.$record = _clone(payload)
+    state.$record = payload
+    state.record = _CloneDeep(payload)
   },
   setLocalID(state, payload = {}) {
     state.record._id = payload
@@ -234,6 +240,7 @@ export const mutations = {
     state.record.data.imgFileName = payload
     state.$record.data.imgFileName = payload
   }
+
 }
 
 export const getters = {
@@ -255,19 +262,12 @@ export const getters = {
         }
       } else {
         /* tutti */
-        if (s.ui.filter.text == '') {
+        if (_isEmpty(s.ui.filter.text)) {
           return true
         } else {
-          return (
-            o.data.GL_CommittenteDesc.toLowerCase().includes(
-              s.ui.filter.text.toLowerCase()
-            ) ||
-            o.data.GL_Oggetto.toLowerCase().includes(
-              s.ui.filter.text.toLowerCase()
-            ) ||
-            o.data.GL_Indirizzo.toLowerCase().includes(
-              s.ui.filter.text.toLowerCase()
-            )
+          return ((o.data.GL_CommittenteDesc && o.data.GL_CommittenteDesc.toLowerCase().includes(s.ui.filter.text.toLowerCase())) ||
+            (o.data.GL_Oggetto && o.data.GL_Oggetto.toLowerCase().includes(s.ui.filter.text.toLowerCase())) ||
+            (o.data.GL_Indirizzo && o.data.GL_Indirizzo.toLowerCase().includes(s.ui.filter.text.toLowerCase()))
           )
         }
       }

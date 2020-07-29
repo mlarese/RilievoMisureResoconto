@@ -7,7 +7,6 @@
       class="py-2"
       >{{ $record.data.GL_CommittenteDesc }}
     </v-input>
-
     <v-input
       persistent-hint
       hint="Descrizione lavori"
