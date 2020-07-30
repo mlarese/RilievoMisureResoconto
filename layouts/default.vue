@@ -80,19 +80,19 @@
 
     <v-tabs-items v-model="tab" @change="tabChanged" v-if="$vuetify.breakpoint.xsOnly">
       <v-tab-item v-for="(item, i) in getMenuItems_Tab" :key="i" :value="item.to" :touchless="true">
-        <v-content>
+        <v-main>
           <v-container fluid>
             <nuxt />
           </v-container>
-        </v-content>
+        </v-main>
       </v-tab-item>
     </v-tabs-items>
 
-    <v-content>
+    <v-main>
       <v-container fluid v-if="$vuetify.breakpoint.smAndUp">
         <nuxt />
       </v-container>
-    </v-content>
+    </v-main>
 
     <v-dialog v-model="isDialogProfileVisible" persistent max-width="300">
       <v-card>
