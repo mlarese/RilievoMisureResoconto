@@ -8,6 +8,7 @@
             <v-text-field
               outlined
               dense
+              clearable
               label="Cerca contatto..."
               append-icon="search"
               background-color="white"
@@ -21,7 +22,7 @@
     <!-- LISTA CONTATTI -->
     <v-row dense>
       <v-col v-for="(item, i) in getfilteredList" :key="i" xs="12" md="6" lg="4">
-        <v-card color="white" @click="openEditForm(item._id)" min-width="300" max-height="200">
+        <v-card color="white" @click="openEditForm(item._id)" min-width="300" min-height="130" max-height="200">
           <div class="d-flex flex-no-wrap">
             <v-avatar class="mt-6 ml-3" size="60">
               <v-img :src="item.imgURL || require('../../assets/images/contact.jpg')" />
@@ -36,14 +37,14 @@
               <v-card-text v-text="item.data.CONIndirizzo" />
             </div>
           </div>
-          <v-card-actions class="py-0">
+<!--           <v-card-actions class="py-0">
             <v-spacer></v-spacer>
             <v-icon
               v-if="item.data.isPreferito"
               color="primary"
               class="align-self-end pa-1"
             >favorite</v-icon>
-          </v-card-actions>
+          </v-card-actions> -->
         </v-card>
       </v-col>
     </v-row>

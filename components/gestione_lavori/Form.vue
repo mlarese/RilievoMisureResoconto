@@ -5,7 +5,7 @@
         <div v-if="$vuetify.breakpoint.xsOnly">
           <div class="d-flex justify-start align-center">
             <div>
-              <v-avatar size="40" class="pa-0 ma-0" tile>
+               <v-avatar size="40" class="pb-0">
                 <v-img :src="ui.imgURL || require('../../assets/images/lavoro.png')"></v-img>
               </v-avatar>
             </div>
@@ -20,24 +20,35 @@
         <div v-else>Gestione lavoro</div>
       </div>
 
-      <v-btn
-        icon
-        class="mr-1"
-        @click="openEditForm()"
-        slot="panelToolbarRight"
-        v-if="$vuetify.breakpoint.xsOnly"
-      >
-        <v-icon>mdi-pencil</v-icon>
-      </v-btn>
+      <div v-if="$vuetify.breakpoint.xsOnly" slot="panelToolbarRight" class="mr-1">
+        <v-row>
+          <v-col cols="2" class="align-self-center">
+            <v-checkbox
+              class="pt-5"
+              v-model="$record.data.isPreferito"
+              on-icon="favorite"
+              off-icon="favorite_border"
+              @change="salvaModifiche()"
+            />
+          </v-col>
+          <v-col cols="2" class="align-self-center">
+            <v-btn icon @click="openEditForm()">
+              <v-icon>mdi-pencil</v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
+      </div>
 
       <div v-show="!modalOpened" slot="mainContent">
         <div v-if="isView">
           <div v-if="$vuetify.breakpoint.smAndUp">
             <v-row class="mx-2">
               <v-col cols="auto">
-                <v-avatar size="75" class="pb-0" tile>
-                  <v-img :src="getImgPric_asURL()" v-if="getImgPric_asURL()"></v-img>
-                  <v-img :src="require('../../assets/images/lavoro.png')" v-else></v-img>
+                <!-- <v-avatar size="75" class="pb-0" tile> -->
+                <!--  <v-img :src="getImgPric_asURL()" v-if="getImgPric_asURL()"></v-img>
+                <v-img :src="require('../../assets/images/lavoro.png')" v-else></v-img>-->
+                <v-avatar size="75" class="pb-0">
+                  <v-img :src="ui.imgURL || require('../../assets/images/lavoro.png')"></v-img>
                   <input
                     type="file"
                     @change="
@@ -67,6 +78,7 @@
                       color="primary"
                       on-icon="favorite"
                       off-icon="favorite_border"
+                      @change="salvaModifiche()"
                     />
                   </v-col>
                   <v-col cols="2" class="align-self-center">
@@ -174,7 +186,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="annullaModifiche()">Annulla</v-btn>
-          <v-btn color="blue darken-1" text @click="salvaModifiche()">Salva</v-btn>
+          <v-btn color="blue darken-1" text @click="salvaModifiche()" :disabled="!canSave()">Salva</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -296,6 +308,7 @@ export default {
         this.$router.back()
       } else {
         // Rimane nella schermata del lavoro
+        this.annullaModificheRecord()
       }
 
       // imposta comunque la modalità a sola visualizzazione come defaul
@@ -324,7 +337,8 @@ export default {
     ...mapActions(storeName, {
       salvaLavoro: 'save',
       UploadESaveLavoro: 'upload',
-      aggiungiImmagine: 'addImgPrinc'
+      aggiungiImmagine: 'addImgPrinc',
+      annullaModificheRecord: 'annullaModificheRecord'
     }),
 
     apriRilievo() {
@@ -382,6 +396,11 @@ export default {
         }
       }
       return imgUrl
+    },
+    canSave() {
+      return (
+        this.$record.data.GL_Oggetto && this.$record.data.GL_CommittenteDesc
+      )
     }
   }
 }

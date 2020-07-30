@@ -6,29 +6,28 @@
       on-icon="favorite"
       off-icon="favorite_border"
       label="Preferito"
-       :readonly="isView"
+      :readonly="isView"
     />
-    
+
     <v-text-field
       v-model="$record.data.GL_CommittenteDesc"
       label="Committente"
-      required
       dense
       :readonly="isView"
+      :rules="[rules.required]"
       class="py-2"
     ></v-text-field>
     <v-text-field
       v-model="$record.data.GL_Oggetto"
       label="Descrizione Lavori"
-      required
       dense
       :readonly="isView"
+      :rules="[rules.required]"
       class="py-2"
     ></v-text-field>
     <v-text-field
       v-model="$record.data.GL_Indirizzo"
       label="Indirizzo"
-      required
       dense
       :readonly="isView"
       class="py-2"
@@ -36,19 +35,11 @@
     <v-text-field
       v-model="$record.data.GL_Telefono"
       label="Telefono"
-      required
       dense
       :readonly="isView"
       class="py-2"
     ></v-text-field>
-    <v-textarea
-      v-model="$record.data.GL_Note"
-      label="Note"
-      dense
-      :readonly="isView"
-      class="py-2"
-    />
-    
+    <v-textarea v-model="$record.data.GL_Note" label="Note" dense :readonly="isView" class="py-2" />
 
     <!-- <v-btn
       class="mr-4"
@@ -58,7 +49,7 @@
       style="margin-top: -12px"
       >SALVA</v-btn
     >
-    <v-btn large @click="exit()" style="margin-top: -12px">ANNULLA</v-btn> -->
+    <v-btn large @click="exit()" style="margin-top: -12px">ANNULLA</v-btn>-->
   </v-card>
 
   <!--     <v-bottom-navigation grow color="blue accent-3" fixed>
@@ -81,12 +72,18 @@
 
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex'
+import { rules } from '../../assets/rules'
 
 const storeName = 'gestione_lavori'
 
 export default {
   props: {
     // editable: { type: Boolean, default: false }
+  },
+  data() {
+    return {
+      rules
+    }
   },
   computed: {
     ...mapState('app', ['dark']),
@@ -111,11 +108,8 @@ export default {
     },
     ...mapActions(storeName, ['save']),
     openGoogleMap() {
-        window.open(
-          "https://goo.gl/maps/5vn9uhm7x6gavZ699",
-          "_blank"
-        );
-      }
+      window.open('https://goo.gl/maps/5vn9uhm7x6gavZ699', '_blank')
+    }
   }
 }
 </script>

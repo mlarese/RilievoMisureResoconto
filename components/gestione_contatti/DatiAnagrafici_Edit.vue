@@ -6,6 +6,7 @@
       required
       dense
       :readonly="isView"
+       :rules="[rules.required]"
       class="py-2"
     ></v-text-field>
     <v-text-field
@@ -42,10 +43,16 @@
 
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex'
+import { rules } from '../../assets/rules'
 
 const storeName = 'gestione_contatti'
 
 export default {
+  data() {
+    return {
+      rules
+    }
+  },
   computed: {
     ...mapState('app', ['dark']),
     ...mapState(storeName, ['$record']),

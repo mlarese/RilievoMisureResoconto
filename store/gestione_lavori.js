@@ -1,7 +1,9 @@
-import _clone from 'lodash/clone'
+import _CloneDeep from 'lodash/cloneDeep'
 import _filter from 'lodash/filter'
+import _isEmpty from 'lodash/isEmpty'
 import { visibleRecord, syncStates, internalStates } from './db'
 import { repoFilename } from '../assets/filters'
+import Vue from 'vue'
 
 const root = { root: true }
 const emptyRecord = () => ({
@@ -46,9 +48,29 @@ export const state = () => {
   }
 }
 export const actions = {
-  load({ commit, dispatch, state }) {
+  load({ commit, dispatch, state }, withFile = false) {
     const table = state.dbName
+    commit('setList', [])
     return dispatch('db/selectAll', { table }, root)
+      .then((lista) => {
+        lista.forEach((element) => {
+          if (withFile && element.data.imgFileName) {
+            dispatch('dm_resources/getUrlById', element.data.imgFileName, root)
+              .then((url) => {
+                //console.log(url)
+                if (url && url.thumbnailUrl) {
+                  Vue.set(element, 'imgURL', url.thumbnailUrl)
+                } else {
+                  Vue.set(element, 'imgURL', null)
+                }
+              })
+          }
+          commit('addInList', element)
+        })
+        return lista
+      })
+/*     const table = state.dbName
+      return dispatch('db/selectAll', { table }, root)
       .then((res) => {
         commit('setList', res)
         // commit('setRecord', {})
@@ -57,12 +79,27 @@ export const actions = {
       .catch((e) => {
         console.log(e)
         return e
-      })
+      }) */
   },
   async getById({ dispatch, commit, state }, id) {
     const table = state.dbName
     const rec = await dispatch('db/selectById', { table, id }, root)
     commit('setRecord', rec)
+
+    if (rec.data.imgFileName) {
+      dispatch('dm_resources/getUrlById', rec.data.imgFileName, root)
+        .then((url) => {
+          //console.log(url)
+          if (url && url.thumbnailUrl) {
+            Vue.set(state.ui, 'imgURL', url.thumbnailUrl)
+            //console.log(state.ui.imgURL)
+          } else {
+            Vue.set(state.ui, 'imgURL', null)
+          }
+        })
+    } else {
+      Vue.set(state.ui, 'imgURL', null)
+    }
   },
   async save({ dispatch, commit, state, rootState }) {
     const isInsert = !state.$record._id
@@ -72,6 +109,8 @@ export const actions = {
     if (isInsert) {
       actionName = 'db/insertInto'
     }
+
+    //console.log('save actionname:' + actionName)
 
     commit('setLastUpdate_UTCDate', new Date().toJSON())
     commit('setLastUpdateUser', rootState.auth.utente)
@@ -165,6 +204,9 @@ export const actions = {
   },
   impostaModalitaVisualizzazione({ dispatch, commit, state }, modalita) {
     commit('setModalita', modalita)
+  },
+  annullaModificheRecord({ dispatch, commit, state }) {
+    commit('setRecord', state.record)
   }
 }
 
@@ -172,13 +214,17 @@ export const mutations = {
   setList(state, payload = []) {
     state.list = payload
   },
+  addInList(state, payload) {
+    if (!state.list) state.list = []
+    state.list.push(payload)
+  },
   resetRecord(state) {
     state.record = emptyRecord()
     state.$record = emptyRecord()
   },
   setRecord(state, payload = {}) {
-    state.record = payload
-    state.$record = _clone(payload)
+    state.$record = payload
+    state.record = _CloneDeep(payload)
   },
   setLocalID(state, payload = {}) {
     state.record._id = payload
@@ -234,6 +280,7 @@ export const mutations = {
     state.record.data.imgFileName = payload
     state.$record.data.imgFileName = payload
   }
+
 }
 
 export const getters = {
@@ -255,7 +302,7 @@ export const getters = {
         }
       } else {
         /* tutti */
-        if (!s.ui.filter.text) {
+        if (s.ui.filter.text === null) {
           return true
         } else {
           return (
@@ -268,6 +315,14 @@ export const getters = {
             ((o.data.GL_Indirizzo) && o.data.GL_Indirizzo.toLowerCase().includes(
               s.ui.filter.text.toLowerCase()
             ))
+
+        // if (s.ui.filter.text === null) {
+        //   return true
+        // } else {
+        //   return ((o.data.GL_CommittenteDesc && o.data.GL_CommittenteDesc.toLowerCase().includes(s.ui.filter.text.toLowerCase())) ||
+        //     (o.data.GL_Oggetto && o.data.GL_Oggetto.toLowerCase().includes(s.ui.filter.text.toLowerCase())) ||
+        //     (o.data.GL_Indirizzo && o.data.GL_Indirizzo.toLowerCase().includes(s.ui.filter.text.toLowerCase()))
+
           )
         }
       }

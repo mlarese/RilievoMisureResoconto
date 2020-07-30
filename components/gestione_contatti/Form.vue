@@ -33,7 +33,7 @@
           <v-row class="mx-2">
             <v-col cols="auto">
               <v-avatar size="75" class="pb-0">
-                <v-img :src="ui.imgURL || require('../../assets/images/contact.jpg')"></v-img>
+                 <v-img :src="ui.imgURL || require('../../assets/images/contact.jpg')"></v-img> 
                 <input
                   type="file"
                   @change="
@@ -70,8 +70,8 @@
 
         <v-tabs centered>
           <v-tab>INFO</v-tab>
-          <v-tab>AAA</v-tab>
-          <v-tab>BBB</v-tab>
+<!--           <v-tab>AAA</v-tab>
+          <v-tab>BBB</v-tab> -->
 
           <v-tab-item
             :class="
@@ -83,7 +83,7 @@
             <DatiAnagrafici />
           </v-tab-item>
 
-          <v-tab-item
+<!--           <v-tab-item
             :class="
               $vuetify.breakpoint.xsOnly
                 ? 'tabs__content_small'
@@ -116,7 +116,7 @@
                 class="mx-auto"
               />
             </v-container>
-          </v-tab-item>
+          </v-tab-item> -->
         </v-tabs>
       </div>
     </Panel>
@@ -153,7 +153,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="annullaModifiche()">Annulla</v-btn>
-          <v-btn color="blue darken-1" text @click="salvaModifiche()">Salva</v-btn>
+          <v-btn color="blue darken-1" text @click="salvaModifiche()" :disabled="!canSave()">Salva</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -222,7 +222,8 @@ export default {
     ...mapActions('dm_resources', { getRisorsa: 'getById' }),
     ...mapActions(storeName, {
       salvaRecord: 'save',
-      aggiungiImmagine: 'addImgPrinc'
+      aggiungiImmagine: 'addImgPrinc',
+      annullaModificheRecord: 'annullaModifiche'
     }),
     openEditForm() {
       // Un nuovo record può essere inserito e modificato anche se offline
@@ -250,6 +251,7 @@ export default {
         this.$router.back()
       } else {
         // Rimane nella schermata Form
+        this.annullaModificheRecord()
       }
 
       // imposta comunque la modalità a sola visualizzazione come defaul
@@ -302,19 +304,23 @@ export default {
       //   }
       // }
       // return imgUrl
+     // console.log(this.$record.data.imgFileName)
       const id = this.$record.data.imgFileName
       if (id) {
         this.getRisorsa(id).then((blob) => {
           if (blob) {
             let imgUrl = ''
             imgUrl = URL.createObjectURL(blob)
+            console.log(imgUrl)
             return imgUrl
           }
         })
       }
+    },
+    canSave() {
+      return this.$record.data.CONDescrizione
     }
   },
-
   mounted() {}
 }
 </script>

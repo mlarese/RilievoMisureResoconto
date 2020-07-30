@@ -1,4 +1,4 @@
-import _clone from 'lodash/clone'
+import _cloneDeep from 'lodash/cloneDeep'
 import _filter from 'lodash/filter'
 import { visibleRecord, syncStates, internalStates } from './db'
 import { repoFilename } from '../assets/filters'
@@ -57,7 +57,14 @@ export const actions = {
         lista.forEach((element) => {
           if (withFile && element.data.imgFileName) {
             dispatch('dm_resources/getUrlById', element.data.imgFileName, root)
-              .then((url) => Vue.set(element, 'imgURL', url))
+              .then((url) => {
+                //console.log(url)
+                if (url && url.thumbnailUrl) {
+                  Vue.set(element, 'imgURL', url.thumbnailUrl)
+                } else {
+                  Vue.set(element, 'imgURL', null)
+                }
+              })
           }
           commit('addInList', element)
         })
@@ -71,7 +78,15 @@ export const actions = {
 
     if (rec.data.imgFileName) {
       dispatch('dm_resources/getUrlById', rec.data.imgFileName, root)
-        .then((url) => Vue.set(state.ui, 'imgURL', url))
+        .then((url) => {
+          //console.log(url)
+          if (url && url.thumbnailUrl) {
+            Vue.set(state.ui, 'imgURL', url.thumbnailUrl)
+            //console.log(state.ui.imgURL)
+          } else {
+            Vue.set(state.ui, 'imgURL', null)
+          }
+        })
     } else {
       Vue.set(state.ui, 'imgURL', null)
     }
@@ -173,6 +188,9 @@ export const actions = {
         console.log(e)
         return e
       })
+  },
+  annullaModifiche({ dispatch, commit, state }) {
+    commit('setRecord', state.record)
   }
 }
 export const mutations = {
@@ -189,7 +207,7 @@ export const mutations = {
   },
   setRecord(state, payload = {}) {
     state.record = payload
-    state.$record = _clone(payload)
+    state.$record = _cloneDeep(payload)
   },
   setLocalID(state, payload = {}) {
     state.record._id = payload
@@ -252,7 +270,7 @@ export const getters = {
 
   filteredList: (s) =>
     _filter(s.list, function (o) {
-      if (s.ui.filter.text == '') {
+      if (s.ui.filter.text === null) {
         return true
       } else {
         return (

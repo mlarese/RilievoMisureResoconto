@@ -57,7 +57,9 @@ export default {
     workbox: {
       dev: false,
       workboxVersion: '0.0.2',
-      workboxURL: 'https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js',
+      importScripts: ['swextended.js'],
+      // __workboxURL: "importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js')",
+      workboxURL: "https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js",
       runtimeCaching: [
         {
           urlPattern: 'https://fonts.googleapis.com/.*',
@@ -84,7 +86,8 @@ export default {
   plugins: [
     '@/plugins/startup',
     '@/plugins/filesystem',
-    { src: '@/plugins/vuex-persist', ssr: false }
+    { src: '@/plugins/vuex-persist', ssr: false },
+    '@/plugins/swlisteners'
   ],
   /*
    ** Nuxt.js dev-modules

@@ -305,9 +305,9 @@ export const getters = {
     } else {
       textFilter = s.ui.filter
     }
-    textFilter = textFilter.toLowerCase()
-    //console.log('---- dateFilter ',dateFilter)
-    //console.log('---- textFilter ',textFilter)
+    if (textFilter) textFilter = textFilter.toLowerCase()
+    console.log('---- dateFilter ',dateFilter)
+    console.log('---- textFilter ',textFilter)
     return g.appuntiByDate.filter(o => {
       let dateBool = true
       let textBool = true
