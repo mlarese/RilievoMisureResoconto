@@ -129,7 +129,6 @@ export default {
     ...mapState(storeName, ['record', 'ui'])
   },
   methods: {
-    ...mapActions('dm_resources', ['getUrlById']),
     exit() {
       this.$router.replace(`/${storeName}`)
     },

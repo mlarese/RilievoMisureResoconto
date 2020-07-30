@@ -20,7 +20,7 @@
 
       </v-flex>-->
       <v-flex xs12>
-        <v-textarea clearable v-model="syncLog" label="Log" dense readonly />
+        <v-textarea clearable v-model="ui.syncLog" label="Log" dense readonly />
       </v-flex>
       <v-flex>
         <v-btn slot="right" @click="syncAll" :disabled="synchronizing" :loading="synchronizing">
@@ -57,7 +57,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('sync', ['synchronizing', 'syncLog'])
+    ...mapState('sync', ['synchronizing', 'ui'])
   }
 }
 </script>

@@ -6,7 +6,7 @@ const root = { root: true }
 export const state = () => {
   return {
     synchronized: false, // la app sta sincronizzando i dati
-    syncLog: '',
+    ui: {syncLog: ''},
     listaOggettiLocali: [],
     listaRisorseLocali: []
   }
@@ -83,7 +83,7 @@ export const actions = {
 
         listaDaInviare.push(objToSend)
       })
-
+      
       commit('logMe', `Inizio Upload al ws degli oggetti locali`)
       const url = '/api/sincronizza/uploadAllHeaders'
       const apiResponse = await dispatch('api/post', { url, data: listaDaInviare }, root)
@@ -296,11 +296,11 @@ export const mutations = {
     s.listaOggettiLocali = p
   },
   newLog(s, p) {
-    s.syncLog = ''
-    s.syncLog = p
+    s.ui.syncLog = ''
+    s.ui.syncLog = p
   },
   logMe(s, p) {
-    s.syncLog = s.syncLog.concat('\r\n', p)
+    s.ui.syncLog = s.syncLog.concat('\r\n', p)
   },
   setDbStatus(s, p) {
     s.dbStatus = p

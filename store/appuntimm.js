@@ -123,10 +123,11 @@ export const actions = {
     let listaRisorse = []
 
     for (const risorsa of state.ui.listaRisorse) {
-      let file = await fetch(risorsa.fileUrl).then(r => r.blob());
+      // let file = await fetch(risorsa.fileUrl).then(r => r.blob());
       let id = uuidv4()
       listaRisorse.push(id)
-      await dispatch('dm_resources/save', { id, file }, root)
+      // await dispatch('dm_resources/save', { id, file }, root)
+      await dispatch('dm_resources/salvaRisorsa', { id, risorsa }, root)
     }
 
     let data = {
@@ -192,11 +193,13 @@ export const actions = {
     let lista = await dispatch('db/selectAll', { table }, root)
 
     for (const element of lista) {
+      if (!element.data) continue
+      
       Vue.set(element, 'files', [])
 
       if (element.listaRisorse) {
         for (const res of element.listaRisorse) {
-          var risorsa = await dispatch('dm_resources/getUrlById', res, root)
+          var risorsa = await dispatch('dm_resources/getRisorsaById', res, root)
           element.files.push(risorsa)
         }
       }

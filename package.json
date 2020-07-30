@@ -26,6 +26,7 @@
     "date-fns": "^2.11.1",
     "devextreme": "19.2.6",
     "devextreme-vue": "19.2.6",
+    "intersection-observer": "^0.11.0",
     "lodash": "^4.17.15",
     "logrocket": "^1.0.6",
     "module": "^1.2.5",

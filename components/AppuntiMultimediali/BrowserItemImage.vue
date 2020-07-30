@@ -1,28 +1,22 @@
 <template>
-  <div>
-    <vue-easy-lightbox
-      :visible="showPreviewImages"
-      :imgs="(risorsa) ? risorsa.thumbnailUrl : null"
-      @hide="handleHide()"
-    ></vue-easy-lightbox>
-
-    <v-dialog v-if="showPreviewVideo" :value="showPreviewVideo" max-width="800px" @click:outside="showPreviewVideo=false">
-      <video :style="{width: '100%'}" controls>
-        <source :src="risorsa.fileUrl" :type="risorsa.typeFile" />Your browser does not support HTML video.
-      </video>
-    </v-dialog>
-
-    <div class="text-align-center overflow-x-hidden">
-      <div class="text-align-center" style="max-height: 250px; overflow: hidden" @click="openFile()">
+  <div v-if="(risorsa)">
+    <div class="text-align-center overflow-x: hidden">
+      <div
+        class="text-align-center"
+        style="max-height: 250px; overflow: hidden"
+        @click="showImage()"
+      >
         <img width="100%" :src="risorsa.thumbnailUrl || '/images/img-placeholder.png'" />
       </div>
       <div class="body-2 align-left mt-1">{{ appunto.data.EV_Descrizione }}</div>
     </div>
+
+    <GalleryBox ref="GalleryBox" :listaRisorse="this.appunto.files" />
   </div>
 </template>
 
 <script>
-import ResourceAvatar from './ResourceAvatar'
+import GalleryBox from '../Risorse/GalleryBox'
 import { mapState, mapGetters, mapActions } from 'vuex'
 import { appuntimm } from './browsermx'
 let curDate = null
@@ -36,32 +30,21 @@ const newRisorsa = {
 
 export default {
   mixins: [appuntimm],
-  components: { ResourceAvatar },
+  components: { GalleryBox },
   props: ['appunto'],
   data() {
     return {
       risorsa: newRisorsa,
       showPreviewImages: false,
-      showPreviewVideo: false,
-      showPreviewPDF: false
     }
   },
   methods: {
-    openFile() {
-      if (this.risorsa.type === 'pdf') {
-        this.showPreviewPDF = true
-        window.open(this.risorsa.fileUrl)
-      } else if (this.risorsa.type === 'video') {
-        this.showPreviewVideo = true
-      } else {
-        this.showPreviewImages = true
-      }
-    },
-    handleHide() {
-      this.showPreviewImages = false
+    showImage(index) {
+      this.showPreviewImages = true
+      this.$refs.GalleryBox.showPreview(0)
     }
   },
-  mounted(){
+  mounted() {
     this.risorsa = this.appunto.files[0]
   }
 }

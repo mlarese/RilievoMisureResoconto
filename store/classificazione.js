@@ -18,8 +18,7 @@ export const actions = {
                 return res.data
             })
             .catch((e) => {
-                console.log(e)
-                return e
+                console.log('nessuna classificazione presente a db', e)
             })
     },
     getDescrizioneById({ state }, id) {

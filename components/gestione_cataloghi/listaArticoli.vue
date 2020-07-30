@@ -8,10 +8,11 @@
             <v-text-field
               outlined
               dense
+              clearable=""
               label="Cerca articolo..."
               append-icon="search"
               background-color="white"
-              v-model="ui.filter.text"
+              v-model="ui.filterText"
             />
           </div>
         </v-card>
@@ -20,7 +21,7 @@
 
     <!-- LISTA ARTICOLI -->
     <v-row dense>
-      <v-col v-for="(item, i) in listaArticoli" :key="i" xs="12" md="6" lg="4">
+      <v-col v-for="(item, i) in getListaFiltrata" :key="i" xs="12" md="6" lg="4">
         <v-card color="white" @click="openEditForm(item._id)" min-width="300" max-height="200">
           <div class="d-flex flex-no-wrap">
             <v-avatar class="ma-3" size="60" tile>
@@ -52,7 +53,8 @@ import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
 
 export default {
   computed: {
-    ...mapState('articoli', { ui: 'ui', listaArticoli: 'list' })
+    ...mapState('articoli', { ui: 'ui', listaArticoli: 'list' }),
+    ...mapGetters('articoli', ['getListaFiltrata'] )
   },
   methods: {
     ...mapActions('articoli', { caricaLavoro: 'getById' }),

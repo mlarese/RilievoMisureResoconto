@@ -12,6 +12,7 @@
               append-icon="search"
               background-color="white"
               v-model="ui.filter.text"
+              clearable
             />
             <v-btn
               icon

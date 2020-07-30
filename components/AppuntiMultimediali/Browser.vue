@@ -1,11 +1,7 @@
 <template>
   <div>
 
-    <!-- <v-card :elevation="0" v-if="false" >
-      <BrowserLoadImages />
-    </v-card> -->
-
-    <v-card class="overflow-hidden viewer" :elevation="0">
+    <v-card class="overflow-hidden viewer fill-height" :elevation="0">
       <!-- FILTRO -->
       <v-row dense>
         <v-col cols="12">
@@ -13,9 +9,9 @@
         </v-col>
       </v-row>
 
-      <v-row dense class="pb-5">
+      <v-row dense>
         <v-col cols="12">
-          <BrowserView class="pb-5"/>
+          <BrowserView />
         </v-col>
       </v-row>
 
@@ -40,7 +36,6 @@
 
 <script>
 import BrowserCompleteInput from '~/components/AppuntiMultimediali/BrowserCompleteInput'
-import BrowserLoadImages from '~/components/AppuntiMultimediali/BrowserLoadImages'
 import BrowserSearch from '~/components/AppuntiMultimediali/BrowserSearch'
 import BrowserInput from '~/components/AppuntiMultimediali/BrowserInput'
 import BrowserView from '~/components/AppuntiMultimediali/BrowserView'
@@ -49,7 +44,7 @@ import { appuntimm } from './browsermx'
   export default {
     mixins: [appuntimm],
     props: ['job'],
-    components: {BrowserSearch, BrowserInput, BrowserView, BrowserLoadImages, BrowserCompleteInput},
+    components: {BrowserSearch, BrowserInput, BrowserView, BrowserCompleteInput},
     mounted () {
       this.$nextTick(() => {
         this.$vuetify.goTo('#end-appunti-browser-view', {offset: -1000})

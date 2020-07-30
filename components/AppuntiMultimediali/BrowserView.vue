@@ -2,7 +2,7 @@
   <v-card class="elevation-0 overflow-x-hidden px-1" :height="getHeight + 'px'" id="scroll-target">
     <v-row align="stretch" id="scrolled-content">
       <template v-for="appunto in appuntiFiltered">
-        <v-col :cols="12" v-if="show(appunto.insert_UTCDate)" :key="appunto._id + appunto.insert_UTCDate">
+        <v-col class="py-0" :cols="12" v-if="show(appunto.insert_UTCDate)" :key="appunto._id + appunto.insert_UTCDate">
           <BrowserItemDate :appunto="appunto" />
         </v-col>
 
@@ -74,9 +74,9 @@ export default {
       let offset = -10
       if (this.$el) offset = this.$el.offsetTop
       if (this.$vuetify.breakpoint.xsOnly) {
-        return this.$vuetify.breakpoint.height - 250 + offset
+        return this.$vuetify.breakpoint.height - 220 //+ offset
       } else {
-        return this.$vuetify.breakpoint.height - 400 + offset
+        return this.$vuetify.breakpoint.height - 400 //+ offset
       }
     }
   },

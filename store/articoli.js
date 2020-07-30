@@ -1,4 +1,5 @@
 import _clone from 'lodash/clone'
+import _filter from 'lodash/filter'
 import uuid from 'uuid/v1'
 import Vue from 'vue'
 
@@ -8,11 +9,9 @@ const demoRecord = () => ({
   catalogo: 'AGILE',
   codice: 'SER',
   macroComandi: 'MACRO:DEMO1',
-  propertys: [
-    { name: 'L', label: 'Larghezza', type: 'DEC' },
-    { name: 'H_SX', label: 'Altezza', type: 'DEC' },
-    { name: 'H_DX', label: 'Altezza dx', type: 'DEC' }
-  ]
+  ui: {
+    filterText: ''
+  }
 })
 
 export const state = () => {
@@ -107,4 +106,21 @@ export const mutations = {
   }
 }
 
-export const getters = {}
+export const getters = {
+  getListaFiltrata: (s) =>
+    _filter(s.list, function (o) {
+      if (s.ui.filterText){
+        //JSDescrizione catalogoDesc
+        // aziendaDesc
+        return (
+          (
+            ((o.JSDescrizione) && o.JSDescrizione.toLowerCase().includes(s.ui.filterText.toLowerCase())) ||
+            ((o.catalogoDesc) && o.catalogoDesc.toLowerCase().includes(s.ui.filterText.toLowerCase())) ||
+            ((o.aziendaDesc) && o.aziendaDesc.toLowerCase().includes(s.ui.filterText.toLowerCase())))
+        )
+      }else{
+        return true
+      }
+    })
+  
+}

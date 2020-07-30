@@ -116,9 +116,9 @@
                   : 'tabs__content_large'
               "
             >
-              <v-container>
+              <v-card flat class="pa-2">
                 <Browser class="overflow-hidden" :job="{ job_id: $record._id }" />
-              </v-container>
+              </v-card>
             </v-tab-item>
             <!-- <v-tab-item
               :class="
@@ -193,7 +193,7 @@
       :value="isBrowserLoadImagesVisible"
       persistent
       :fullscreen="$vuetify.breakpoint.xsOnly"
-      max-width="800px"
+      max-width="800px"      
     >
       <BrowserLoadImages />
     </v-dialog>

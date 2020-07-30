@@ -4,7 +4,7 @@ export const state = () => {
   return {
     list: [],
     record: {},
-    dbName: 'cataloghi'
+    dbName: 'cataloghi',
   }
 }
 export const actions = {

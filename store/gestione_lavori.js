@@ -35,7 +35,7 @@ export const state = () => {
         imgFileName: null
       }
     },
-    record: {},
+    record: { data: {} },
     dbName: 'lavori',
     modalita: 'FIND',
     ui: {
@@ -255,19 +255,19 @@ export const getters = {
         }
       } else {
         /* tutti */
-        if (s.ui.filter.text == '') {
+        if (!s.ui.filter.text) {
           return true
         } else {
           return (
-            o.data.GL_CommittenteDesc.toLowerCase().includes(
+            ((o.data.GL_CommittenteDesc) && o.data.GL_CommittenteDesc.toLowerCase().includes(
               s.ui.filter.text.toLowerCase()
-            ) ||
-            o.data.GL_Oggetto.toLowerCase().includes(
+            )) ||
+            ((o.data.GL_Oggetto) && o.data.GL_Oggetto.toLowerCase().includes(
               s.ui.filter.text.toLowerCase()
-            ) ||
-            o.data.GL_Indirizzo.toLowerCase().includes(
+            )) ||
+            ((o.data.GL_Indirizzo) && o.data.GL_Indirizzo.toLowerCase().includes(
               s.ui.filter.text.toLowerCase()
-            )
+            ))
           )
         }
       }
