@@ -37,11 +37,6 @@ export default {
     listaRisorse: { type: Array, default: [] }
   },
   components: { ResourceGallery },
-  data() {
-    return {
-      bShowPreview: false
-    }
-  },
   computed: {
     ...mapState('appuntimm', ['isShowingGallery'])
   },

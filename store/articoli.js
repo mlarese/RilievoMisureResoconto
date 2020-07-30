@@ -2,6 +2,7 @@ import _clone from 'lodash/clone'
 import _filter from 'lodash/filter'
 import uuid from 'uuid/v1'
 import Vue from 'vue'
+import { syncStates } from './db'
 
 const root = { root: true }
 const demoRecord = () => ({
@@ -32,25 +33,26 @@ export const actions = {
     const table = state.dbName
     commit('setList')
     let listaCataloghi = await dispatch('db/selectAll', { table }, root)
-    
+
     for (const cat of listaCataloghi) {
       const listaArt = cat.data.JSArticoli
       if (!listaArt) continue;
+      if (cat.syncStatus != syncStates['COMPLETO'])
 
-      for (let art of listaArt) {
+        for (let art of listaArt) {
 
-        const res = await dispatch('dm_resources/getRisorsaById', art.JSImmagineRisID, root)
-        Vue.set(art, 'risorsa', res)
-        Vue.set(art, 'catalogoDesc', cat.data.JSCatalogoDesc)
-        Vue.set(art, 'aziendaDesc', cat.data.JSAzienda.JSDenominazione)
+          const res = await dispatch('dm_resources/getRisorsaById', art.JSImmagineRisID, root)
+          Vue.set(art, 'risorsa', res)
+          Vue.set(art, 'catalogoDesc', cat.data.JSCatalogoDesc)
+          Vue.set(art, 'aziendaDesc', cat.data.JSAzienda.JSDenominazione)
 
-        Vue.set(art, '_id', `${cat.data.JSAzienda.JSUID}.${cat.data.JSCatalogoID}.${art.JSCodice}`)
-        commit('addInList', art)
+          Vue.set(art, '_id', `${cat.data.JSAzienda.JSUID}.${cat.data.JSCatalogoID}.${art.JSCodice}`)
+          commit('addInList', art)
 
-      }
+        }
     }
     return listaCataloghi
- },
+  },
   async getById({ dispatch, commit, state }, id) {
     const azienda = id.split('.')[0]
     const catCod = id.split('.')[1]
@@ -109,7 +111,7 @@ export const mutations = {
 export const getters = {
   getListaFiltrata: (s) =>
     _filter(s.list, function (o) {
-      if (s.ui.filterText){
+      if (s.ui.filterText) {
         //JSDescrizione catalogoDesc
         // aziendaDesc
         return (
@@ -118,9 +120,9 @@ export const getters = {
             ((o.catalogoDesc) && o.catalogoDesc.toLowerCase().includes(s.ui.filterText.toLowerCase())) ||
             ((o.aziendaDesc) && o.aziendaDesc.toLowerCase().includes(s.ui.filterText.toLowerCase())))
         )
-      }else{
+      } else {
         return true
       }
     })
-  
+
 }

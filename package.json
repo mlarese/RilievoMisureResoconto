@@ -19,6 +19,7 @@
     "@nuxtjs/auth": "^4.8.5",
     "@nuxtjs/axios": "^5.9.5",
     "@nuxtjs/device": "^1.2.7",
+    "@nuxtjs/dotenv": "^1.4.1",
     "@nuxtjs/pwa": "^3.0.0-0",
     "bluebird": "^3.7.2",
     "blueimp-canvas-to-blob": "^3.27.0",
