@@ -2,11 +2,11 @@
 <template>
   <v-app id="inspire" class="transparent">
     <notifications position="top right" />
-    <v-content class="back-city">
+    <v-main class="back-city">
       <v-container fluid fill-height class="transparent">
         <nuxt />
       </v-container>
-    </v-content>
+    </v-main>
   </v-app>
 </template>
 
