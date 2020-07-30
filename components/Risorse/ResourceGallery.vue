@@ -46,10 +46,11 @@
 
     <!-- LISTA MINIATURE -->
     <v-col cols="12" style="height: 60px" class="py-0">
-      <div 
-      class="d-flex py-2"
-       style="width: calc(100%); overflow-x: auto"
-       :class="$vuetify.breakpoint.smAndUp ? 'justify-center': 'justify-left'">
+      <div
+        class="d-flex py-2"
+        style="width: calc(100%); overflow-x: auto"
+        :class="$vuetify.breakpoint.smAndUp ? 'justify-center': 'justify-left'"
+      >
         <div
           v-for="(ris, i) in listaRisorse"
           :key="i"
@@ -100,6 +101,9 @@ export default {
     },
     canDecrement() {
       return this.indexRisorsa > 0
+    },
+    setRisorsaSelezionata(ris){
+      this.risorsaSelezionata = ris
     },
     setImageIndex(index) {
       if (index < 0) {

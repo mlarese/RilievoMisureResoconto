@@ -19,8 +19,14 @@ export const state = () => {
     $record: { data: {} },
     record: { data: {} },
 
-    // da vedere
-    isShowingGallery: false,
+    //==  GALLERY ==
+    gallery: {
+      isShowingGallery: false,
+      listaRisorseGallery: [],
+      index: -1
+    },
+    // ==
+
     $files: [],
     browserFilter: {},
     strutturaDiClassificazione: {},
@@ -192,7 +198,7 @@ export const actions = {
 
     for (const element of lista) {
       if (!element.data) continue
-      
+
       Vue.set(element, 'files', [])
 
       if (element.listaRisorse) {
@@ -267,17 +273,21 @@ export const mutations = {
     if (!s.list) s.list = []
     s.list.push(p)
   },
-  clearEventRecord(s){
+  clearEventRecord(s) {
     s.record = { data: {} }
     s.$record = { data: {} }
     s.ui.listaRisorse = []
     s.ui.message = ''
   },
-  showGallery(s){
-    s.isShowingGallery = true
+  showGallery(s, {lista, index}) {
+    s.gallery.listaRisorseGallery = lista
+    s.gallery.index = index
+    s.gallery.isShowingGallery = true
   },
-  hideGallery(s){
-    s.isShowingGallery = false
+  hideGallery(s) {
+    s.gallery.isShowingGallery = false
+    s.gallery.listaRisorseGallery = []
+    s.gallery.index = -1
   }
 }
 
@@ -310,8 +320,8 @@ export const getters = {
       textFilter = s.ui.filter
     }
     if (textFilter) textFilter = textFilter.toLowerCase()
-    console.log('---- dateFilter ',dateFilter)
-    console.log('---- textFilter ',textFilter)
+    console.log('---- dateFilter ', dateFilter)
+    console.log('---- textFilter ', textFilter)
     return g.appuntiByDate.filter(o => {
       let dateBool = true
       let textBool = true

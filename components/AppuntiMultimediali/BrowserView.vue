@@ -13,17 +13,21 @@
       </template>
     </v-row>
     <a id="end-appunti-browser-view" />
+
+    <GalleryBox />
+    
   </v-card>
 </template>
 
 <script>
 import BrowserItemDate from '~/components/AppuntiMultimediali/BrowserItemDate'
 import BrowserItemFactory from '~/components/AppuntiMultimediali/BrowserItemFactory'
+import GalleryBox from '../Risorse/GalleryBox'
 import { appuntimm } from './browsermx'
 
 export default {
   mixins: [appuntimm],
-  components: { BrowserItemDate, BrowserItemFactory },
+  components: { BrowserItemDate, BrowserItemFactory, GalleryBox },
   date() {
     return {
       lastDate: null

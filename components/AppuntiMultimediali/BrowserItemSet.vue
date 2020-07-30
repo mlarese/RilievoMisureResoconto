@@ -22,7 +22,6 @@
       </v-col>
     </v-row>
 
-    <GalleryBox ref="GalleryBox" :listaRisorse="appunto.files" />
   </v-container>
 </template>
 
@@ -38,15 +37,16 @@
 </style>
 
 <script>
-import GalleryBox from '../Risorse/GalleryBox'
+import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
 import ResourceAvatar from '../Risorse/ResourceAvatar'
 
 export default {
   props: ['appunto'],
-  components: { ResourceAvatar, GalleryBox },
+  components: { ResourceAvatar },
   methods: {
+    ...mapMutations('appuntimm', ['showGallery']),
     showImage(index) {
-      this.$refs.GalleryBox.showPreview(index)
+      this.showGallery({lista: this.appunto.files, index})
     }
   }
 }

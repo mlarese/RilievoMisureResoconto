@@ -11,13 +11,11 @@
       <div class="body-2 align-left mt-1">{{ appunto.data.EV_Descrizione }}</div>
     </div>
 
-    <GalleryBox ref="GalleryBox" :listaRisorse="this.appunto.files" />
   </div>
 </template>
 
 <script>
-import GalleryBox from '../Risorse/GalleryBox'
-import { mapState, mapGetters, mapActions } from 'vuex'
+import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
 import { appuntimm } from './browsermx'
 let curDate = null
 
@@ -30,18 +28,16 @@ const newRisorsa = {
 
 export default {
   mixins: [appuntimm],
-  components: { GalleryBox },
   props: ['appunto'],
   data() {
     return {
       risorsa: newRisorsa,
-      showPreviewImages: false,
     }
   },
   methods: {
-    showImage(index) {
-      this.showPreviewImages = true
-      this.$refs.GalleryBox.showPreview(0)
+    ...mapMutations('appuntimm', ['showGallery']),
+    showImage() {
+      this.showGallery({lista: this.appunto.files, index: 0})
     }
   },
   mounted() {

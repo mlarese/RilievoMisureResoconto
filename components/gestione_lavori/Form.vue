@@ -116,7 +116,7 @@
             <v-tab>MEDIA</v-tab>
             <!-- <v-tab>FOTO</v-tab> -->
 
-            <v-tabs-items v-model="currentTab" :touchless="isTabTouchless">
+            <v-tabs-items v-model="currentTab" :touchless="isTabTouchless()">
               <v-tab-item
                 :class="
                   $vuetify.breakpoint.xsOnly
@@ -307,18 +307,18 @@ export default {
   computed: {
     ...mapState('app', ['modalOpened']),
     ...mapState(storeName, ['$record', 'ui']),
-    ...mapState('appuntimm', ['isShowingGallery']),
+    ...mapState('appuntimm', ['gallery']),
     ...mapGetters('appuntimm', [
       'isBrowserCompleteInputVisible',
       'isBrowserLoadImagesVisible'
     ]),
-    ...mapGetters(storeName, ['isEdit', 'isAdd', 'isView', 'getImg']),
-    isTabTouchless() {
-      return this.isShowingGallery
-    }
+    ...mapGetters(storeName, ['isEdit', 'isAdd', 'isView', 'getImg'])
   },
   methods: {
     ...mapMutations(storeName, ['setEditMode', 'setNewMode', 'setViewMode']),
+    isTabTouchless() {
+      return this.gallery.isShowingGallery
+    },
     openEditForm() {
       // Un nuovo lavoro può essere inserito e modificato anche se offline
       // Ad oggi, se un lavoro è stato sincronizzato, la sua modifica può avvenire solamnte se siamo online
