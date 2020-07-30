@@ -23,19 +23,17 @@ export const actions = {
       .then((result) => {
         return result
       })
-
+  },
+  async salvaBlob({ dispatch }, { id, blob }) {
+    // Crea la risorsa dal blob
+    const risorsa = await dispatch('getRisorsaFromBlob', blob)
+    // salva fisicamente
+    await dispatch('salvaRisorsa', { id, risorsa })
   },
   async salvaRisorsa({ dispatch }, { id, risorsa }) {
     const db = new PouchDb(table)
     let file = await fetch(risorsa.fileUrl).then(r => r.blob());
     let fileThumbnail = await fetch(risorsa.thumbnailUrl).then(r => r.blob());
-
-    // const db = new PouchDb(table)
-    // await db
-    //   .putAttachment(id, id, file, file.type)
-    //   .then((result) => {
-    //     return result
-    //   })
 
     db.put({
       _id: id,
@@ -71,22 +69,13 @@ export const actions = {
       console.dir(error)
     }
   },
-  // getById({ dispatch, commit, state }, id) {
-  //   const db = new PouchDb(table)
-  //   return db
-  //     .getAttachment(id, id)
-  //     .then((blob) => {
-  //       return blob
-  //     })
-  // },!!
 
-  // da dismettere
-  async getUrlById({ dispatch, commit, state }, id) {
+  async getBlobById({ dispatch, commit, state }, id) {
     const db = new PouchDb(table)
     return db
       .getAttachment(id, id)
       .then((blob) => {
-        return dispatch('getRisorsaFromBlob', blob)
+        return blob
       })
   },
 
@@ -144,16 +133,20 @@ export const actions = {
 
       try {
         fileUrl = await resizeImage(fileUrl, 1000, 1000)
-        // fileUrl = URL.createObjectURL(boh)
-        thumbnailUrl = await resizeImage(fileUrl, 300, 300)
-        // thumbnailUrl = URL.createObjectURL(boh2)
       } catch (err) {
         console.log(err)
       }
+
+      try {
+        thumbnailUrl = await resizeImage(fileUrl, 300, 300)
+      } catch (err) {
+        console.log(err)
+      }
+
     }
 
     const myRes = { typeFile, type, thumbnailUrl, fileUrl }
-     //console.dir(myRes)
+    //console.dir(myRes)
     return myRes
   }
 
@@ -161,7 +154,7 @@ export const actions = {
 
 function resizeImage(fileUrl, maxWidth, maxHeight) {
   return new Promise((resolve, reject) => {
-    let image = document.createElement('img');
+    let image = new Image();
     image.src = fileUrl;
     image.onload = () => {
       let width = image.width;

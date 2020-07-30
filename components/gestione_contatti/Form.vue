@@ -219,7 +219,6 @@ export default {
     ...mapGetters(storeName, ['isEdit', 'isAdd', 'isView'])
   },
   methods: {
-    ...mapActions('dm_resources', { getRisorsa: 'getById' }),
     ...mapActions(storeName, {
       salvaRecord: 'save',
       aggiungiImmagine: 'addImgPrinc',
@@ -289,34 +288,7 @@ export default {
       if (!fileList.length) return
       const myFile = fileList[0]
       this.aggiungiImmagine(myFile)
-    },
-    getImgPric_asURL() {
-      // let imgUrl = ''
-      // const allegatiDelRecord = this.$record._attachments
-      // const fileNameImmagineLavoro = this.$record.data.imgFileName
-      // if (allegatiDelRecord && fileNameImmagineLavoro) {
-      //   if (allegatiDelRecord.hasOwnProperty(fileNameImmagineLavoro)) {
-      //     const myAllegato = allegatiDelRecord[fileNameImmagineLavoro]
-      //     if (myAllegato && myAllegato.data) {
-      //       imgUrl =
-      //         'data:' + myAllegato.content_type + ';base64,' + myAllegato.data
-      //     }
-      //   }
-      // }
-      // return imgUrl
-     // console.log(this.$record.data.imgFileName)
-      const id = this.$record.data.imgFileName
-      if (id) {
-        this.getRisorsa(id).then((blob) => {
-          if (blob) {
-            let imgUrl = ''
-            imgUrl = URL.createObjectURL(blob)
-            console.log(imgUrl)
-            return imgUrl
-          }
-        })
-      }
-    },
+    },    
     canSave() {
       return this.$record.data.CONDescrizione
     }

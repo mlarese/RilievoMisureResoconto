@@ -27,16 +27,6 @@
           <span>Sincronizza</span>
           <v-icon>mdi-database-sync</v-icon>
         </v-btn>
-        <!-- <v-btn slot="right" @click="randomInsert" :disabled="synchronizing" :loading="synchronizing">
-          <span>random</span>
-          <v-icon>mdi-database-sync</v-icon>
-        </v-btn>
-
-        <v-btn slot="right" @click="syncAppuntiDemo"  :disabled="synchronizing" :loading="synchronizing">
-          <span>appunti demo</span>
-          <v-icon>mdi-database-sync</v-icon>
-        </v-btn> -->
-
       </v-flex>
     </v-layout>
   </v-card>
@@ -50,7 +40,7 @@ import appuntimmJson from '../../storeimp/fixtures/appuntimm.json'
 export default {
   components: { Panel },
   methods: {
-    ...mapActions('sync', ['syncAll', 'randomInsert']),
+    ...mapActions('sync', ['syncAll']),
     ...mapActions('appuntimm', ['setDemo']),
     syncAppuntiDemo () {
       this.setDemo(appuntimmJson)
