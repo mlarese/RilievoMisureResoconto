@@ -5,22 +5,30 @@
         <div v-if="$vuetify.breakpoint.xsOnly">
           <div class="d-flex justify-start align-center">
             <div>
-               <v-avatar size="40" class="pb-0">
-                <v-img :src="ui.imgURL || require('../../assets/images/lavoro.png')"></v-img>
+              <v-avatar size="40" class="pb-0">
+                <v-img
+                  :src="ui.imgURL || require('../../assets/images/lavoro.png')"
+                ></v-img>
               </v-avatar>
             </div>
             <div class="pl-1">
               <div class="subtitle-1 ellipseText">
                 <b>{{ $record.data.GL_CommittenteDesc }}</b>
               </div>
-              <div class="caption ellipseText">{{ $record.data.GL_Oggetto }}</div>
+              <div class="caption ellipseText">
+                {{ $record.data.GL_Oggetto }}
+              </div>
             </div>
           </div>
         </div>
         <div v-else>Gestione lavoro</div>
       </div>
 
-      <div v-if="$vuetify.breakpoint.xsOnly" slot="panelToolbarRight" class="mr-1">
+      <div
+        v-if="$vuetify.breakpoint.xsOnly"
+        slot="panelToolbarRight"
+        class="mr-1"
+      >
         <v-row>
           <v-col cols="2" class="align-self-center">
             <v-checkbox
@@ -48,7 +56,11 @@
                 <!--  <v-img :src="getImgPric_asURL()" v-if="getImgPric_asURL()"></v-img>
                 <v-img :src="require('../../assets/images/lavoro.png')" v-else></v-img>-->
                 <v-avatar size="75" class="pb-0">
-                  <v-img :src="ui.imgURL || require('../../assets/images/lavoro.png')"></v-img>
+                  <v-img
+                    :src="
+                      ui.imgURL || require('../../assets/images/lavoro.png')
+                    "
+                  ></v-img>
                   <input
                     type="file"
                     @change="
@@ -64,7 +76,9 @@
                 <div class="title ellipseText">
                   <b>{{ $record.data.GL_CommittenteDesc }}</b>
                 </div>
-                <div class="subtitle-1 ellipseText">{{ $record.data.GL_Oggetto }}</div>
+                <div class="subtitle-1 ellipseText">
+                  {{ $record.data.GL_Oggetto }}
+                </div>
               </v-col>
               <v-col cols="auto" class="pb-0">
                 <v-row class="pb-0">
@@ -96,49 +110,50 @@
             </v-row>
             <v-divider></v-divider>
           </div>
-          <v-tabs centered>
+          <v-tabs v-model="currentTab" centered>
             <v-tab>INFO</v-tab>
             <v-tab>RILIEVI</v-tab>
             <v-tab>MEDIA</v-tab>
             <!-- <v-tab>FOTO</v-tab> -->
 
-            <v-tab-item
-              :class="
-                $vuetify.breakpoint.xsOnly
-                  ? 'tabs__content_small'
-                  : 'tabs__content_large'
-              "
-            >
-              <DatiAnagrafici />
-            </v-tab-item>
+            <v-tabs-items v-model="currentTab" :touchless="isTabTouchless">
+              <v-tab-item
+                :class="
+                  $vuetify.breakpoint.xsOnly
+                    ? 'tabs__content_small'
+                    : 'tabs__content_large'
+                "
+              >
+                <DatiAnagrafici />
+              </v-tab-item>
 
-            <v-tab-item
-              :class="
-                $vuetify.breakpoint.xsOnly
-                  ? 'tabs__content_small'
-                  : 'tabs__content_large'
-              "
-            >
-              <ListaRilievi :rifLavoroID="$record._id" />
-            </v-tab-item>
-            <v-tab-item
-              :class="
-                $vuetify.breakpoint.xsOnly
-                  ? 'tabs__content_small'
-                  : 'tabs__content_large'
-              "
-            >
-              <v-card flat class="pa-2">
-                <Browser class="overflow-hidden" :job="{ job_id: $record._id }" />
-              </v-card>
-            </v-tab-item>
-            <!-- <v-tab-item
-              :class="
-                $vuetify.breakpoint.xsOnly
-                  ? 'tabs__content_small'
-                  : 'tabs__content_large'
-              "
-            >
+              <v-tab-item
+                :class="
+                  $vuetify.breakpoint.xsOnly
+                    ? 'tabs__content_small'
+                    : 'tabs__content_large'
+                "
+              >
+                <ListaRilievi :rifLavoroID="$record._id" />
+              </v-tab-item>
+
+              <v-tab-item
+                :class="
+                  $vuetify.breakpoint.xsOnly
+                    ? 'tabs__content_small'
+                    : 'tabs__content_large'
+                "
+              >
+                <v-card flat class="pa-2">
+                  <Browser
+                    class="overflow-hidden"
+                    :job="{ job_id: $record._id }"
+                  />
+                </v-card>
+              </v-tab-item>
+            </v-tabs-items>
+
+            <!-- <v-tab-item :class="$vuetify.breakpoint.xsOnly ? 'tabs__content_small' : 'tabs__content_large'">
               <v-container>
                 <EmptyList
                   :title="'Nessuna immagine'"
@@ -163,7 +178,12 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="green darken-1" text @click="isDialogErrorVisible = false">OK</v-btn>
+          <v-btn
+            color="green darken-1"
+            text
+            @click="isDialogErrorVisible = false"
+            >OK</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -176,7 +196,9 @@
     >
       <v-card>
         <v-card-title>
-          <span class="headline">{{ isAdd ? 'Nuovo lavoro' : 'Modifica lavoro' }}</span>
+          <span class="headline">{{
+            isAdd ? 'Nuovo lavoro' : 'Modifica lavoro'
+          }}</span>
         </v-card-title>
 
         <v-card-text>
@@ -185,8 +207,16 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="annullaModifiche()">Annulla</v-btn>
-          <v-btn color="blue darken-1" text @click="salvaModifiche()" :disabled="!canSave()">Salva</v-btn>
+          <v-btn color="blue darken-1" text @click="annullaModifiche()"
+            >Annulla</v-btn
+          >
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="salvaModifiche()"
+            :disabled="!canSave()"
+            >Salva</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -205,7 +235,7 @@
       :value="isBrowserLoadImagesVisible"
       persistent
       :fullscreen="$vuetify.breakpoint.xsOnly"
-      max-width="800px"      
+      max-width="800px"
     >
       <BrowserLoadImages />
     </v-dialog>
@@ -265,22 +295,27 @@ export default {
   },
   data() {
     return {
+      currentTab: null,
+      takenImage: null,
       isDialogErrorVisible: false,
       isPreviewVisible: false,
       isFileManagerVisible: false,
       isCameraVisible: false,
-      isFormVisible: true,
-      takenImage: null
+      isFormVisible: true
     }
   },
   computed: {
     ...mapState('app', ['modalOpened']),
     ...mapState(storeName, ['$record', 'ui']),
+    ...mapState('appuntimm', ['isShowingGallery']),
     ...mapGetters('appuntimm', [
       'isBrowserCompleteInputVisible',
       'isBrowserLoadImagesVisible'
     ]),
-    ...mapGetters(storeName, ['isEdit', 'isAdd', 'isView', 'getImg'])
+    ...mapGetters(storeName, ['isEdit', 'isAdd', 'isView', 'getImg']),
+    isTabTouchless() {
+      return this.isShowingGallery
+    }
   },
   methods: {
     ...mapMutations(storeName, ['setEditMode', 'setNewMode', 'setViewMode']),
