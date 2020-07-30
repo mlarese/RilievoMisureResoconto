@@ -20,7 +20,7 @@ export const state = () => {
     record: { data: {} },
 
     // da vedere
-
+    isShowingGallery: false,
     $files: [],
     browserFilter: {},
     strutturaDiClassificazione: {},
@@ -272,6 +272,12 @@ export const mutations = {
     s.$record = { data: {} }
     s.ui.listaRisorse = []
     s.ui.message = ''
+  },
+  showGallery(s){
+    s.isShowingGallery = true
+  },
+  hideGallery(s){
+    s.isShowingGallery = false
   }
 }
 

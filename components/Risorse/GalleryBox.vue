@@ -1,6 +1,6 @@
 
 <template>
-  <v-card v-show="bShowPreview" class="modal" >
+  <v-card v-show="isShowingGallery" class="modal" >
     <v-btn style="top: 60px" color="gray" absolute top right fab small @click="handleHide">
       <v-icon>mdi-close</v-icon>
     </v-btn>    
@@ -30,6 +30,7 @@
 
 <script>
 import ResourceGallery from '../Risorse/ResourceGallery'
+import { mapState, mapMutations } from 'vuex'
 
 export default {
   props: {
@@ -41,13 +42,17 @@ export default {
       bShowPreview: false
     }
   },
+  computed: {
+    ...mapState('appuntimm', ['isShowingGallery'])
+  },
   methods: {
+      ...mapMutations('appuntimm', ['showGallery', 'hideGallery']),
     showPreview(index) {
-      this.bShowPreview = true
+      this.showGallery()
       this.$refs.ResourceGallery.setImageIndex(index)
     },
     handleHide() {
-      this.bShowPreview = false
+      this.hideGallery()
     }
   }
 }

@@ -30,11 +30,13 @@ export const notifySuccess = ({ title, text }) => ({
   type: 'success'
 })
 
+const officialWsUrl = 'https://agile4work.4innovation.srl:1002'
+
 export const baseURL = (() => {
   if (process.env.NODE_ENV === 'production') {
-    return 'https://agile4work.4innovation.srl:1002'
+    return officialWsUrl
   } else {
-    return 'https://localhost:44397'
+    return process.env.LOCAL_WS_URL || officialWsUrl
   }
 })()
 

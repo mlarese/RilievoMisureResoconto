@@ -4,7 +4,7 @@ const namespace = 'appuntimm'
 export const appuntimm = {
     methods: {
       ...mapActions(namespace, ['addSetImage', 'addPhotocamera', 'cancelPhotocamera', 'addComment', 'getAttachment', 'addImage', 'editAppunto', 'getStrutturaDiClassificazione', 'save', 'cancelAppunto']),
-      ...mapMutations(namespace, ['clearEventRecord', 'setEditMode', 'setNewMode', 'setViewMode', 'setLavoroCorrente', 'setFiles']),
+      ...mapMutations(namespace, ['clearEventRecord', 'setEditMode', 'setNewMode', 'setViewMode', 'setLavoroCorrente', 'setFiles', 'showGallery', 'hideGallery']),
       ...mapMutations('app', ['setModalOpened'])
     },
     computed: {

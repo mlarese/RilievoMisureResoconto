@@ -31,7 +31,7 @@
     "logrocket": "^1.0.6",
     "module": "^1.2.5",
     "numeral": "^2.0.6",
-    "nuxt": "^2.0.0",
+    "nuxt": "^2.14.0",
     "nuxt-material-design-icons": "^1.0.4",
     "pdfjs-dist": "^2.4.456",
     "pdfobject": "^2.1.1",
@@ -52,6 +52,7 @@
     "vue-web-cam": "^1.9.0",
     "vue-webcam": "^2.0.4",
     "vue2-touch-events": "^2.2.1",
+    "vuetify": "^2.3.6",
     "vuex-persist": "^2.2.0"
   },
   "devDependencies": {
