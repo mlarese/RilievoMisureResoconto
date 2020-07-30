@@ -43,12 +43,6 @@ export const currentFullTime = () => {
   return formatSt(new Date(), 'HH:mm:ss') + ' '
 }
 
-export const repoFilename = (fileName) => {
-  let ldate = new Date()
-  //ldate = addMinutes(ldate, offs)
-  return formatSt(ldate, 'yyyyMMddHHmmss') + '_' + fileName.replace(/\s/g, '')
-}
-
 export const time = (date, pattern = 'HH:mm:ss') => {
   if (!date) return ''
   let ldate = null

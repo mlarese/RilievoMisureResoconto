@@ -1,8 +1,8 @@
 import _CloneDeep from 'lodash/cloneDeep'
 import _filter from 'lodash/filter'
 import _isEmpty from 'lodash/isEmpty'
+import { v4 as uuidv4 } from 'uuid'
 import { visibleRecord, syncStates, internalStates } from './db'
-import { repoFilename } from '../assets/filters'
 import Vue from 'vue'
 
 const root = { root: true }
@@ -55,11 +55,11 @@ export const actions = {
       .then((lista) => {
         lista.forEach((element) => {
           if (withFile && element.data.imgFileName) {
-            dispatch('dm_resources/getUrlById', element.data.imgFileName, root)
-              .then((url) => {
+            dispatch('dm_resources/getRisorsaById', element.data.imgFileName, root)
+              .then((res) => {
                 //console.log(url)
-                if (url && url.thumbnailUrl) {
-                  Vue.set(element, 'imgURL', url.thumbnailUrl)
+                if (res && res.thumbnailUrl) {
+                  Vue.set(element, 'imgURL', res.thumbnailUrl)
                 } else {
                   Vue.set(element, 'imgURL', null)
                 }
@@ -87,7 +87,7 @@ export const actions = {
     commit('setRecord', rec)
 
     if (rec.data.imgFileName) {
-      dispatch('dm_resources/getUrlById', rec.data.imgFileName, root)
+      dispatch('dm_resources/getRisorsaById', rec.data.imgFileName, root)
         .then((url) => {
           //console.log(url)
           if (url && url.thumbnailUrl) {
@@ -152,10 +152,10 @@ export const actions = {
     const table = state.dbName
 
     // Genera un nuovo filename per la risorsa
-    const fileName = repoFilename(file.name)
+    const fileName = uuidv4()
 
     // Salva fisicamente il file come risorsa
-    await dispatch('dm_resources/save', { id: fileName, file }, root)
+    await dispatch('dm_resources/salvaBlob', { id: fileName, blob: file }, root)
 
     // Aggiorna il nuovo nome del file
     let listaRis = [fileName]

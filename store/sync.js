@@ -175,10 +175,10 @@ export const actions = {
           commit('logMe', `--->> Inizio DOWNLOAD risorsa  ${fileName}`)
           var urlGet = `/api/sincronizza/downloadSingleRes?fileName=${fileName}`
           var responseFile = await dispatch('api/getFile', { url: urlGet }, root)
-          var file = responseFile.data
+          var blob = responseFile.data
 
           commit('logMe', `--->> Salvataggio locale della risorsa`)
-          await dispatch('dm_resources/save', { id: fileName, file }, root)
+          await dispatch('dm_resources/salvaBlob', { id: fileName, blob }, root)
 
           // una volta inserita la aggiunge anche alla lista delle risorse locali in modo da non riscaricarla
           state.listaRisorseLocali.push(fileName)
@@ -228,7 +228,7 @@ export const actions = {
         for (var fileName of response.data) {
 
           commit('logMe', `--->> Lettura della risorsa localmente - ${fileName}`)
-          const file = await dispatch('dm_resources/getById', fileName, root)
+          const file = await dispatch('dm_resources/getBlobById', fileName, root)
 
           commit('logMe', `--->> Invio al ws della risorsa`)
           const responseFile = await dispatch('api/postFile', { url: urlFile, data: { data, file, fileName } }, root)
@@ -252,40 +252,6 @@ export const actions = {
   async DELETE({ dispatch, commit, state }, { table, data }) {
     // TODO
   },
-
-  async randomInsert({ dispatch, commit, state }) {
-    const table = 'contatti'
-    let fileName = ''
-    var i;
-    for (i = 0; i < 10; i++) {
-      let passi = Math.floor(Math.random() * 100) + 100;
-      var url = `https://picsum.photos/1000`
-      var responseFile = await dispatch('api/getFile', { url }, root)
-      fileName = `randomFile${passi}`
-
-      let data = {
-        _id: null,
-        tipo: 'CONTATTO',
-        syncStatus: syncStates['NOT_SYNC'],
-        lastUpdate_UTCDate: new Date(),
-        data: {
-          CONDescrizione: `random contact ${passi}`,
-          CONIndirizzo: `random indirizzo ${passi}`,
-          CONTelefono: `random telefono ${passi}`,
-          CONEmail: `random email ${passi}`,
-          CONNote: `random note ${passi}`,
-          imgFileName: fileName
-        },
-        listaRisorse: [fileName]
-      }
-
-      let res = await dispatch('db/insertInto', { table, data }, root)
-
-      var file = responseFile.data
-      await dispatch('dm_resources/save', { id: fileName, file }, root)
-    }
-
-  }
 }
 
 export const mutations = {

@@ -39,7 +39,7 @@ export const actions = {
 
       for (let art of listaArt) {
 
-        const res = await dispatch('dm_resources/getUrlById', art.JSImmagineRisID, root)
+        const res = await dispatch('dm_resources/getRisorsaById', art.JSImmagineRisID, root)
         Vue.set(art, 'risorsa', res)
         Vue.set(art, 'catalogoDesc', cat.data.JSCatalogoDesc)
         Vue.set(art, 'aziendaDesc', cat.data.JSAzienda.JSDenominazione)
@@ -68,7 +68,7 @@ export const actions = {
         for (const art of cat.data.JSArticoli) {
 
           if (art.JSCodice === artCod) {
-            var risorsaPrinc = await dispatch('dm_resources/getUrlById', art.JSImmagineRisID, root)
+            var risorsaPrinc = await dispatch('dm_resources/getRisorsaById', art.JSImmagineRisID, root)
 
             Vue.set(state.ui, 'risorsaPrinc', risorsaPrinc)
             Vue.set(state.ui, 'catalogoDesc', cat.data.JSCatalogoDesc)
@@ -76,7 +76,7 @@ export const actions = {
           }
 
           for (const res of art.JSRisorse) {
-            var urlRes = await dispatch('dm_resources/getUrlById', res.JSRisID, root)
+            var urlRes = await dispatch('dm_resources/getRisorsaById', res.JSRisID, root)
 
             Vue.set(res, 'risorsa', urlRes)
 

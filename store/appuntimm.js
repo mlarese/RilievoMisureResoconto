@@ -123,10 +123,8 @@ export const actions = {
     let listaRisorse = []
 
     for (const risorsa of state.ui.listaRisorse) {
-      // let file = await fetch(risorsa.fileUrl).then(r => r.blob());
       let id = uuidv4()
       listaRisorse.push(id)
-      // await dispatch('dm_resources/save', { id, file }, root)
       await dispatch('dm_resources/salvaRisorsa', { id, risorsa }, root)
     }
 

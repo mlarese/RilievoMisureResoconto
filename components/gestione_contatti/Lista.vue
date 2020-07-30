@@ -71,7 +71,6 @@ export default {
   },
   methods: {
     ...mapActions('gestione_contatti', { caricaLavoro: 'getById' }),
-    ...mapActions('dm_resources', { getRisorsa: 'getById' }),
     onAdd() {
       this.$router.push(`/gestione_contatti/add`)
     },
