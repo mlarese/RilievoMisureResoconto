@@ -32,8 +32,9 @@
       cols="12"
       style="height: calc(100% - 60px)"
       class="pa-0"
-      v-touch:swipe.left="incrementImageIndex"
-      v-touch:swipe.right="decrementImageIndex"
+      v-touch="{
+        left: () => incrementImageIndex(),
+        right: () => decrementImageIndex()}"
     >
       <ResourceBig
         :key="indexRisorsa"
@@ -92,10 +93,10 @@ export default {
   },
   methods: {
     canIncrement() {
-      return (this.indexRisorsa < this.listaRisorse.length - 1)
+      return this.indexRisorsa < this.listaRisorse.length - 1
     },
     canDecrement() {
-      return (this.indexRisorsa > 0)
+      return this.indexRisorsa > 0
     },
     setImageIndex(index) {
       if (index < 0) {
