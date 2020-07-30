@@ -38,21 +38,14 @@
 </style>
 
 <script>
-let curDate = null
 import GalleryBox from '../Risorse/GalleryBox'
 import ResourceAvatar from '../Risorse/ResourceAvatar'
 
 export default {
   props: ['appunto'],
   components: { ResourceAvatar, GalleryBox },
-  data() {
-    return {
-      showPreviewImages: false
-    }
-  },
   methods: {
     showImage(index) {
-      this.showPreviewImages = true
       this.$refs.GalleryBox.showPreview(index)
     }
   }

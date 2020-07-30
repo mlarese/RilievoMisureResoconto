@@ -160,7 +160,9 @@ export const actions = {
 
       // nel caso di catalogo deve andare a prendere i dati sul dbMaster
       let isMaster = false
-      if (table === 'CATALOGO')  isMaster = true
+      if (table === dbList['CATALOGO']) { 
+        isMaster = true
+      }
 
       // Verifica se sono presenti tutte le risorse
       if (remoteDoc.listaRisorse && remoteDoc.listaRisorse.length > 0) {

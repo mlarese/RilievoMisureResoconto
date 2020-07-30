@@ -30,19 +30,30 @@ export const notifySuccess = ({ title, text }) => ({
   type: 'success'
 })
 
-const officialWsUrl = 'https://agile4work.4innovation.srl:1002'
+const productionWsUrl = 'https://agile4work.4innovation.srl:1002'
+let productionTimeout = 10000
 
 export const baseURL = (() => {
   if (process.env.NODE_ENV === 'production') {
-    return officialWsUrl
+    return productionWsUrl
   } else {
-    return process.env.LOCAL_WS_URL || officialWsUrl
+    return process.env.LOCAL_WS_URL || productionWsUrl
   }
 })()
 
+export const timeout = (() => {
+  if (process.env.NODE_ENV === 'production') {
+    return productionTimeout
+  } else {
+    return process.env.LOCAL_TIMEOUT || productionTimeout
+  }
+})()
+
+
+
 const instance = axios.create({
   baseURL,
-  timeout: 180000,
+  timeout,
   headers: { 'Content-Type': 'application/json' },
   withCredentials: false
 })

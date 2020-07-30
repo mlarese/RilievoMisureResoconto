@@ -43,29 +43,12 @@
           <v-divider></v-divider>
         </div>
 
-        <vue-easy-lightbox
-          :visible="showPreviewImages"
-          :imgs="risorsaUrl"
-          @hide="handleHide()"
-        ></vue-easy-lightbox>
-
-        <v-dialog
-          v-if="showPreviewVideo"
-          :value="showPreviewVideo"
-          max-width="800px"
-          @click:outside="showPreviewVideo=false"
-        >
-          <video :style="{width: '100%'}" controls>
-            <source :src="risorsa.fileUrl" :type="risorsa.typeFile" />Your browser does not support HTML video.
-          </video>
-        </v-dialog>
-
         <!-- Elenco files dell'articolo -->
         <v-container>
           <v-card flat :style="{ 'max-height': getMaxHeight() + 'px', 'overflow-y': 'scroll' }">
             <v-list three-line>
-              <template v-for="item in record.JSRisorse">
-                <v-list-item :key="item.JSRisID" @click="openFile(item.risorsa)">
+              <template v-for="(item, i) in record.JSRisorse">
+                <v-list-item :key="item.JSRisID" @click="showImage(i)">
                   <v-list-item-avatar size="80" tile>
                     <v-img :src="(item.risorsa) ? item.risorsa.thumbnailUrl : ''"></v-img>
                   </v-list-item-avatar>
@@ -81,6 +64,8 @@
         </v-container>
       </div>
     </Panel>
+
+    <GalleryBox ref="GalleryBox" :listaRisorse="record.JSRisorse.map(jsr => jsr.risorsa)" />
   </div>
 </template>
 
@@ -111,19 +96,13 @@
 <script>
 import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
 import Panel from '../Containers/Panel'
+import GalleryBox from '../Risorse/GalleryBox'
 const storeName = 'articoli'
 
 export default {
   components: {
-    Panel
-  },
-  data() {
-    return {
-      risorsaUrl: '',
-      showPreviewImages: false,
-      showPreviewVideo: false,
-      showPreviewPDF: false
-    }
+    Panel,
+    GalleryBox
   },
   computed: {
     ...mapState(storeName, ['record', 'ui'])
@@ -141,19 +120,8 @@ export default {
         return this.$vuetify.breakpoint.height - 200 + offset
       }
     },
-    openFile(risorsa) {
-      this.risorsaUrl = risorsa.fileUrl
-      if (risorsa.type === 'pdf') {
-        this.showPreviewPDF = true
-        window.open(risorsa.fileUrl)
-      } else if (risorsa.type === 'video') {
-        this.showPreviewVideo = true
-      } else {
-        this.showPreviewImages = true
-      }
-    },
-    handleHide() {
-      this.showPreviewImages = false
+    showImage(index) {
+      this.$refs.GalleryBox.showPreview(index)
     }
   }
 }

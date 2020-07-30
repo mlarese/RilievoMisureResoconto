@@ -46,7 +46,10 @@
 
     <!-- LISTA MINIATURE -->
     <v-col cols="12" style="height: 60px" class="py-0">
-      <div class="d-flex justify-center py-2" style="max-width: calc(100%); overflow-x: auto">
+      <div 
+      class="d-flex py-2"
+       style="width: calc(100%); overflow-x: auto"
+       :class="$vuetify.breakpoint.smAndUp ? 'justify-center': 'justify-left'">
         <div
           v-for="(ris, i) in listaRisorse"
           :key="i"
