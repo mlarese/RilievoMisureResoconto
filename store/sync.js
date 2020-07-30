@@ -158,6 +158,10 @@ export const actions = {
       // Imposta il flag come dato parziale
       // verrà reimpostato quando saranno sincronizzate tutte le risorse
 
+      // nel caso di catalogo deve andare a prendere i dati sul dbMaster
+      let isMaster = false
+      if (table === 'CATALOGO')  isMaster = true
+
       // Verifica se sono presenti tutte le risorse
       if (remoteDoc.listaRisorse && remoteDoc.listaRisorse.length > 0) {
         for (var fileName of remoteDoc.listaRisorse) {
@@ -173,7 +177,7 @@ export const actions = {
           if (risorsaPresente) continue
 
           commit('logMe', `--->> Inizio DOWNLOAD risorsa  ${fileName}`)
-          var urlGet = `/api/sincronizza/downloadSingleRes?fileName=${fileName}`
+          var urlGet = `/api/sincronizza/downloadSingleRes?fileName=${fileName}&isMaster=${isMaster}`
           var responseFile = await dispatch('api/getFile', { url: urlGet }, root)
           var blob = responseFile.data
 
