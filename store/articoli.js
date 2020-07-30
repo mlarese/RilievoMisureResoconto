@@ -37,7 +37,7 @@ export const actions = {
     for (const cat of listaCataloghi) {
       const listaArt = cat.data.JSArticoli
       if (!listaArt) continue;
-      if (cat.syncStatus != syncStates['COMPLETO'])
+      if (cat.syncStatus != syncStates['COMPLETO']) continue
 
         for (let art of listaArt) {
 
