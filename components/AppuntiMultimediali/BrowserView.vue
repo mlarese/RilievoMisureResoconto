@@ -1,21 +1,31 @@
 <template>
-  <v-card class="elevation-0 overflow-x-hidden px-1" :height="getHeight + 'px'" id="scroll-target">
-    <v-row align="stretch" id="scrolled-content">
+  <v-card class="elevation-0 overflow-x-hidden px-1" :height="getHeight + 'px'">
+    <v-row align="stretch">
       <template v-for="appunto in appuntiFiltered">
-        <v-col class="py-0" :cols="12" v-if="show(appunto.insert_UTCDate)" :key="appunto._id + appunto.insert_UTCDate">
+        <v-col
+          class="py-0"
+          :cols="12"
+          v-if="show(appunto.insert_UTCDate)"
+          :key="appunto._id + appunto.insert_UTCDate"
+        >
           <BrowserItemDate :appunto="appunto" />
         </v-col>
 
-        <v-col :cols="12" :xs="12" :sm="6" :md="4" :id="'ap_' + appunto._id" :key="appunto._id">
+        <v-col
+          :cols="12"
+          :xs="12"
+          :sm="6"
+          :md="4"
+          :id="'ap_' + appunto._id"
+          :key="appunto._id"
+        >
           <a :name="'ap_' + appunto._id" :href="'ap_' + appunto._id" />
           <BrowserItemFactory :appunto="appunto" />
         </v-col>
       </template>
     </v-row>
-    <a id="end-appunti-browser-view" />
-
+    <div id="end-appunti-browser-view" />
     <GalleryBox />
-    
   </v-card>
 </template>
 
@@ -28,9 +38,19 @@ import { appuntimm } from './browsermx'
 export default {
   mixins: [appuntimm],
   components: { BrowserItemDate, BrowserItemFactory, GalleryBox },
-  date() {
+  data() {
     return {
-      lastDate: null
+      // Da capire perchè inserendo "lastDate" si creano dei loop infiniti
+      // lastDate: null,
+      lastAppuntiFilteredLength: 0
+    }
+  },
+  watch: {
+    appuntiFiltered: function(value) {
+      if (this.lastAppuntiFilteredLength != value.length) {
+        this.lastAppuntiFilteredLength = value.length
+        this.nextTickScrollToBottom()
+      }
     }
   },
   methods: {
@@ -47,18 +67,9 @@ export default {
           this.lastDate = date
           return true
         }
-        // if (date) {
-        //   date = date.substring(0, 10)
-        //   if (date === this.lastDate) {
-        //     return false
-        //   }
-        //   this.lastDate = date
-        //   return true
-        // } else {
-        //   return false
-        // }
       } catch (error) {
         console.log(error)
+        return false
       }
     },
     sameDay(d1, d2) {
@@ -66,11 +77,17 @@ export default {
       d2 = new Date(d2)
       return d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate()
     },
-    scrollDown() {
-      // var elem = document.getElementById('scrolled-content')
-      var container = document.getElementById('scroll-target')
-      if (!container) return
-      container.scrollTop = container.scrollHeight
+    scrollToBottom() {
+      const endAppuntiBrowserView = document.getElementById(
+        'end-appunti-browser-view'
+      )
+      endAppuntiBrowserView.scrollIntoView()
+    },
+    nextTickScrollToBottom() {
+      console.log('--- nextTickScrollDown()')
+      this.$nextTick(() => {
+        this.scrollToBottom()
+      })
     }
   },
   computed: {
@@ -85,7 +102,7 @@ export default {
     }
   },
   mounted() {
-    setTimeout(this.scrollDown, 500)
+    setTimeout(this.nextTickScrollToBottom, 250)
   }
 }
 </script>
