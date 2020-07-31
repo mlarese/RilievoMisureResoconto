@@ -10,6 +10,7 @@
       <v-text-field
         ref="inputRef"
         outlined
+        clearable
         dense
         hide-details
         placeholder="Cerca appunti multimediali..."

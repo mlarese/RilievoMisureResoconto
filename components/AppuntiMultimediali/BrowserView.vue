@@ -1,6 +1,6 @@
 <template>
-  <v-card class="elevation-0 overflow-x-hidden px-1" :height="getHeight + 'px'">
-    <v-row align="stretch">
+  <v-card class="elevation-0 overflow-x-hidden px-1" :height="getHeight + 'px'" id="containerScroll">
+    <v-row align="stretch" >
       <template v-for="appunto in appuntiFiltered">
         <v-col
           class="py-0"
@@ -24,20 +24,19 @@
         </v-col>
       </template>
     </v-row>
-    <div id="end-appunti-browser-view" />
-    <GalleryBox />
+    <a id="end-appunti-browser-view" style="opacity: 0" >____________</a>
   </v-card>
 </template>
 
 <script>
+import VueScrollTo from 'vue-scrollto'
 import BrowserItemDate from '~/components/AppuntiMultimediali/BrowserItemDate'
 import BrowserItemFactory from '~/components/AppuntiMultimediali/BrowserItemFactory'
-import GalleryBox from '../Risorse/GalleryBox'
 import { appuntimm } from './browsermx'
 
 export default {
   mixins: [appuntimm],
-  components: { BrowserItemDate, BrowserItemFactory, GalleryBox },
+  components: { BrowserItemDate, BrowserItemFactory },
   data() {
     return {
       // Da capire perchè inserendo "lastDate" si creano dei loop infiniti
@@ -77,17 +76,20 @@ export default {
       d2 = new Date(d2)
       return d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate()
     },
-    scrollToBottom() {
-      const endAppuntiBrowserView = document.getElementById(
-        'end-appunti-browser-view'
-      )
-      endAppuntiBrowserView.scrollIntoView()
-    },
-    nextTickScrollToBottom() {
-      console.log('--- nextTickScrollDown()')
-      this.$nextTick(() => {
-        this.scrollToBottom()
-      })
+    scrollDown() {
+
+      const element = '#end-appunti-browser-view'
+      const duration = 0
+      var options = {
+        container: '#containerScroll',
+        easing: 'ease-in',
+        offset: 0,
+        force: true,
+        cancelable: false,
+        x: false,
+        y: true
+      }
+      VueScrollTo.scrollTo(element, duration, options)
     }
   },
   computed: {
@@ -101,8 +103,13 @@ export default {
       }
     }
   },
-  mounted() {
-    setTimeout(this.nextTickScrollToBottom, 250)
+  created() {
+    setTimeout(this.scrollDown, 100)
+    // this.scrollDown()
+  },
+  updated() {
+    setTimeout(this.scrollDown, 100)
+    // this.scrollDown()
   }
 }
 </script>
