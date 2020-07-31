@@ -87,7 +87,6 @@ export default {
   props: {
     listaRisorse: { type: Array, default: [] },
     editable: { type: Boolean, default: false }
-    // index: { type: Number, default: -1 }
   },
   data() {
     return {

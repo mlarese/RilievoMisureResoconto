@@ -1,18 +1,30 @@
 <template>
   <div style="height: 100%">
     <div style="height: 100%" v-if="(risorsa)">
-      <component :is="currentType" :src="risorsa.fileUrl" :typeFile="risorsa.typeFile" style="z-index: 0" />
+      <component
+        :is="currentType"
+        :src="risorsa.fileUrl"
+        :typeFile="risorsa.typeFile"
+        style="z-index: 0"
+      />
 
-        <div v-if="editable" class="d-flex justify-center">
-          <v-card class="toolbarOption px-2" :style="{ opacity: '70%' }">
-            <v-btn dark icon @click="editFile()" v-if="risorsa.type === 'image'">
-              <v-icon>mdi-pencil</v-icon>
-            </v-btn>
-            <v-btn dark icon @click="$emit('onRemoveCurrentFile')">
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
-          </v-card>
-        </div>
+      <div v-if="editable" class="d-flex justify-center">
+        <v-card class="toolbarOption px-2" :style="{ opacity: '70%' }">
+          <v-btn dark icon @click="editFile()" v-if="risorsa.type === 'image'">
+            <v-icon>mdi-pencil</v-icon>
+          </v-btn>
+          <v-btn dark icon @click="$emit('onRemoveCurrentFile')">
+            <v-icon>mdi-delete</v-icon>
+          </v-btn>
+        </v-card>
+      </div>
+      <PhotoEditor
+        v-if="editable"
+        :visible="editorVisible"
+        :image-url="risorsa.fileUrl"
+        @exit="editorVisible=false"
+        @save="salvaNewImage"
+      />
     </div>
 
     <div v-else style="height: 100%" class="d-flex align-center justify-center">
@@ -35,19 +47,20 @@
 </style>
 
 <script>
-
 import { mapActions, mapState, mapGetters } from 'vuex'
 import ResourceItemImage from './ResourceItemImage'
 import ResourceItemAudio from './ResourceItemAudio'
 import ResourceItemPdf from './ResourceItemPdf'
 import ResourceItemVideo from './ResourceItemVideo'
+import PhotoEditor from '../Photo/PhotoEditor'
 
 export default {
   components: {
     ResourceItemImage,
     ResourceItemAudio,
     ResourceItemPdf,
-    ResourceItemVideo
+    ResourceItemVideo,
+    PhotoEditor
   },
   props: {
     risorsa: {
@@ -61,6 +74,11 @@ export default {
     editable: {
       type: Boolean,
       defautt: false
+    }
+  },
+  data() {
+    return {
+      editorVisible: false
     }
   },
   computed: {
@@ -79,11 +97,19 @@ export default {
           return 'ResourceItemImage'
           break
       }
-    }
+    },
+    ...mapState('appuntimm', ['ui'])
   },
   methods: {
-    editFile(){
-      
+    ...mapActions('dm_resources', ['getRisorsaFromBlob']),
+    editFile() {
+      this.editorVisible = true
+    },
+    async salvaNewImage(dataurl) {
+      const myBlob = await fetch(dataurl).then((r) => r.blob())
+      const myRis = await this.getRisorsaFromBlob(myBlob)
+      this.ui.listaRisorse = this.ui.listaRisorse.map(item => item.fileUrl === this.risorsa.fileUrl ? myRis : item)
+      this.editorVisible = false
     }
   }
 }

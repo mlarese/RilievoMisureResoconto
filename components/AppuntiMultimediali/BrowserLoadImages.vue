@@ -62,7 +62,7 @@
     <!-- calcola l'altezza senza la toolbar e card-actions -->
     <v-row style="height: calc(100% - 48px - 52px)" class="pa-0 ma-0">
       <v-col cols="12" style="height: calc(100% - 120px)" class="py-0">
-        <ResourceGallery ref="ResourceGallery" :listaRisorse="ui.listaRisorse" />
+        <ResourceGallery ref="ResourceGallery" :listaRisorse="ui.listaRisorse" :editable="true" />
       </v-col>
       <v-col cols="12" style="height: 110px" class="py-0 pt-2">
         <BrowserCompleteInputLite />

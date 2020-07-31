@@ -288,6 +288,9 @@ export const mutations = {
     s.gallery.isShowingGallery = false
     s.gallery.listaRisorseGallery = []
     s.gallery.index = -1
+  },
+  setFilterText(s, p){
+    s.ui.filter = ''
   }
 }
 
