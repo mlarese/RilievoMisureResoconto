@@ -1,8 +1,13 @@
 <template>
-  <v-card class="elevation-0 overflow-x-hidden px-1" :height="getHeight + 'px'" id="scroll-target">
-    <v-row align="stretch" id="scrolled-content">
+  <v-card class="elevation-0 overflow-x-hidden px-1" :height="getHeight + 'px'" id="containerScroll">
+    <v-row align="stretch" >
       <template v-for="appunto in appuntiFiltered">
-        <v-col class="py-0" :cols="12" v-if="show(appunto.insert_UTCDate)" :key="appunto._id + appunto.insert_UTCDate">
+        <v-col
+          class="py-0"
+          :cols="12"
+          v-if="show(appunto.insert_UTCDate)"
+          :key="appunto._id + appunto.insert_UTCDate"
+        >
           <BrowserItemDate :appunto="appunto" />
         </v-col>
 
@@ -12,22 +17,19 @@
         </v-col>
       </template>
     </v-row>
-    <a id="end-appunti-browser-view" />
-
-    <GalleryBox />
-    
+    <a id="end-appunti-browser-view" style="opacity: 0" >____________</a>
   </v-card>
 </template>
 
 <script>
+import VueScrollTo from 'vue-scrollto'
 import BrowserItemDate from '~/components/AppuntiMultimediali/BrowserItemDate'
 import BrowserItemFactory from '~/components/AppuntiMultimediali/BrowserItemFactory'
-import GalleryBox from '../Risorse/GalleryBox'
 import { appuntimm } from './browsermx'
 
 export default {
   mixins: [appuntimm],
-  components: { BrowserItemDate, BrowserItemFactory, GalleryBox },
+  components: { BrowserItemDate, BrowserItemFactory },
   date() {
     return {
       lastDate: null
@@ -47,16 +49,7 @@ export default {
           this.lastDate = date
           return true
         }
-        // if (date) {
-        //   date = date.substring(0, 10)
-        //   if (date === this.lastDate) {
-        //     return false
-        //   }
-        //   this.lastDate = date
-        //   return true
-        // } else {
-        //   return false
-        // }
+
       } catch (error) {
         console.log(error)
       }
@@ -67,10 +60,19 @@ export default {
       return d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate()
     },
     scrollDown() {
-      // var elem = document.getElementById('scrolled-content')
-      var container = document.getElementById('scroll-target')
-      if (!container) return
-      container.scrollTop = container.scrollHeight
+
+      const element = '#end-appunti-browser-view'
+      const duration = 0
+      var options = {
+        container: '#containerScroll',
+        easing: 'ease-in',
+        offset: 0,
+        force: true,
+        cancelable: false,
+        x: false,
+        y: true
+      }
+      VueScrollTo.scrollTo(element, duration, options)
     }
   },
   computed: {
@@ -84,8 +86,13 @@ export default {
       }
     }
   },
-  mounted() {
-    setTimeout(this.scrollDown, 500)
+  created() {
+    setTimeout(this.scrollDown, 100)
+    // this.scrollDown()
+  },
+  updated() {
+    setTimeout(this.scrollDown, 100)
+    // this.scrollDown()
   }
 }
 </script>

@@ -11,7 +11,7 @@
 
       <v-row dense>
         <v-col cols="12">
-          <BrowserView />
+          <BrowserView ref="BrowserView" />
         </v-col>
       </v-row>
 
@@ -31,10 +31,12 @@
       </v-col>
     </v-row>
 
+ <GalleryBox />
   </div>
 </template>
 
 <script>
+import GalleryBox from '../Risorse/GalleryBox'
 import BrowserCompleteInput from '~/components/AppuntiMultimediali/BrowserCompleteInput'
 import BrowserSearch from '~/components/AppuntiMultimediali/BrowserSearch'
 import BrowserInput from '~/components/AppuntiMultimediali/BrowserInput'
@@ -44,11 +46,12 @@ import { appuntimm } from './browsermx'
   export default {
     mixins: [appuntimm],
     props: ['job'],
-    components: {BrowserSearch, BrowserInput, BrowserView, BrowserCompleteInput},
+    components: {BrowserSearch, BrowserInput, BrowserView, BrowserCompleteInput, GalleryBox},
     mounted () {
-      this.$nextTick(() => {
-        this.$vuetify.goTo('#end-appunti-browser-view', {offset: -1000})
-      })
+      // this.$nextTick(() => {
+      //   this.$vuetify.goTo('#end-appunti-browser-view', {offset: -1000})
+      // })
+      // this.$refs.BrowserView.scrollDown()
     },
     created() {
       this.setLavoroCorrente(this.job)

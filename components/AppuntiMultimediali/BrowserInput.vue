@@ -33,7 +33,6 @@ export default {
     },
     sendOrEdit () {
       if(this.isEmpty) {
-        // this.$nextTick(() => {  this.$refs.inputRef.$refs.input.focus();  });
         this.clearEventRecord()
         this.addPhotocamera()
       } else {
