@@ -100,15 +100,22 @@ export default {
       isLoadingRes: false
     }
   },
+  watch: {
+    ui: {
+      handler(val) {
+        this.$refs.ResourceGallery.setRisorsaSelezionata(val.listaRisorse[val.index])
+      },
+      deep: true
+    }
+  },
   methods: {
     ...mapActions('dm_resources', ['getRisorsaFromBlob']),
     filesChange(selectedFiles) {
       Array.prototype.forEach.call(selectedFiles, (file) => {
         this.getRisorsaFromBlob(file).then((risorsa) => {
           this.ui.listaRisorse.push(risorsa)
-          this.$refs.ResourceGallery.setImageIndex(
-            this.ui.listaRisorse.length - 1
-          )
+          this.ui.index = 0
+          //this.$refs.ResourceGallery.setImageIndex(this.ui.listaRisorse.length - 1)
         })
       })
     },

@@ -46,7 +46,7 @@ export default {
   methods: {
     ...mapMutations('appuntimm', ['showGallery']),
     showImage(index) {
-      this.showGallery({lista: this.appunto.files, index})
+      this.showGallery({lista: this.appunto.files, index:0})
     }
   }
 }

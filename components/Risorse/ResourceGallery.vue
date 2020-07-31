@@ -91,7 +91,7 @@ export default {
   data() {
     return {
       risorsaSelezionata: null,
-      indexRisorsa: -1
+      indexRisorsa: 0
     }
   },
   methods: {
@@ -101,7 +101,7 @@ export default {
     canDecrement() {
       return this.indexRisorsa > 0
     },
-    setRisorsaSelezionata(ris){
+    setRisorsaSelezionata(ris) {
       this.risorsaSelezionata = ris
     },
     setImageIndex(index) {

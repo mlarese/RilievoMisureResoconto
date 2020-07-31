@@ -35,6 +35,7 @@ export const state = () => {
     dbName,
     ui: {
       listaRisorse: [],
+      index: -1,
 
       eventoEditStatus: 'none', // none editor
       viewerStatus: 'view', //loadimage view

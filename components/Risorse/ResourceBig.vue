@@ -65,7 +65,7 @@ export default {
   props: {
     risorsa: {
       type: Object,
-      default: {}
+      default: null
     },
     isLoading: {
       type: Boolean,
@@ -73,7 +73,7 @@ export default {
     },
     editable: {
       type: Boolean,
-      defautt: false
+      default: false
     }
   },
   data() {
@@ -108,6 +108,7 @@ export default {
     async salvaNewImage(dataurl) {
       const myBlob = await fetch(dataurl).then((r) => r.blob())
       const myRis = await this.getRisorsaFromBlob(myBlob)
+      this.ui.index = this.ui.listaRisorse.findIndex(item => item.fileUrl === this.risorsa.fileUrl)
       this.ui.listaRisorse = this.ui.listaRisorse.map(item => item.fileUrl === this.risorsa.fileUrl ? myRis : item)
       this.editorVisible = false
     }
