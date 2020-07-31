@@ -83,10 +83,7 @@
       </div>
     </Panel>
 
-    <GalleryBox
-      ref="GalleryBox"
-      :listaRisorse="record.JSRisorse.map((jsr) => jsr.risorsa)"
-    />
+    <GalleryBox />
   </div>
 </template>
 
@@ -118,6 +115,7 @@
 import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
 import Panel from '../Containers/Panel'
 import GalleryBox from '../Risorse/GalleryBox'
+import { appuntimm } from '../AppuntiMultimediali/browsermx'
 const storeName = 'articoli'
 
 export default {
@@ -129,6 +127,7 @@ export default {
     ...mapState(storeName, ['record', 'ui'])
   },
   methods: {
+    ...mapMutations('appuntimm', ['showGallery']),
     exit() {
       this.$router.replace(`/${storeName}`)
     },
@@ -143,7 +142,7 @@ export default {
     },
     showImage(index) {
       const lista = this.record.JSRisorse.map((jsr) => jsr.risorsa)
-      this.$refs.GalleryBox.showGallery({ lista, index })
+      this.showGallery({ lista, index })
     }
   }
 }
