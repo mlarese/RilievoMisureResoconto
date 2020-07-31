@@ -1,6 +1,10 @@
 <template>
-  <v-card class="elevation-0 overflow-x-hidden px-1" :height="getHeight + 'px'" id="containerScroll">
-    <v-row align="stretch" >
+  <v-card
+    class="elevation-0 overflow-x-hidden px-1"
+    :height="getHeight + 'px'"
+    id="containerScroll"
+  >
+    <v-row align="stretch">
       <template v-for="appunto in appuntiFiltered">
         <v-col
           class="py-0"
@@ -24,7 +28,7 @@
         </v-col>
       </template>
     </v-row>
-    <a id="end-appunti-browser-view" style="opacity: 0" >____________</a>
+    <div id="end-appunti-browser-view" />
   </v-card>
 </template>
 
@@ -40,16 +44,7 @@ export default {
   data() {
     return {
       // Da capire perchè inserendo "lastDate" si creano dei loop infiniti
-      // lastDate: null,
-      lastAppuntiFilteredLength: 0
-    }
-  },
-  watch: {
-    appuntiFiltered: function(value) {
-      if (this.lastAppuntiFilteredLength != value.length) {
-        this.lastAppuntiFilteredLength = value.length
-        this.nextTickScrollToBottom()
-      }
+      // lastDate: null
     }
   },
   methods: {
@@ -76,10 +71,8 @@ export default {
       d2 = new Date(d2)
       return d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate()
     },
-    scrollDown() {
-
+    scrollDown(duration) {
       const element = '#end-appunti-browser-view'
-      const duration = 0
       var options = {
         container: '#containerScroll',
         easing: 'ease-in',
@@ -103,13 +96,11 @@ export default {
       }
     }
   },
-  created() {
-    setTimeout(this.scrollDown, 100)
-    // this.scrollDown()
+  mounted() {
+    setTimeout(() => this.scrollDown(-1), 100)
   },
   updated() {
-    setTimeout(this.scrollDown, 100)
-    // this.scrollDown()
+    setTimeout(() => this.scrollDown(250), 100)
   }
 }
 </script>
