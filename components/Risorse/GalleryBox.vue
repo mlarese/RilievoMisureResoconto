@@ -51,7 +51,7 @@ export default {
   }
   },
   methods: {
-      ...mapMutations('appuntimm', ['hideGallery']),
+      ...mapMutations('appuntimm', ['hideGallery', 'showGallery']),
     handleHide() {
       this.hideGallery()
     }

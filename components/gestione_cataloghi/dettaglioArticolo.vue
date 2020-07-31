@@ -7,7 +7,11 @@
             <v-col cols="2">
               <v-avatar size="40" class="mt-1">
                 <v-img
-                  :src="(ui.risorsaPrinc) ? ui.risorsaPrinc.thumbnailUrl : require('../../assets/images/product.png')"
+                  :src="
+                    ui.risorsaPrinc
+                      ? ui.risorsaPrinc.thumbnailUrl
+                      : require('../../assets/images/product.png')
+                  "
                 ></v-img>
               </v-avatar>
             </v-col>
@@ -29,7 +33,11 @@
             <v-col cols="auto">
               <v-avatar size="75" class="pb-0">
                 <v-img
-                  :src="(ui.risorsaPrinc) ? ui.risorsaPrinc.thumbnailUrl : require('../../assets/images/product.png')"
+                  :src="
+                    ui.risorsaPrinc
+                      ? ui.risorsaPrinc.thumbnailUrl
+                      : require('../../assets/images/product.png')
+                  "
                 ></v-img>
               </v-avatar>
             </v-col>
@@ -45,16 +53,26 @@
 
         <!-- Elenco files dell'articolo -->
         <v-container>
-          <v-card flat :style="{ 'max-height': getMaxHeight() + 'px', 'overflow-y': 'scroll' }">
+          <v-card
+            flat
+            :style="{
+              'max-height': getMaxHeight() + 'px',
+              'overflow-y': 'scroll'
+            }"
+          >
             <v-list three-line>
               <template v-for="(item, i) in record.JSRisorse">
                 <v-list-item :key="item.JSRisID" @click="showImage(i)">
                   <v-list-item-avatar size="80" tile>
-                    <v-img :src="(item.risorsa) ? item.risorsa.thumbnailUrl : ''"></v-img>
+                    <v-img
+                      :src="item.risorsa ? item.risorsa.thumbnailUrl : ''"
+                    ></v-img>
                   </v-list-item-avatar>
 
                   <v-list-item-content>
-                    <v-list-item-title v-html="item.JSRisDesc"></v-list-item-title>
+                    <v-list-item-title
+                      v-html="item.JSRisDesc"
+                    ></v-list-item-title>
                     <!-- <v-list-item-subtitle v-html="item.subtitle"></v-list-item-subtitle> -->
                   </v-list-item-content>
                 </v-list-item>
@@ -65,7 +83,10 @@
       </div>
     </Panel>
 
-    <GalleryBox ref="GalleryBox" :listaRisorse="record.JSRisorse.map(jsr => jsr.risorsa)" />
+    <GalleryBox
+      ref="GalleryBox"
+      :listaRisorse="record.JSRisorse.map((jsr) => jsr.risorsa)"
+    />
   </div>
 </template>
 
@@ -121,7 +142,8 @@ export default {
       }
     },
     showImage(index) {
-      this.$refs.GalleryBox.showPreview(index)
+      const lista = this.record.JSRisorse.map((jsr) => jsr.risorsa)
+      this.$refs.GalleryBox.showGallery({ lista, index })
     }
   }
 }
