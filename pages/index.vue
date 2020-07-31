@@ -8,8 +8,8 @@
            {{errors}}
         </pre>
 
-        <v-btn @click="onClick">Chiama post message</v-btn>
-        <v-btn @click="onClickLoadEventi">Chiama load eventi</v-btn>
+        <!-- <v-btn @click="onClick">Chiama post message</v-btn>
+        <v-btn @click="onClickLoadEventi">Chiama load eventi</v-btn> -->
 
       </v-flex>
     </v-layout>
@@ -24,18 +24,18 @@ import {serviceWorker} from '../plugins/swlisteners'
 export default {
   methods: {
     ...mapActions('swstore', ['loadEvents']),
-    onClickLoadEventi () {
-      this.loadEvents()
-    },
-    onClick () {
-      console.clear()
+    // onClickLoadEventi () {
+    //   this.loadEvents()
+    // },
+    // onClick () {
+    //   console.clear()
 
-      serviceWorker.active.postMessage({
-        type: 'caricaEventi',
-        token: 'kkkkkk',
-        message: 'caricamento in background'
-      })
-    }
+    //   serviceWorker.active.postMessage({
+    //     type: 'caricaEventi',
+    //     token: 'kkkkkk',
+    //     message: 'caricamento in background'
+    //   })
+    // }
   },
   components: { DbMonitor },
   data() {
