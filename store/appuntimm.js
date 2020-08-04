@@ -309,6 +309,11 @@ export const getters = {
           textFilter = af[1]
           aDateFilter[1] = af[0]
         }
+        for (let i = 0; i < aDateFilter.length; i++) {
+          if (aDateFilter[i].length === 1) {
+            aDateFilter[i] = '0' + aDateFilter[i]
+          }
+        }
         dateFilter = aDateFilter[1] + '-' + aDateFilter[0]
       }
 
@@ -317,6 +322,11 @@ export const getters = {
           let af = aDateFilter[2].split(' ')
           textFilter = af[1]
           aDateFilter[2] = af[0]
+        }
+        for (let i = 0; i < aDateFilter.length; i++) {
+          if (aDateFilter[i].length === 1) {
+            aDateFilter[i] = '0' + aDateFilter[i]
+          }
         }
         dateFilter = aDateFilter[2] + '-' + aDateFilter[1] + '-' + aDateFilter[0]
       }
