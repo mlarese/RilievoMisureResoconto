@@ -24,7 +24,10 @@ export const state = () => {
     ui: {
       title: 'Articoli',
       filter: {},
-      imgURL: null
+      imgURL: null,
+      risorsaPrinc: {},
+      catalogoDesc: null,
+      aziendaDesc: null
     }
   }
 }
@@ -72,9 +75,9 @@ export const actions = {
           if (art.JSCodice === artCod) {
             var risorsaPrinc = await dispatch('dm_resources/getRisorsaById', art.JSImmagineRisID, root)
 
-            Vue.set(state.ui, 'risorsaPrinc', risorsaPrinc)
-            Vue.set(state.ui, 'catalogoDesc', cat.data.JSCatalogoDesc)
-            Vue.set(state.ui, 'aziendaDesc', cat.data.JSAzienda.JSDenominazione)
+            commit('setUiRisorsaPrinc', risorsaPrinc)
+            commit('setUiCatalogoDesc', cat.data.JSCatalogoDesc)
+            commit('setUiAziendaDesc', cat.data.JSAzienda.JSDenominazione)
           }
 
           for (const res of art.JSRisorse) {
@@ -105,6 +108,15 @@ export const mutations = {
   },
   setRecord(state, payload = {}) {
     state.record = payload
+  },
+  setUiRisorsaPrinc(state, payload = {}) {
+    state.ui.risorsaPrinc = payload
+  },
+  setUiCatalogoDesc(state, payload = null) {
+    state.ui.catalogoDesc = payload
+  },
+  setUiAziendaDesc(state, payload = null) {
+    state.ui.aziendaDesc = payload
   }
 }
 
