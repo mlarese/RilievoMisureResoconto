@@ -33,7 +33,7 @@ export default {
   methods: {
     clickEvent(e) {
       let ImagePoint = {
-        X: e.clientX - this.$refs.ucIMG.$el.getBoundingClientRect().left + 12, // è il padding del container......
+        X: e.clientX - this.$refs.ucIMG.$el.getBoundingClientRect().left , //+ 12 è il padding del container......
         Y: e.clientY - this.$refs.ucIMG.$el.getBoundingClientRect().top
       }
       // let ImagePoint = {
@@ -97,7 +97,7 @@ export default {
       if (!PIM) {
         return
       }
-      console.dir(PIM.ItemSelezionato)
+      
       let c = document.createElement('canvas')
       // let c = document.getElementById('mycanvas')
       c.width = this.imgWidth

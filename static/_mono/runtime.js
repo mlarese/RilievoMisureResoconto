@@ -40,6 +40,27 @@ var Module = {
 				// Public Shared Function getPIMSerialized_con_OggettoSelezionato(selectObject_X As Integer, selectObject_Y As Integer) As String
 				window.GPROD.getPIMSerialized_con_OggettoSelezionato = Module.mono_bind_static_method(baseDLL + "getPIMSerialized_con_OggettoSelezionato")
 
+				//   Public Shared Sub SetTables(TablesSerializzato As String)
+				window.GPROD.SetTables = Module.mono_bind_static_method(baseDLL + "SetTables")
+
+				// Public Shared Sub SetCatalogoInUso(CatalogoCodice As String)
+				window.GPROD.SetCatalogoInUso = Module.mono_bind_static_method(baseDLL + "SetCatalogoInUso")
+
+				// Public Shared Function GetTableSerialized(TableName As String) As String
+				window.GPROD.GetTableSerialized = Module.mono_bind_static_method(baseDLL + "GetTableSerialized")
+
+				// Public Shared Function SetProperty(propName As String, propVal As String) As String
+				window.GPROD.SetProperty = Module.mono_bind_static_method(baseDLL + "SetProperty")
+
+				// Public Shared Function GetPropertyDesc(propName As String, propVal As String) As String
+				window.GPROD.GetPropertyDesc = Module.mono_bind_static_method(baseDLL + "GetPropertyDesc")
+
+
+
+
+
+
+
 				// let fn3 = Module.mono_bind_static_method("[ICT_GestoreSerramenti_STD] ICT_GestoreSerramenti_STD.GestorePWApp:getComandiImmagine")
 				// window.GPROD.getDrawingCommands = fn3;
 

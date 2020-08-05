@@ -22,8 +22,10 @@ export const actions = {
   },
   getById({ dispatch, commit, state }, id) {
     const table = state.dbName
-    dispatch('db/selectById', { table, id }, root).then((rec) =>
+    return dispatch('db/selectById', { table, id }, root).then((rec) => {
       commit('setRecord', rec)
+      return rec
+    }
     )
   },
   save({ dispatch, commit, state }) {

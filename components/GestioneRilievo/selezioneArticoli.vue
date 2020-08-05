@@ -33,14 +33,15 @@ export default {
     return {
       stepIndex: 1,
       // listaArticoli: [],
-      listaModelli: []
+      listaModelli: [],
+      catalogoID: ''
     }
   },
   computed: {
     ...mapState('rilievoDet', {rilievoDet: 'record'})
   },
   methods: {
-    ...mapActions('cataloghi', { loadCataloghi: 'load' }),
+    ...mapActions('cataloghi', { loadCataloghi: 'load', getCatalogoByID: 'getById' }),
     ...mapActions('articoli', { loadArticoli: 'load' }),
     // caricaArticoli() {
     //   this.listaArticoli = window.GPROD.GetListaArticoli_as_JSON()
@@ -48,12 +49,17 @@ export default {
     articoloSelezionato(articolo) {
       // carica i modelli per l'articolo selezionato
       this.listaModelli = articolo.JSModelli
+      this.catalogoID = articolo.catalogoCodice
       // va allo step successivo
       this.stepIndex = 2
     },
-    modelloSelezionato(modello){
+    async modelloSelezionato(modello){
       console.dir(modello)
+      window.GPROD.SetCatalogoInUso(this.catalogoID)
       window.GPROD.IstanziaNuovoProdottoDaJSModello(JSON.stringify(modello))
+      
+      let catalogo = await this.getCatalogoByID(this.catalogoID)
+      window.GPROD.SetTables(JSON.stringify(catalogo.data.JSTables))
       this.$router.push(`/dettaglio/add`)
     }
   },

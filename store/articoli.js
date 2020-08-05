@@ -48,6 +48,7 @@ export const actions = {
           Vue.set(art, 'risorsa', res)
           Vue.set(art, 'catalogoDesc', cat.data.JSCatalogoDesc)
           Vue.set(art, 'aziendaDesc', cat.data.JSAzienda.JSDenominazione)
+          Vue.set(art, 'catalogoCodice', cat.data.JSCatalogoID)
 
           Vue.set(art, '_id', `${cat.data.JSAzienda.JSUID}.${cat.data.JSCatalogoID}.${art.JSCodice}`)
           commit('addInList', art)
