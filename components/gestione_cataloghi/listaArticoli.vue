@@ -21,11 +21,21 @@
 
     <!-- LISTA ARTICOLI -->
     <v-row dense>
-      <v-col v-for="(item, i) in getListaFiltrata" :key="i" class="d-flex align-content-start flex-wrap">
+      <v-col
+        v-for="(item, i) in getListaFiltrata"
+        :key="i"
+        class="d-flex align-content-start flex-wrap"
+      >
         <v-card color="white" @click="rowClick(item)" width="400" height="130">
           <div class="d-flex flex-no-wrap">
             <v-avatar class="ma-3" size="60" tile>
-              <v-img :src="(item.risorsa) ? item.risorsa.thumbnailUrl : require('../../assets/images/product.png')"></v-img>
+              <v-img
+                :src="
+                  item.risorsa
+                    ? item.risorsa.thumbnailUrl
+                    : require('../../assets/images/product.png')
+                "
+              ></v-img>
             </v-avatar>
             <div class="flex-grow-1 flex-shrink-1">
               <v-card-title
@@ -52,10 +62,10 @@
 import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
 
 export default {
-  props: {modalita: {type: String, default: 'GestioneAnargafica'}},
+  props: { modalita: { type: String, default: 'GestioneAnargafica' } },
   computed: {
     ...mapState('articoli', { ui: 'ui', listaArticoli: 'list' }),
-    ...mapGetters('articoli', ['getListaFiltrata'] )
+    ...mapGetters('articoli', ['getListaFiltrata'])
   },
   methods: {
     ...mapActions('articoli', { caricaLavoro: 'getById' }),
@@ -63,10 +73,10 @@ export default {
       this.$router.push(`/articoli/add`)
     },
     rowClick(articolo) {
-      if (this.modalita === 'SelezioneOggetto'){
+      if (this.modalita === 'SelezioneOggetto') {
         this.$emit('onSelected', articolo)
-      }else{
-        this.$router.push(`/cataloghi/${articolo.id}`)
+      } else {
+        this.$router.push(`/cataloghi/${articolo._id}`)
       }
     }
   }
