@@ -87,7 +87,7 @@ export default {
     '@/plugins/startup',
     '@/plugins/filesystem',
     { src: '@/plugins/vuex-persist', ssr: false },
-    '@/plugins/swlisteners'
+    // '@/plugins/swlisteners'
   ],
   /*
    ** Nuxt.js dev-modules

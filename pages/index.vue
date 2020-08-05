@@ -20,7 +20,7 @@
 import DbMonitor from '../components/Db/DbMonitor'
 import { fs, previewFile } from '../assets/filesystem'
 import { mapState, mapGetters, mapActions } from 'vuex'
-import {serviceWorker} from '../plugins/swlisteners'
+// import {serviceWorker} from '../plugins/swlisteners'
 export default {
   methods: {
     ...mapActions('swstore', ['loadEvents']),
