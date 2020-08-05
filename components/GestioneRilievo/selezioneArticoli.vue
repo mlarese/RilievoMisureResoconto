@@ -1,23 +1,50 @@
 <template>
-  <div>
-    <v-stepper v-model="stepIndex">
-      <v-stepper-header>
-        <v-stepper-step :complete="stepIndex > 1" step="1">Selezionare l'articolo</v-stepper-step>
-
-        <v-divider></v-divider>
-
-        <v-stepper-step :complete="stepIndex > 2" step="2">Selezionare il modello</v-stepper-step>
-      </v-stepper-header>
-
-      <v-stepper-items>
+  <div :key="mainKey">
+    <v-stepper v-model="stepIndex" :vertical="isSmAndDown">
+      <template v-if="isSmAndDown">
+        <v-stepper-step :complete="stepIndex > 1" editable step="1">
+          Selezionare il catalogo
+        </v-stepper-step>
         <v-stepper-content step="1">
-            <ListaArticoli @onSelected="articoloSelezionato" :modalita="'SelezioneOggetto'" />
+          <ListaArticoli
+            @onSelected="articoloSelezionato"
+            :modalita="'SelezioneOggetto'"
+          />
         </v-stepper-content>
-
+        <v-stepper-step :complete="stepIndex > 2" step="2">
+          Selezionare il modello
+        </v-stepper-step>
         <v-stepper-content step="2">
-            <ListaModelli :lista="listaModelli" @onSelected="modelloSelezionato" />
+          <ListaModelli
+            :lista="listaModelli"
+            @onSelected="modelloSelezionato"
+          />
         </v-stepper-content>
-      </v-stepper-items>
+      </template>
+      <template v-else>
+        <v-stepper-header>
+          <v-stepper-step :complete="stepIndex > 1" editable step="1">
+            Selezionare il catalogo
+          </v-stepper-step>
+          <v-stepper-step :complete="stepIndex > 2" step="2">
+            Selezionare il modello
+          </v-stepper-step>
+        </v-stepper-header>
+        <v-stepper-items>
+          <v-stepper-content step="1">
+            <ListaArticoli
+              @onSelected="articoloSelezionato"
+              :modalita="'SelezioneOggetto'"
+            />
+          </v-stepper-content>
+          <v-stepper-content step="2">
+            <ListaModelli
+              :lista="listaModelli"
+              @onSelected="modelloSelezionato"
+            />
+          </v-stepper-content>
+        </v-stepper-items>
+      </template>
     </v-stepper>
   </div>
 </template>
@@ -33,11 +60,26 @@ export default {
     return {
       stepIndex: 1,
       // listaArticoli: [],
-      listaModelli: []
+      listaModelli: [],
+      mainKeyCounter: 0
     }
   },
   computed: {
-    ...mapState('rilievoDet', {rilievoDet: 'record'})
+    ...mapState('rilievoDet', { rilievoDet: 'record' }),
+    isSmAndDown() {
+      return this.$vuetify.breakpoint.smAndDown
+    },
+    mainKey() {
+      return 'selezione_articoli_main_' + this.mainKeyCounter
+    }
+  },
+  watch: {
+    isSmAndDown(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.mainKeyCounter++
+        this.loadArticoli()
+      }
+    }
   },
   methods: {
     ...mapActions('cataloghi', { loadCataloghi: 'load' }),
@@ -45,13 +87,13 @@ export default {
     // caricaArticoli() {
     //   this.listaArticoli = window.GPROD.GetListaArticoli_as_JSON()
     // },
-    articoloSelezionato(articolo) {
+   articoloSelezionato(articolo) {
       // carica i modelli per l'articolo selezionato
       this.listaModelli = articolo.JSModelli
       // va allo step successivo
       this.stepIndex = 2
     },
-    modelloSelezionato(modello){
+    modelloSelezionato(modello) {
       console.dir(modello)
       window.GPROD.IstanziaNuovoProdottoDaJSModello(JSON.stringify(modello))
       this.$router.push(`/dettaglio/add`)
@@ -61,7 +103,7 @@ export default {
     // carica gli articoli per la visualizzazione
     this.loadArticoli()
 
-    // // carica i cataloghi
+        // // carica i cataloghi
     // this.load().then((listaCataloghi) => {
     //   listaCataloghi.forEach((cat) => {
     //     // per ogni catalogo caricato lo "invia" alla DLL
