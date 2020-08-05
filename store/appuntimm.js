@@ -334,17 +334,14 @@ export const getters = {
       textFilter = s.ui.filter
     }
     if (textFilter) textFilter = textFilter.toLowerCase()
-    console.log('---- dateFilter ', dateFilter)
-    console.log('---- textFilter ', textFilter)
+    console.dir(g.appuntiByDate)
     return g.appuntiByDate.filter(o => {
       let dateBool = true
       let textBool = true
-      let evClassificazione = o.data.EV_Classificazione
-      if (!_isString(evClassificazione)) evClassificazione = ''
 
       if (dateFilter !== null) dateBool = o.insert_UTCDate.includes(dateFilter)
       if (textFilter !== null) textBool = (
-        evClassificazione.toLowerCase().includes(textFilter) ||
+        _get(o.data, 'ClassificazioneDesc', '').toLowerCase().includes(textFilter) ||
         _get(o.data, 'EV_NOTE', '').toLowerCase().includes(textFilter) ||
         _get(o.data, 'EV_Descrizione', '').toLowerCase().includes(textFilter)
       )
