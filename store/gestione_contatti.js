@@ -52,44 +52,32 @@ export const actions = {
   load({ commit, dispatch, state }, withFile = false) {
     const table = state.dbName
     commit('setList', [])
-    return dispatch('db/selectAll', { table }, root)
-      .then((lista) => {
-        lista.forEach((element) => {
-          if (withFile && element.data.imgFileName) {
-            dispatch('dm_resources/getRisorsaById', element.data.imgFileName, root)
-              .then((res) => {
-                //console.log(url)
-                if (res && res.thumbnailUrl) {
-                  Vue.set(element, 'imgURL', res.thumbnailUrl)
-                } else {
-                  Vue.set(element, 'imgURL', null)
-                }
-              })
-          }
-          commit('addInList', element)
-        })
-        return lista
+    return dispatch('db/selectAll', { table }, root).then((lista) => {
+      lista.forEach((element) => {
+        if (withFile && element.data.imgFileName) {
+          dispatch(
+            'dm_resources/getRisorsaById',
+            element.data.imgFileName,
+            root
+          ).then((res) => {
+            //console.log(url)
+            if (res && res.thumbnailUrl) {
+              Vue.set(element, 'imgURL', res.thumbnailUrl)
+            } else {
+              Vue.set(element, 'imgURL', null)
+            }
+          })
+        }
+        commit('addInList', element)
       })
+      return lista
+    })
   },
   async getById({ dispatch, commit, state }, id) {
     const table = state.dbName
     const rec = await dispatch('db/selectById', { table, id }, root)
     commit('setRecord', rec)
-
-    if (rec.data.imgFileName) {
-      dispatch('dm_resources/getRisorsaById', rec.data.imgFileName, root)
-        .then((url) => {
-          //console.log(url)
-          if (url && url.thumbnailUrl) {
-            Vue.set(state.ui, 'imgURL', url.thumbnailUrl)
-            //console.log(state.ui.imgURL)
-          } else {
-            Vue.set(state.ui, 'imgURL', null)
-          }
-        })
-    } else {
-      Vue.set(state.ui, 'imgURL', null)
-    }
+    dispatch('loadUiImgUrl', rec.data.imgFileName)
   },
   async save({ dispatch, commit, state, rootState }) {
     const isInsert = !state.$record._id
@@ -109,19 +97,29 @@ export const actions = {
       commit('setInsertUser', rootState.auth.utente)
 
       // Salva localmente
-      const res = await dispatch(actionName, { table, data: state.$record }, root)
+      const res = await dispatch(
+        actionName,
+        { table, data: state.$record },
+        root
+      )
 
       // Recupera il nuov ID e lo imposta
       commit('setLocalID', res.id)
 
       // tenta l'upload in background altrimenti sarà caricato durante la sincronizzazione
       // chiamata async in modo da non bloccare l'utente
-      dispatch('sync/UPLOAD', {
-        table, data: state.$record, callback: () => {
-          console.log('callback')
-          dispatch('getById', state.$record._id), dispatch('load') // ricarica i dati
-        }
-      }, root)
+      dispatch(
+        'sync/UPLOAD',
+        {
+          table,
+          data: state.$record,
+          callback: () => {
+            console.log('callback')
+            dispatch('getById', state.$record._id), dispatch('load') // ricarica i dati
+          }
+        },
+        root
+      )
     } else {
       // Una modifica deve per forza prima essere sincronizzata con il ws
       // Se tutto va a buon fine provvede a salvarla localmente
@@ -153,6 +151,7 @@ export const actions = {
     // Salva il documento
     await dispatch('save')
 
+    dispatch('loadUiImgUrl', fileName)
   },
 
   safeDelete({ dispatch, commit, state }, rec) {
@@ -191,6 +190,19 @@ export const actions = {
   },
   annullaModifiche({ dispatch, commit, state }) {
     commit('setRecord', state.record)
+  },
+  loadUiImgUrl({ commit, dispatch }, fileName) {
+    if (fileName && fileName !== '') {
+      dispatch('dm_resources/getRisorsaById', fileName, root).then((url) => {
+        if (url && url.thumbnailUrl) {
+          commit('setUiImgUrl', url.thumbnailUrl)
+        } else {
+          commit('setUiImgUrl')
+        }
+      })
+    } else {
+      commit('setUiImgUrl')
+    }
   }
 }
 export const mutations = {
@@ -262,6 +274,9 @@ export const mutations = {
   setImgFileName(state, payload) {
     state.record.data.imgFileName = payload
     state.$record.data.imgFileName = payload
+  },
+  setUiImgUrl(state, payload = null) {
+    state.ui.imgURL = payload
   }
 }
 
@@ -269,14 +284,23 @@ export const getters = {
   noDeletedList: (s) => s.list.filter(visibleRecord),
 
   filteredList: (s) =>
-    _filter(s.list, function (o) {
+    _filter(s.list, function(o) {
       if (s.ui.filter.text === null) {
         return true
       } else {
         return (
-          ((o.data.CONDescrizione) && o.data.CONDescrizione.toLowerCase().includes(s.ui.filter.text.toLowerCase())) ||
-          ((o.data.CONNote) && o.data.CONNote.toLowerCase().includes(s.ui.filter.text.toLowerCase())) ||
-          ((o.data.CONIndirizzo) && o.data.CONIndirizzo.toLowerCase().includes(s.ui.filter.text.toLowerCase()))
+          (o.data.CONDescrizione &&
+            o.data.CONDescrizione.toLowerCase().includes(
+              s.ui.filter.text.toLowerCase()
+            )) ||
+          (o.data.CONNote &&
+            o.data.CONNote.toLowerCase().includes(
+              s.ui.filter.text.toLowerCase()
+            )) ||
+          (o.data.CONIndirizzo &&
+            o.data.CONIndirizzo.toLowerCase().includes(
+              s.ui.filter.text.toLowerCase()
+            ))
         )
       }
     }),
