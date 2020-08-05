@@ -1,23 +1,51 @@
-.v-card__text, .v-card__title {
-    word-break: normal; /* maybe !important  */
-  }
-html{
-  overscroll-behavior-y: none !important;
+.v-card__text,
+.v-card__title {
+  word-break: normal; /* maybe !important  */
 }
+
+html,
+body {
+  overscroll-behavior-x: none !important;
+  overscroll-behavior-y: none !important;
+  overscroll-behavior: none !important;
+}
+
 .overflow-hidden {
   overflow: hidden;
 }
 
-.overflow-x-hidden { overflow-x: hidden;}
-.overflow-y-hidden { overflow-y: hidden;}
+.overflow-x-hidden {
+  overflow-x: hidden;
+}
 
-.align-left {text-align: left;}
+.overflow-y-hidden {
+  overflow-y: hidden;
+}
 
-.text--grey {color: grey;}
+.align-left {
+  text-align: left;
+}
 
-.text-align-left {   text-align: left; }
-.text-align-center {   text-align: center; }
-.text-align-right {   text-align: right; }
+.text--grey {
+  color: grey;
+}
 
-.image-bottom-left {display: none !important;}
-.image-container{width: 100% !important}
+.text-align-left {
+  text-align: left;
+}
+
+.text-align-center {
+  text-align: center;
+}
+
+.text-align-right {
+  text-align: right;
+}
+
+.image-bottom-left {
+  display: none !important;
+}
+
+.image-container {
+  width: 100% !important;
+}
