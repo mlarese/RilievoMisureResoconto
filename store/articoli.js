@@ -62,7 +62,7 @@ export const actions = {
     const artCod = id.split('.')[2]
 
     const table = state.dbName
-    commit('setList')
+    // commit('setList')
 
     var listaCataloghi = await dispatch('db/selectAll', { table }, root)
 
