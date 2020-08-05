@@ -55,9 +55,14 @@ var Module = {
 				// Public Shared Function GetPropertyDesc(propName As String, propVal As String) As String
 				window.GPROD.GetPropertyDesc = Module.mono_bind_static_method(baseDLL + "GetPropertyDesc")
 
+				// Public Shared Sub ImpostaLuceTelaio_ConLuceVuota()
+				window.GPROD.ImpostaLuceTelaio_ConLuceVuota = Module.mono_bind_static_method(baseDLL + "ImpostaLuceTelaio_ConLuceVuota")
 
+				// Public Shared Sub ImpostaLuceTelaio_ConPannello()
+				window.GPROD.ImpostaLuceTelaio_ConPannello = Module.mono_bind_static_method(baseDLL + "ImpostaLuceTelaio_ConPannello")
 
-
+				// Public Shared Sub ImpostaLuceTelaio_ConGrpAnteSTD()
+				window.GPROD.ImpostaLuceTelaio_ConGrpAnteSTD = Module.mono_bind_static_method(baseDLL + "ImpostaLuceTelaio_ConGrpAnteSTD")
 
 
 

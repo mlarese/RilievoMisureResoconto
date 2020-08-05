@@ -208,13 +208,13 @@ export default {
   },
   data() {
     return {
-      imgWidth: 1000,
-      imgHeight: 800,
+      imgWidth: 100,
+      imgHeight: 100,
       showArticoloSelection: false
     }
   },
   methods: {
-    ...mapMutations('rilievoDet', { setRecordRilievoDet: 'setRecord' }),
+    ...mapMutations('rilievoDet', { setDetRecordID: 'setRecordID', setRecordRilievoDet: 'setRecord', setRiferimentoAPosizione: 'setRiferimentoAPosizione', setRiferimentoARilievo: 'setRiferimentoARilievo' }),
     ...mapMutations('rilievoPos', ['setRecord']),
     ...mapActions('rilievoPos', { saveRow: 'save', deleteRow: 'deleteByID' }),
     ...mapActions('rilievo', { saveRilievo: 'save' }),
@@ -251,6 +251,9 @@ export default {
       this.deleteRow(data._id)
     },
     addDettaglio(posID){
+      this.setRiferimentoARilievo(this.record._id)
+      this.setRiferimentoAPosizione(posID)
+      this.setDetRecordID()
       this.showArticoloSelection = true
     },
     _addDettaglio(posID) {

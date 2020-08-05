@@ -16,6 +16,7 @@
             <v-tab>Misure</v-tab>
             <v-tab>Grp. Ante</v-tab>
             <v-tab>Div</v-tab>
+            <v-tab>Struttura</v-tab>
 
             <v-tabs-items v-model="currentTab">
               <v-tab-item>
@@ -119,23 +120,23 @@
                     </v-col>
                     <v-col cols="7" class="py-0 my-0">
                       <v-text-field
-                        v-model="NUMERO_ANTE"
+                        v-model="GRP_NUMERO_ANTE"
                         readonly
                         append-outer-icon="mdi-magnify"
-                        @click:append-outer="openTable('NUMERO_ANTE', 'NUMERO_ANTE')"
+                        @click:append-outer="openTable('GRP_NUMERO_ANTE', 'NUMERO_ANTE')"
                       ></v-text-field>
                     </v-col>
                   </v-row>
                   <v-row>
                     <v-col cols="4" class="py-0 my-0">
-                      <v-subheader>Numero ante</v-subheader>
+                      <v-subheader>Sistema Ap.</v-subheader>
                     </v-col>
                     <v-col cols="7" class="py-0 my-0">
                       <v-text-field
-                        v-model="SISTEMA_APERTURA"
+                        v-model="GRP_SISTEMA_APERTURA"
                         readonly
                         append-outer-icon="mdi-magnify"
-                        @click:append-outer="openTable('SISTEMA_APERTURA', 'SISTEMI_APERTURA')"
+                        @click:append-outer="openTable('GRP_SISTEMA_APERTURA', 'SISTEMI_APERTURA')"
                       ></v-text-field>
                     </v-col>
                   </v-row>
@@ -157,6 +158,26 @@
                   </v-row>
                 </div>
                 <div v-else>Selezionare un divisore</div>
+              </v-tab-item>
+              <v-tab-item>
+                <v-row>
+                  <v-col>
+                    <v-btn @click="ImpostaLuceTelaio_ConLuceVuota">Imposta luce vuota</v-btn>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col>
+                    <v-btn @click="ImpostaLuceTelaio_ConPannello">Inserisci un pannello</v-btn>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col>
+                    <v-btn @click="ImpostaLuceTelaio_ConGrpAnteSTD">Inserisci Grp. Ante STD</v-btn>
+                  </v-col>
+                </v-row>
+                <!-- <div v-if="elementoSelezionatoType === 'DIVISORE'">
+                </div>
+                <div v-else>Selezionare un divisore</div>-->
               </v-tab-item>
             </v-tabs-items>
           </v-tabs>
@@ -208,8 +229,8 @@ export default {
       SERIE: '',
       TIPO_SERRAMENTO: '',
       TIPO_TELAIO: '',
-      NUMERO_ANTE: '',
-      SISTEMA_APERTURA: ''
+      GRP_NUMERO_ANTE: '',
+      GRP_SISTEMA_APERTURA: ''
     }
   },
   mounted() {
@@ -230,7 +251,21 @@ export default {
       this.$router.back()
     },
 
-
+    ImpostaLuceTelaio_ConLuceVuota() {
+      window.GPROD.ImpostaLuceTelaio_ConLuceVuota()
+      let pim = window.GPROD.GetPIMSerialized()
+      this.drawingCommands = JSON.parse(pim)
+    },
+    ImpostaLuceTelaio_ConPannello() {
+      window.GPROD.ImpostaLuceTelaio_ConPannello
+      let pim = window.GPROD.GetPIMSerialized()
+      this.drawingCommands = JSON.parse(pim)
+    },
+    ImpostaLuceTelaio_ConGrpAnteSTD() {
+      window.GPROD.ImpostaLuceTelaio_ConGrpAnteSTD
+      let pim = window.GPROD.GetPIMSerialized()
+      this.drawingCommands = JSON.parse(pim)
+    },
     openTable(propName, nomeTabella) {
       this.propertySelected = propName
       let myTable = JSON.parse(window.GPROD.GetTableSerialized(nomeTabella))
@@ -243,12 +278,13 @@ export default {
     },
     rigaSelezionata(row) {
       if (row) {
-        if (this.elementoSelezionatoID === 'GRP_ANTE_PRINC') {
-          let comando = `${this.elementoSelezionatoID}.${this.propertySelected}=${row.JSTabRowCodice}`
+        if (this.propertySelected.startsWith('GRP_')) {
+          let realPropName = this.propertySelected.replace('GRP_', '')
+          let comando = `${this.elementoSelezionatoID}.${realPropName}=${row.JSTabRowCodice}`
           this.applicaMC(comando)
 
           let newValue = window.GPROD.GetPropertyDesc(
-            this.propertySelected,
+            realPropName,
             row.JSTabRowCodice
           )
           this[this.propertySelected] = newValue
