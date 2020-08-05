@@ -134,6 +134,7 @@ export const actions = {
       .then((rec) => {
         commit('setRecordID', rec.id)
         dispatch('load')
+        return rec.id
       })
       .catch((e) => {
         console.log(e)

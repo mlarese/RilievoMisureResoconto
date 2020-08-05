@@ -5,16 +5,11 @@
         v-for="rilievo in listRilievi"
         :key="rilievo._id"
         @click="apriRilievo(rilievo._id)"
-        outlined
         class="mb-2"
       >
         <v-card-text>
-          <div class="title">
-            {{ rilievo.descrizione }}
-          </div>
-          <div>
-            {{ rilievo.dataCreazione }}
-          </div>
+          <div class="title">{{ rilievo.descrizione }}</div>
+          <div>{{ rilievo.dataCreazione }}</div>
         </v-card-text>
       </v-card>
       <EmptyList
@@ -35,6 +30,32 @@
         <v-icon>mdi-plus</v-icon>
       </v-btn>
     </v-container>
+
+    <v-dialog :value="showNewRilievo" persistent max-width="700px">
+      <v-card>
+        <v-card-title>
+          <span class="headline">
+            Gestione rilievo
+          </span>
+        </v-card-title>
+
+        <v-card-text>
+          <v-text-field
+            v-model="rilievo.descrizione"
+            label="Descrizione"
+            required
+            dense
+            class="py-2"
+          ></v-text-field>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="annullaModifiche()">Annulla</v-btn>
+          <v-btn color="blue darken-1" text @click="salvaModifiche()">Salva</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -52,20 +73,33 @@ export default {
   props: {
     rifLavoroID: { default: null }
   },
+  data() {
+    return {
+      showNewRilievo: false
+    }
+  },
   components: {
     EmptyList
   },
   computed: {
-    ...mapState('rilievo', { listRilievi: 'list' })
+    ...mapState('rilievo', { listRilievi: 'list', rilievo: 'record' })
   },
   methods: {
     ...mapMutations('rilievo', ['setRiferimentoAlLavoro']),
-    ...mapActions('rilievo', { loadRilievi: 'load' }),
+    ...mapActions('rilievo', { loadRilievi: 'load', saveRilievo: 'save' }),
     apriRilievo(id) {
       this.$router.push(`/rilievo/${id}`)
     },
     creaNuovoRilievo() {
-      this.$router.push(`/rilievo/add`)
+      this.showNewRilievo = true
+      // this.$router.push(`/rilievo/add`)
+    },
+    annullaModifiche(){
+      this.showNewRilievo = false
+    },
+    async salvaModifiche(){
+      const id = await this.saveRilievo()
+      this.$router.push(`/rilievo/${id}`)
     }
   },
   mounted() {

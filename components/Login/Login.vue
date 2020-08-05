@@ -70,7 +70,7 @@
             dense
             class="mb-0"
             transition="scroll-y-transition"
-            :value="error"
+            :value="isError"
           >
             {{ error }}
           </v-alert>
@@ -156,7 +156,7 @@
                 dense
                 class="mb-0"
                 transition="scroll-y-transition"
-                :value="error"
+                :value="isError"
               >
                 {{ error }}
               </v-alert>
@@ -257,6 +257,7 @@ export default {
     return {
       formValid: false,
       error: null,
+      isError: false,
       username: '',
       password: '',
       alert: null,
@@ -286,9 +287,11 @@ export default {
       this.$refs.loginForm.validate()
       if (!this.formValid) {
         this.error = 'Verificare i dati inseriti'
+        this.isError = true
         return
       }
 
+      this.isError = false
       this.error = null
       this.loading = true
 
@@ -307,6 +310,7 @@ export default {
             this.loading = false
             // NON DOVREBBE MAI PRESENTARSI
             this.error = 'Errore imprevisto'
+            this.isError = true
           }
         })
         .catch((err) => {
@@ -316,6 +320,7 @@ export default {
           } else {
             this.error = 'Verificare la connessione'
           }
+          this.isError = true
         })
     }
   }

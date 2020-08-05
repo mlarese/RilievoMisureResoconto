@@ -160,40 +160,15 @@
       </div>
     </Panel>
     <popupPosEdit ref="popupPosEdit" />
+
+
     <v-dialog
-      :value="isEdit || isAdd"
-      persistent
+      :value="showArticoloSelection"
+      
       :fullscreen="$vuetify.breakpoint.xsOnly"
       max-width="700px"
     >
-      <v-card>
-        <v-card-title>
-          <span class="headline">{{
-            isAdd ? 'Nuovo rilievo' : 'Modifica rilievo'
-          }}</span>
-        </v-card-title>
-
-        <v-card-text>
-          <v-text-field
-            v-model="record.descrizione"
-            label="Descrizione"
-            required
-            dense
-            :readonly="isView"
-            class="py-2"
-          ></v-text-field>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="annullaModifiche()"
-            >Annulla</v-btn
-          >
-          <v-btn color="blue darken-1" text @click="salvaModifiche()"
-            >Salva</v-btn
-          >
-        </v-card-actions>
-      </v-card>
+    <selezioneArticoli />
     </v-dialog>
   </div>
 </template>
@@ -215,12 +190,14 @@ import { mapState, mapActions, mapMutations, mapGetters } from 'vuex'
 import ImmagineDet from '~/components/GestioneRilievo/ImmagineDet'
 import popupPosEdit from '../../components/GestioneRilievo/posizioneEdit'
 import Panel from '../Containers/Panel'
+import selezioneArticoli from './selezioneArticoli'
 
 export default {
   components: {
     ImmagineDet,
     popupPosEdit,
-    Panel
+    Panel,
+    selezioneArticoli
   },
   props: [],
   computed: {
@@ -232,7 +209,8 @@ export default {
   data() {
     return {
       imgWidth: 1000,
-      imgHeight: 800
+      imgHeight: 800,
+      showArticoloSelection: false
     }
   },
   methods: {
@@ -272,7 +250,10 @@ export default {
       console.log(data._id)
       this.deleteRow(data._id)
     },
-    addDettaglio(posID) {
+    addDettaglio(posID){
+      this.showArticoloSelection = true
+    },
+    _addDettaglio(posID) {
       let newDettaglio = {
         rilievoID: this.record._id,
         RifPosID: posID,
