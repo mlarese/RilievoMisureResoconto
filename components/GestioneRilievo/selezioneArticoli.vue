@@ -26,6 +26,7 @@
           <v-stepper-step :complete="stepIndex > 1" editable step="1">
             Selezionare il catalogo
           </v-stepper-step>
+          <v-divider />
           <v-stepper-step :complete="stepIndex > 2" step="2">
             Selezionare il modello
           </v-stepper-step>
@@ -87,7 +88,7 @@ export default {
     // caricaArticoli() {
     //   this.listaArticoli = window.GPROD.GetListaArticoli_as_JSON()
     // },
-   articoloSelezionato(articolo) {
+    articoloSelezionato(articolo) {
       // carica i modelli per l'articolo selezionato
       this.listaModelli = articolo.JSModelli
       // va allo step successivo
@@ -103,7 +104,7 @@ export default {
     // carica gli articoli per la visualizzazione
     this.loadArticoli()
 
-        // // carica i cataloghi
+    // // carica i cataloghi
     // this.load().then((listaCataloghi) => {
     //   listaCataloghi.forEach((cat) => {
     //     // per ogni catalogo caricato lo "invia" alla DLL
