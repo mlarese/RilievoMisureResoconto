@@ -163,7 +163,7 @@
 
 
     <v-dialog
-      :value="showArticoloSelection"
+      v-model="showArticoloSelection"
       
       :fullscreen="$vuetify.breakpoint.xsOnly"
       max-width="700px"
