@@ -11,7 +11,7 @@
         hide-details
         v-model="ui.message"
         :append-outer-icon="icon"
-        prepend-icon="message"
+        prepend-icon="mdi-message"
         @click:append-outer="sendOrEdit"
         outlined  />
     </div>
@@ -49,7 +49,7 @@ export default {
       return false
     },
     icon () {
-      return (this.isEmpty) ? 'camera_enhance' : 'send'
+      return (this.isEmpty) ? 'mdi-camera' : 'mdi-send'
     }
   }
 }

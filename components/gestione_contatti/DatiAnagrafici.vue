@@ -21,7 +21,7 @@
       v-if="$record.data.CONTelefono"
       persistent-hint
       hint="Telefono"
-      prepend-icon="phone"
+      prepend-icon="mdi-phone"
       class="py-2"
       ><a :href="`tel:${$record.data.CONTelefono}`">{{
         $record.data.CONTelefono

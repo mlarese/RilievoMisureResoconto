@@ -106,7 +106,7 @@ export default {
     //'@nuxtjs/auth',
     '@nuxtjs/pwa',
     '@nuxtjs/device',
-    'nuxt-material-design-icons',
+    // 'nuxt-material-design-icons',
     'vue-scrollto/nuxt',
   ],
   /*

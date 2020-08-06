@@ -52,7 +52,7 @@
               v-if="item.data.isPreferito"
               color="primary"
               class="align-self-end pb-3 pr-3"
-            >favorite</v-icon>
+            >mdi-heart</v-icon>
           </v-card-actions>
         </v-card>
       </v-col>
