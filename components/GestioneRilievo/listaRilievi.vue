@@ -98,6 +98,7 @@ export default {
       this.showNewRilievo = false
     },
     async salvaModifiche(){
+      this.rilievo._id = ''
       const id = await this.saveRilievo()
       this.$router.push(`/rilievo/${id}`)
     }

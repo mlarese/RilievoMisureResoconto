@@ -17,6 +17,7 @@
             <v-tab>Grp. Ante</v-tab>
             <v-tab>Div</v-tab>
             <v-tab>Struttura</v-tab>
+            <v-tab>Pannello</v-tab>
 
             <v-tabs-items v-model="currentTab">
               <v-tab-item>
@@ -113,17 +114,17 @@
                 </v-row>
               </v-tab-item>
               <v-tab-item>
-                <div v-if="elementoSelezionatoID === 'GRP_ANTE_PRINC'">
+                <div v-if="elementoSelezionatoType === '#GRP_ANTE'">
                   <v-row>
                     <v-col cols="4" class="py-0 my-0">
                       <v-subheader>Numero ante</v-subheader>
                     </v-col>
                     <v-col cols="7" class="py-0 my-0">
                       <v-text-field
-                        v-model="GRP_NUMERO_ANTE"
+                        v-model="XX_NUMERO_ANTE"
                         readonly
                         append-outer-icon="mdi-magnify"
-                        @click:append-outer="openTable('GRP_NUMERO_ANTE', 'NUMERO_ANTE')"
+                        @click:append-outer="openTable('XX_NUMERO_ANTE', 'NUMERO_ANTE')"
                       ></v-text-field>
                     </v-col>
                   </v-row>
@@ -133,10 +134,10 @@
                     </v-col>
                     <v-col cols="7" class="py-0 my-0">
                       <v-text-field
-                        v-model="GRP_SISTEMA_APERTURA"
+                        v-model="XX_SISTEMA_APERTURA"
                         readonly
                         append-outer-icon="mdi-magnify"
-                        @click:append-outer="openTable('GRP_SISTEMA_APERTURA', 'SISTEMI_APERTURA')"
+                        @click:append-outer="openTable('XX_SISTEMA_APERTURA', 'SISTEMI_APERTURA')"
                       ></v-text-field>
                     </v-col>
                   </v-row>
@@ -144,7 +145,7 @@
                 <div v-else>Selezionare un gruppo ante</div>
               </v-tab-item>
               <v-tab-item>
-                <div v-if="elementoSelezionatoType === 'DIVISORE'">
+                <div v-if="elementoSelezionatoType === '#DIV'">
                   <v-row>
                     <v-col cols="4" class="py-0 my-0">
                       <v-subheader>Distanza</v-subheader>
@@ -160,6 +161,7 @@
                 <div v-else>Selezionare un divisore</div>
               </v-tab-item>
               <v-tab-item>
+                <span>Luce telaio ID: {{ LuceTelaioInGestione }}</span>
                 <v-row>
                   <v-col>
                     <v-btn @click="ImpostaLuceTelaio_ConLuceVuota">Imposta luce vuota</v-btn>
@@ -179,6 +181,37 @@
                 </div>
                 <div v-else>Selezionare un divisore</div>-->
               </v-tab-item>
+              <v-tab-item>
+                <div v-if="elementoSelezionatoType === '#PANNELLO'">
+                  <v-row>
+                    <v-col cols="4" class="py-0 my-0">
+                      <v-subheader>Tipo pannello</v-subheader>
+                    </v-col>
+                    <v-col cols="7" class="py-0 my-0">
+                      <v-text-field
+                        v-model="XX_CODICE_PANNELLO"
+                        readonly
+                        append-outer-icon="mdi-magnify"
+                        @click:append-outer="openTable('XX_CODICE_PANNELLO', 'PANNELLI')"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="4" class="py-0 my-0">
+                      <v-subheader>Tipo disegno</v-subheader>
+                    </v-col>
+                    <v-col cols="7" class="py-0 my-0">
+                      <v-text-field
+                        v-model="XX_TIPO_DISEGNO"
+                        readonly
+                        append-outer-icon="mdi-magnify"
+                        @click:append-outer="openTable('XX_TIPO_DISEGNO', 'PANNELLI_TIPO_DISEGNO')"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                </div>
+                <div v-else>Selezionare un pannello</div>
+              </v-tab-item>
             </v-tabs-items>
           </v-tabs>
           <v-card elevation="0" flat>
@@ -193,6 +226,12 @@
     </Panel>
     <v-dialog v-model="showSelectTable" max-width="400">
       <selectTable :rows="tableRows" @onRigaSelezionata="rigaSelezionata" />
+      <v-card elevation="0" flat>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn text @click="showSelectTable=false">Nessun valore</v-btn>
+        </v-card-actions>
+      </v-card>
     </v-dialog>
   </div>
 </template>
@@ -225,12 +264,16 @@ export default {
       showSelectTable: false,
       tableRows: [],
       propertySelected: '',
+      LuceTelaioInGestione: '',
+
       TINTA: '',
       SERIE: '',
       TIPO_SERRAMENTO: '',
       TIPO_TELAIO: '',
-      GRP_NUMERO_ANTE: '',
-      GRP_SISTEMA_APERTURA: ''
+      XX_NUMERO_ANTE: '',
+      XX_SISTEMA_APERTURA: '',
+      XX_TIPO_DISEGNO: '',
+      XX_CODICE_PANNELLO: ''
     }
   },
   mounted() {
@@ -244,6 +287,7 @@ export default {
     ...mapMutations('rilievoDet', ['setMacroComandi', 'setDrawingCommands']),
     salva() {
       this.setDrawingCommands(this.drawingCommands)
+      this.setMacroComandi(window.GPROD.getMacrocomandi())
       this.save()
       this.$router.back()
     },
@@ -257,14 +301,19 @@ export default {
       this.drawingCommands = JSON.parse(pim)
     },
     ImpostaLuceTelaio_ConPannello() {
-      window.GPROD.ImpostaLuceTelaio_ConPannello
-      let pim = window.GPROD.GetPIMSerialized()
-      this.drawingCommands = JSON.parse(pim)
+      let comando = `${this.LuceTelaioInGestione}.addVetro(${this.LuceTelaioInGestione}VET)`
+      this.applicaMC(comando)
+      // window.GPROD.ImpostaLuceTelaio_ConPannello
+      // let pim = window.GPROD.GetPIMSerialized()
+      // this.drawingCommands = JSON.parse(pim)
     },
     ImpostaLuceTelaio_ConGrpAnteSTD() {
-      window.GPROD.ImpostaLuceTelaio_ConGrpAnteSTD
-      let pim = window.GPROD.GetPIMSerialized()
-      this.drawingCommands = JSON.parse(pim)
+      // LuceDelTelaio_ID & ".addGruppoAnte(" & newID & ")"
+      let comando = `${this.LuceTelaioInGestione}.addGruppoAnte(${this.LuceTelaioInGestione}GRP)`
+      this.applicaMC(comando)
+      // window.GPROD.ImpostaLuceTelaio_ConGrpAnteSTD
+      // let pim = window.GPROD.GetPIMSerialized()
+      // this.drawingCommands = JSON.parse(pim)
     },
     openTable(propName, nomeTabella) {
       this.propertySelected = propName
@@ -278,8 +327,8 @@ export default {
     },
     rigaSelezionata(row) {
       if (row) {
-        if (this.propertySelected.startsWith('GRP_')) {
-          let realPropName = this.propertySelected.replace('GRP_', '')
+        if (this.propertySelected.startsWith('XX_')) {
+          let realPropName = this.propertySelected.replace('XX_', '')
           let comando = `${this.elementoSelezionatoID}.${realPropName}=${row.JSTabRowCodice}`
           this.applicaMC(comando)
 
@@ -318,18 +367,19 @@ export default {
       let pim = JSON.parse(pimStr)
       this.drawingCommands = pim
 
-      this.elementoSelezionatoID = ''
-      this.elementoSelezionatoType = ''
+      this.elementoSelezionatoID = pim.ItemSelezionato_ID
+      this.elementoSelezionatoType = pim.ItemSelezionato_Tipo
+      this.LuceTelaioInGestione = window.GPROD.GetLuceTelaioInGestione()
 
-      if (pim.ItemSelezionato && pim.ItemSelezionato.ID) {
-        this.elementoSelezionatoID = pim.ItemSelezionato.ID
-        // Scorre gli elementi per prendersi il tipo
-        for (const el of pim.PIMElements) {
-          if (el.ObjID === pim.ItemSelezionato.ID) {
-            this.elementoSelezionatoType = el.ObjType.toUpperCase()
-          }
-        }
-      }
+      // if (pim.ItemSelezionato && pim.ItemSelezionato.ID) {
+      //   this.elementoSelezionatoID = pim.ItemSelezionato.ID
+      //   // Scorre gli elementi per prendersi il tipo
+      //   for (const el of pim.PIMElements) {
+      //     if (el.ObjID === pim.ItemSelezionato.ID) {
+      //       this.elementoSelezionatoType = el.ObjType.toUpperCase()
+      //     }
+      //   }
+      // }
     }
     // applicaMod() {
     //   let mc = this.record.macroComandi.replace(/(?:\r\n|\r|\n)/g, '||')

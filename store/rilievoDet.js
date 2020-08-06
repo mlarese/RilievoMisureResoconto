@@ -8,7 +8,8 @@ export const state = () => {
       RifPosID: 0,
       macroComandi: '',
       drawingCommands: '',
-      descrizione: ''
+      descrizione: '',
+      catalogoID: ''
     },
     dbName: 'rilievoDet'
   }
@@ -17,10 +18,13 @@ export const state = () => {
 export const actions = {
   getById({ dispatch, commit, state }, id) {
     const table = state.dbName
-    dispatch('db/selectById', { table, id }, root)
-    .then((rec) =>
-      commit('setRecord', rec)
-    )
+    return dispatch('db/selectById', { table, id }, root)
+      .then((rec) => {
+        commit('setRecord', rec)
+        return rec
+      }
+
+      )
   },
   save({ dispatch, commit, state }) {
     const rec = state.record
@@ -29,10 +33,12 @@ export const actions = {
     let actionName = 'db/update'
     if (isInsert) {
       actionName = 'db/insertInto'
+      delete rec._rev
+      delete rec._id
     }
     return dispatch(actionName, { table, data: rec }, root)
       .then((result) => {
-        if (result.ok){
+        if (result.ok) {
           commit('setRecordID', result.id)
         }
         return dispatch('rilievo/loadDettagli', {}, root)
@@ -74,7 +80,7 @@ export const mutations = {
   setRiferimentoAPosizione(state, payload = {}) {
     state.record.RifPosID = payload
   },
-  setRecordID(state, payload){
+  setRecordID(state, payload) {
     state.record._id = payload
   },
   setMacroComandi(state, payload = {}) {
@@ -85,6 +91,9 @@ export const mutations = {
   },
   setRecord(state, payload = {}) {
     state.record = payload
+  },
+  setCatalogo(s, p) {
+    s.record.catalogoID = p
   }
 }
 

@@ -64,6 +64,14 @@ var Module = {
 				// Public Shared Sub ImpostaLuceTelaio_ConGrpAnteSTD()
 				window.GPROD.ImpostaLuceTelaio_ConGrpAnteSTD = Module.mono_bind_static_method(baseDLL + "ImpostaLuceTelaio_ConGrpAnteSTD")
 
+				// Public Shared Function getMacrocomandi() As String
+				window.GPROD.getMacrocomandi = Module.mono_bind_static_method(baseDLL + "getMacrocomandi")
+
+				// Public Shared Function GetLuceTelaioInGestione() As String
+				window.GPROD.GetLuceTelaioInGestione = Module.mono_bind_static_method(baseDLL + "GetLuceTelaioInGestione")
+
+				// Public Shared Sub IstanziaProdottoDaMC(macroComandi As String)
+				window.GPROD.IstanziaProdottoDaMC = Module.mono_bind_static_method(baseDLL + "IstanziaProdottoDaMC")
 
 
 				// let fn3 = Module.mono_bind_static_method("[ICT_GestoreSerramenti_STD] ICT_GestoreSerramenti_STD.GestorePWApp:getComandiImmagine")

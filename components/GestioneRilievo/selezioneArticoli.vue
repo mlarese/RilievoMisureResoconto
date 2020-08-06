@@ -97,7 +97,7 @@ export default {
       this.stepIndex = 2
     },
     async modelloSelezionato(modello){
-      console.dir(modello)
+      this.rilievoDet.catalogoID = this.catalogoID
       window.GPROD.SetCatalogoInUso(this.catalogoID)
       window.GPROD.IstanziaNuovoProdottoDaJSModello(JSON.stringify(modello))
       
