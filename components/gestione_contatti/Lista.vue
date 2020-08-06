@@ -10,7 +10,7 @@
               dense
               clearable
               label="Cerca contatto..."
-              append-icon="search"
+              append-icon="mdi-magnify"
               background-color="white"
               v-model="ui.filter.text"
             />

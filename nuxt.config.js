@@ -60,14 +60,14 @@ export default {
       importScripts: ['swextended.js'],
       // __workboxURL: "importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js')",
       workboxURL: "https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js",
-      runtimeCaching: [
-        {
-          urlPattern: 'https://fonts.googleapis.com/.*',
-          handler: 'cacheFirst',
-          method: 'GET',
-          strategyOptions: { cacheableResponse: { statuses: [0, 200] } }
-        }
-      ]
+      // runtimeCaching: [
+      //   {
+      //     urlPattern: 'https://fonts.googleapis.com/.*',
+      //     handler: 'cacheFirst',
+      //     method: 'GET',
+      //     strategyOptions: { cacheableResponse: { statuses: [0, 200] } }
+      //   }
+      // ]
     },
     manifest: {
       display: 'standalone',
@@ -106,7 +106,7 @@ export default {
     //'@nuxtjs/auth',
     '@nuxtjs/pwa',
     '@nuxtjs/device',
-    'nuxt-material-design-icons',
+    // 'nuxt-material-design-icons',
     'vue-scrollto/nuxt',
   ],
   /*

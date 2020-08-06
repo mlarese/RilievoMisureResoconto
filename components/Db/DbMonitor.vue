@@ -1,6 +1,6 @@
 <template>
   <v-card class="pa-5">
-    <v-card-title>Sincronizzazione</v-card-title>
+    <v-card-title>Sincronizzazione V3.0.1</v-card-title>
     <v-layout rows wrap class="py-0">
       <!-- <v-flex x12 class="text-xs-center py-0">
                 <v-layout rows wrap >

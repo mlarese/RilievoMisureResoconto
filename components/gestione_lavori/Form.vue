@@ -34,8 +34,8 @@
             <v-checkbox
               class="pt-5"
               v-model="$record.data.isPreferito"
-              on-icon="favorite"
-              off-icon="favorite_border"
+              on-icon="mdi-heart"
+              off-icon="mdi-heart-outline"
               @change="salvaModifiche()"
             />
           </v-col>
@@ -90,8 +90,8 @@
                     <v-checkbox
                       v-model="$record.data.isPreferito"
                       color="primary"
-                      on-icon="favorite"
-                      off-icon="favorite_border"
+                      on-icon="mdi-heart"
+                      off-icon="mdi-heart-outline"
                       @change="salvaModifiche()"
                     />
                   </v-col>

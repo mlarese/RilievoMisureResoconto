@@ -268,7 +268,7 @@ export const mutations = {
     s.listaOggettiLocali = p
   },
   newLog(s, p) {
-    s.ui.syncLog = ''
+    s.ui.syncLog = 'Versione app: 3.0.1'
     s.ui.syncLog = p
   },
   logMe(s, p) {

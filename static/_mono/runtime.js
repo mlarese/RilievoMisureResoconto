@@ -73,6 +73,9 @@ var Module = {
 				// Public Shared Sub IstanziaProdottoDaMC(macroComandi As String)
 				window.GPROD.IstanziaProdottoDaMC = Module.mono_bind_static_method(baseDLL + "IstanziaProdottoDaMC")
 
+				// Public Shared Function GetGruppoAnteInGestione() As String
+				window.GPROD.GetGruppoAnteInGestione = Module.mono_bind_static_method(baseDLL + "GetGruppoAnteInGestione")
+
 
 				// let fn3 = Module.mono_bind_static_method("[ICT_GestoreSerramenti_STD] ICT_GestoreSerramenti_STD.GestorePWApp:getComandiImmagine")
 				// window.GPROD.getDrawingCommands = fn3;

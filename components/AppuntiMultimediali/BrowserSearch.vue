@@ -3,7 +3,7 @@
 
     <portal to="xs-bar-right">
       <v-btn @click="gotoSearch"  icon color="primary" class="">
-        <v-icon medium>search</v-icon>
+        <v-icon medium>mdi-magnify</v-icon>
       </v-btn>
     </portal>
     <div class="d-flex ">
@@ -14,7 +14,7 @@
         dense
         hide-details
         placeholder="Cerca appunti multimediali..."
-        append-icon="search"
+        append-icon="mdi-magnify"
         background-color="white"
         v-model="ui.filter"
       />

@@ -80,7 +80,7 @@
                     <v-subheader>Larghezza</v-subheader>
                   </v-col>
                   <v-col cols="7" class="py-0 my-0">
-                    <v-text-field value="1000" suffix="mm" @change="applicaMC(`L=${$event}`)"></v-text-field>
+                    <v-text-field suffix="mm" @change="applicaMC(`L=${$event}`)"></v-text-field>
                   </v-col>
                 </v-row>
                 <v-row>
@@ -88,7 +88,7 @@
                     <v-subheader>Altezza DX</v-subheader>
                   </v-col>
                   <v-col cols="7" class="py-0 my-0">
-                    <v-text-field value="1000" suffix="mm" @change="applicaMC(`H_DX=${$event}`)"></v-text-field>
+                    <v-text-field suffix="mm" @change="applicaMC(`H_DX=${$event}`)"></v-text-field>
                   </v-col>
                 </v-row>
                 <v-row>
@@ -96,7 +96,7 @@
                     <v-subheader>Altezza SX</v-subheader>
                   </v-col>
                   <v-col cols="7" class="py-0 my-0">
-                    <v-text-field value="1000" suffix="mm" @change="applicaMC(`H_SX=${$event}`)"></v-text-field>
+                    <v-text-field  suffix="mm" @change="applicaMC(`H_SX=${$event}`)"></v-text-field>
                   </v-col>
                 </v-row>
                 <v-row>
@@ -106,7 +106,7 @@
                   <v-col cols="7" class="py-0 my-0">
                     <v-text-field
                       disabled
-                      value="1000"
+                      
                       suffix="mm"
                       @change="applicaMC(`CORDA=${$event}`)"
                     ></v-text-field>
@@ -114,17 +114,17 @@
                 </v-row>
               </v-tab-item>
               <v-tab-item>
-                <div v-if="elementoSelezionatoType === '#GRP_ANTE'">
+                <div v-if="(gruppoAnteSelezionatoID)">
                   <v-row>
                     <v-col cols="4" class="py-0 my-0">
                       <v-subheader>Numero ante</v-subheader>
                     </v-col>
                     <v-col cols="7" class="py-0 my-0">
                       <v-text-field
-                        v-model="XX_NUMERO_ANTE"
+                        v-model="GRP_NUMERO_ANTE"
                         readonly
                         append-outer-icon="mdi-magnify"
-                        @click:append-outer="openTable('XX_NUMERO_ANTE', 'NUMERO_ANTE')"
+                        @click:append-outer="openTable('GRP_NUMERO_ANTE', 'NUMERO_ANTE')"
                       ></v-text-field>
                     </v-col>
                   </v-row>
@@ -134,10 +134,10 @@
                     </v-col>
                     <v-col cols="7" class="py-0 my-0">
                       <v-text-field
-                        v-model="XX_SISTEMA_APERTURA"
+                        v-model="GRP_SISTEMA_APERTURA"
                         readonly
                         append-outer-icon="mdi-magnify"
-                        @click:append-outer="openTable('XX_SISTEMA_APERTURA', 'SISTEMI_APERTURA')"
+                        @click:append-outer="openTable('GRP_SISTEMA_APERTURA', 'SISTEMI_APERTURA')"
                       ></v-text-field>
                     </v-col>
                   </v-row>
@@ -270,10 +270,11 @@ export default {
       SERIE: '',
       TIPO_SERRAMENTO: '',
       TIPO_TELAIO: '',
-      XX_NUMERO_ANTE: '',
-      XX_SISTEMA_APERTURA: '',
+      GRP_NUMERO_ANTE: '',
+      GRP_SISTEMA_APERTURA: '',
       XX_TIPO_DISEGNO: '',
-      XX_CODICE_PANNELLO: ''
+      XX_CODICE_PANNELLO: '',
+      gruppoAnteSelezionatoID: ''
     }
   },
   mounted() {
@@ -337,6 +338,18 @@ export default {
             row.JSTabRowCodice
           )
           this[this.propertySelected] = newValue
+
+        }else if (this.propertySelected.startsWith('GRP_')) {
+          let realPropName = this.propertySelected.replace('GRP_', '')
+          let comando = `${this.gruppoAnteSelezionatoID}.${realPropName}=${row.JSTabRowCodice}`
+          this.applicaMC(comando)
+
+          let newValue = window.GPROD.GetPropertyDesc(
+            realPropName,
+            row.JSTabRowCodice
+          )
+          this[this.propertySelected] = newValue
+
         } else {
           this.setProperty(row.JSTabRowCodice)
         }
@@ -370,7 +383,7 @@ export default {
       this.elementoSelezionatoID = pim.ItemSelezionato_ID
       this.elementoSelezionatoType = pim.ItemSelezionato_Tipo
       this.LuceTelaioInGestione = window.GPROD.GetLuceTelaioInGestione()
-
+      this.gruppoAnteSelezionatoID = window.GPROD.GetGruppoAnteInGestione()
       // if (pim.ItemSelezionato && pim.ItemSelezionato.ID) {
       //   this.elementoSelezionatoID = pim.ItemSelezionato.ID
       //   // Scorre gli elementi per prendersi il tipo

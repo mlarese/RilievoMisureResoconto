@@ -10,7 +10,7 @@
               dense
               clearable
               label="Cerca lavoro..."
-              append-icon="search"
+              append-icon="mdi-magnify"
               background-color="white"
               v-model="ui.filter.text"
             />
@@ -20,8 +20,8 @@
               @click="ui.filter.preferito = !ui.filter.preferito"
               class="pl-2"
             >
-              <v-icon v-if="ui.filter.preferito">favorite</v-icon>
-              <v-icon v-else>favorite_border</v-icon>
+              <v-icon v-if="ui.filter.preferito">mdi-heart</v-icon>
+              <v-icon v-else>mdi-heart-outline</v-icon>
             </v-btn>
           </div>
         </v-card>

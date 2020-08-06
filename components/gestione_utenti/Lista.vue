@@ -14,7 +14,7 @@
                   outlined
                   dense
                   label="Cerca utente..."
-                  append-icon="search"
+                  append-icon="mdi-magnify"
                   background-color="white"
                   v-model="filterText"
                   :loading="isLoadingList"
