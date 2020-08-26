@@ -272,6 +272,9 @@ export const mutations = {
     s.ui.syncLog = p
   },
   logMe(s, p) {
+    if (!s.ui.syncLog) {
+      s.ui.syncLog = ''
+    }
     s.ui.syncLog = s.ui.syncLog.concat('\r\n', p)
   },
   setDbStatus(s, p) {
