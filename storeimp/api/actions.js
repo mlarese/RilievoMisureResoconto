@@ -31,7 +31,7 @@ export const notifySuccess = ({ title, text }) => ({
 })
 
 const productionWsUrl = 'https://agile4work.4innovation.srl:1002'
-let productionTimeout = 10000
+const productionTimeout = 30000
 
 export const baseURL = (() => {
   if (process.env.NODE_ENV === 'production') {
