@@ -2,22 +2,44 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "chrome",
+      "name": "Attach to Chrome",
+      "port": 3000,
       "request": "attach",
-      "name": "client: chrome",
+      "type": "pwa-chrome",
+      "webRoot": "${workspaceFolder}"
+    },
+    {
+      "name": "Launch Chrome",
+      "request": "launch",
+      "type": "pwa-chrome",
       "url": "http://localhost:3000",
-      "webRoot": "${workspaceFolder}",
-      "sourceMapPathOverrides": {
-        "webpack:///*": "${workspaceRoot}/*"
-      }
+      "webRoot": "${workspaceFolder}"
+    },
+    {
+      "name": "Attach to Edge",
+      "port": 3000,
+      "request": "attach",
+      "type": "pwa-msedge",
+      "webRoot": "${workspaceFolder}"
+    },
+    {
+      "name": "Launch Edge",
+      "request": "launch",
+      "type": "pwa-msedge",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}"
     },
     {
       "type": "node",
       "request": "launch",
       "name": "server: nuxt",
-      "args": ["dev"],
+      "args": [
+        "dev"
+      ],
       "sourceMaps": true,
-      "outFiles": ["${workspaceRoot}/**/*.vue"],
+      "outFiles": [
+        "${workspaceRoot}/**/*.vue"
+      ],
       "env": {
         "NODE_ENV": "development",
         "DEBUG": "nuxt:*,app,client"
@@ -36,7 +58,10 @@
   "compounds": [
     {
       "name": "fullstack: nuxt",
-      "configurations": ["server: nuxt", "client: chrome"]
+      "configurations": [
+        "server: nuxt",
+        "client: chrome"
+      ]
     }
   ]
 }
