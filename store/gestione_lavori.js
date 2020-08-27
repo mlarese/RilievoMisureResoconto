@@ -1,6 +1,7 @@
 import _CloneDeep from 'lodash/cloneDeep'
 import _filter from 'lodash/filter'
 import _isEmpty from 'lodash/isEmpty'
+import _orderBy from 'lodash/orderBy'
 import { v4 as uuidv4 } from 'uuid'
 import { visibleRecord, syncStates, internalStates } from './db'
 import Vue from 'vue'
@@ -51,25 +52,23 @@ export const actions = {
   load({ commit, dispatch, state }, withFile = false) {
     const table = state.dbName
     commit('setList', [])
-    return dispatch('db/selectAll', { table }, root)
-      .then((lista) => {
-        lista.forEach((element) => {
-          if (withFile && element.data.imgFileName) {
-            dispatch('dm_resources/getRisorsaById', element.data.imgFileName, root)
-              .then((res) => {
-                //console.log(url)
-                if (res && res.thumbnailUrl) {
-                  Vue.set(element, 'imgURL', res.thumbnailUrl)
-                } else {
-                  Vue.set(element, 'imgURL', null)
-                }
-              })
-          }
-          commit('addInList', element)
-        })
-        return lista
+    return dispatch('db/selectAll', { table }, root).then(lista => {
+      lista.forEach(element => {
+        if (withFile && element.data.imgFileName) {
+          dispatch('dm_resources/getRisorsaById', element.data.imgFileName, root).then(res => {
+            //console.log(url)
+            if (res && res.thumbnailUrl) {
+              Vue.set(element, 'imgURL', res.thumbnailUrl)
+            } else {
+              Vue.set(element, 'imgURL', null)
+            }
+          })
+        }
+        commit('addInList', element)
       })
-/*     const table = state.dbName
+      return lista
+    })
+    /*     const table = state.dbName
       return dispatch('db/selectAll', { table }, root)
       .then((res) => {
         commit('setList', res)
@@ -87,16 +86,15 @@ export const actions = {
     commit('setRecord', rec)
 
     if (rec.data.imgFileName) {
-      dispatch('dm_resources/getRisorsaById', rec.data.imgFileName, root)
-        .then((url) => {
-          //console.log(url)
-          if (url && url.thumbnailUrl) {
-            Vue.set(state.ui, 'imgURL', url.thumbnailUrl)
-            //console.log(state.ui.imgURL)
-          } else {
-            Vue.set(state.ui, 'imgURL', null)
-          }
-        })
+      dispatch('dm_resources/getRisorsaById', rec.data.imgFileName, root).then(url => {
+        //console.log(url)
+        if (url && url.thumbnailUrl) {
+          Vue.set(state.ui, 'imgURL', url.thumbnailUrl)
+          //console.log(state.ui.imgURL)
+        } else {
+          Vue.set(state.ui, 'imgURL', null)
+        }
+      })
     } else {
       Vue.set(state.ui, 'imgURL', null)
     }
@@ -128,13 +126,18 @@ export const actions = {
 
       // tenta l'upload in background altrimenti sarà caricato durante la sincronizzazione
       // chiamata async in modo da non bloccare l'utente
-      dispatch('sync/UPLOAD', {
-        table, data: state.$record, callback: () => {
-          console.log('callback')
-          dispatch('getById', state.$record._id), dispatch('load') // ricarica i dati
-        }
-      }, root)
-
+      dispatch(
+        'sync/UPLOAD',
+        {
+          table,
+          data: state.$record,
+          callback: () => {
+            console.log('callback')
+            dispatch('getById', state.$record._id), dispatch('load') // ricarica i dati
+          }
+        },
+        root
+      )
     } else {
       // Una modifica deve per forza prima essere sincronizzata con il ws
       // Se tutto va a buon fine provvede a salvarla localmente
@@ -145,7 +148,6 @@ export const actions = {
         console.error()
       }
     }
-
   },
   async addImgPrinc({ dispatch, commit, state }, file) {
     const docID = state.$record._id
@@ -166,7 +168,6 @@ export const actions = {
 
     // Salva il documento
     await dispatch('save')
-
   },
   safeDelete({ dispatch, commit, state }, rec) {
     const table = state.dbName
@@ -174,7 +175,7 @@ export const actions = {
       .then(() => {
         return dispatch('load')
       })
-      .catch((e) => {
+      .catch(e => {
         console.log(e)
         return e
       })
@@ -183,8 +184,8 @@ export const actions = {
     console.log('start deleting' + id)
     const table = state.dbName
     dispatch('db/selectById', { table, id }, root)
-      .then((rec) => dispatch('deleteDoc', rec))
-      .catch((e) => {
+      .then(rec => dispatch('deleteDoc', rec))
+      .catch(e => {
         console.log(e)
         return e
       })
@@ -197,7 +198,7 @@ export const actions = {
       .then(() => {
         return dispatch('load')
       })
-      .catch((e) => {
+      .catch(e => {
         console.log(e)
         return e
       })
@@ -280,60 +281,32 @@ export const mutations = {
     state.record.data.imgFileName = payload
     state.$record.data.imgFileName = payload
   }
-
 }
 
 export const getters = {
-  noDeletedList: (s) => s.list.filter(visibleRecord),
-  filteredList: (s) =>
-    _filter(s.list, function (o) {
-      if (s.ui.filter.preferito) {
-        /* preferiti */
-        if (s.ui.filter.text === null) {
-          return o.data.isPreferito === s.ui.filter.preferito
-        } else {
-          return (
-            (
-              ((o.data.GL_CommittenteDesc) && o.data.GL_CommittenteDesc.toLowerCase().includes(s.ui.filter.text.toLowerCase())) ||
-              ((o.data.GL_Oggetto) && o.data.GL_Oggetto.toLowerCase().includes(s.ui.filter.text.toLowerCase())) ||
-              ((o.data.GL_Indirizzo) && o.data.GL_Indirizzo.toLowerCase().includes(s.ui.filter.text.toLowerCase()))) &&
-            o.data.isPreferito === s.ui.filter.preferito
-          )
-        }
-      } else {
-        /* tutti */
-        if (s.ui.filter.text === null) {
-          return true
-        } else {
-          return (
-            ((o.data.GL_CommittenteDesc) && o.data.GL_CommittenteDesc.toLowerCase().includes(
-              s.ui.filter.text.toLowerCase()
-            )) ||
-            ((o.data.GL_Oggetto) && o.data.GL_Oggetto.toLowerCase().includes(
-              s.ui.filter.text.toLowerCase()
-            )) ||
-            ((o.data.GL_Indirizzo) && o.data.GL_Indirizzo.toLowerCase().includes(
-              s.ui.filter.text.toLowerCase()
-            ))
-
-        // if (s.ui.filter.text === null) {
-        //   return true
-        // } else {
-        //   return ((o.data.GL_CommittenteDesc && o.data.GL_CommittenteDesc.toLowerCase().includes(s.ui.filter.text.toLowerCase())) ||
-        //     (o.data.GL_Oggetto && o.data.GL_Oggetto.toLowerCase().includes(s.ui.filter.text.toLowerCase())) ||
-        //     (o.data.GL_Indirizzo && o.data.GL_Indirizzo.toLowerCase().includes(s.ui.filter.text.toLowerCase()))
-
-          )
-        }
+  noDeletedList: s => s.list.filter(visibleRecord),
+  filteredList: s => {
+    const filter = s.ui.filter
+    const filtered = _filter(s.list, function(o) {
+      const data = o.data
+      let dataVisible = true
+      if (filter.text) {
+        const lowerFilterText = filter.text.toLowerCase()
+        dataVisible =
+          (data.GL_CommittenteDesc && data.GL_CommittenteDesc.toLowerCase().includes(lowerFilterText)) ||
+          (data.GL_Oggetto && data.GL_Oggetto.toLowerCase().includes(lowerFilterText)) ||
+          (data.GL_Indirizzo && data.GL_Indirizzo.toLowerCase().includes(lowerFilterText))
       }
-    }),
-
-  isView: (s) => s.modalita === 'VIEW',
-  isEdit: (s) => s.modalita === 'EDIT',
-  isAdd: (s) => s.modalita === 'ADD',
-  formTitle: (s, g) =>
-    g.isEdit
-      ? `Modifica ${s.ui.formTitleSuffix}`
-      : `Aggiungi ${s.ui.formTitleSuffix}`,
-  buttonAddTitle: (s) => `Aggiungi ${s.ui.formTitleSuffix}`
+      if (filter.preferito) {
+        dataVisible = dataVisible && data.isPreferito === filter.preferito
+      }
+      return dataVisible
+    })
+    return _orderBy(filtered, ['data.GL_CommittenteDesc', 'data.GL_Oggetto'], ['asc', 'asc'])
+  },
+  isView: s => s.modalita === 'VIEW',
+  isEdit: s => s.modalita === 'EDIT',
+  isAdd: s => s.modalita === 'ADD',
+  formTitle: (s, g) => (g.isEdit ? `Modifica ${s.ui.formTitleSuffix}` : `Aggiungi ${s.ui.formTitleSuffix}`),
+  buttonAddTitle: s => `Aggiungi ${s.ui.formTitleSuffix}`
 }
