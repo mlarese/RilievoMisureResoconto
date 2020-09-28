@@ -1,61 +1,77 @@
 <template>
-  <div :key="mainKey">
-    <v-stepper v-model="stepIndex" :vertical="isSmAndDown">
-      <template v-if="isSmAndDown">
-        <v-stepper-step :complete="stepIndex > 1" editable step="1">
-          Selezionare il catalogo
-        </v-stepper-step>
-        <v-stepper-content step="1">
-          <ListaArticoli
-            @onSelected="articoloSelezionato"
-            :modalita="'SelezioneOggetto'"
-          />
-        </v-stepper-content>
-        <v-stepper-step :complete="stepIndex > 2" step="2">
-          Selezionare il modello
-        </v-stepper-step>
-        <v-stepper-content step="2">
-          <ListaModelli
-            :lista="listaModelli"
-            @onSelected="modelloSelezionato"
-          />
-        </v-stepper-content>
-      </template>
-      <template v-else>
-        <v-stepper-header>
-          <v-stepper-step :complete="stepIndex > 1" editable step="1">
-            Selezionare il catalogo
-          </v-stepper-step>
-          <v-divider />
-          <v-stepper-step :complete="stepIndex > 2" step="2">
-            Selezionare il modello
-          </v-stepper-step>
-        </v-stepper-header>
-        <v-stepper-items>
-          <v-stepper-content step="1">
-            <ListaArticoli
-              @onSelected="articoloSelezionato"
-              :modalita="'SelezioneOggetto'"
-            />
-          </v-stepper-content>
-          <v-stepper-content step="2">
-            <ListaModelli
-              :lista="listaModelli"
-              @onSelected="modelloSelezionato"
-            />
-          </v-stepper-content>
-        </v-stepper-items>
-      </template>
+  <v-card :key="mainKey">
+    <v-stepper v-model="stepIndex">
+      <v-stepper-content step="1">
+        Selezionare il catalogo
+        <ListaArticoli
+          style="max-height: 700px; overflow: auto"
+          @onSelected="articoloSelezionato"
+          :modalita="'SelezioneOggetto'"
+        />
+      </v-stepper-content>
+
+      <v-stepper-content step="2">
+        Selezionare il modello
+        <ListaModelli
+          style="max-height: 700px; overflow: auto"
+          :lista="listaModelli"
+          @onSelected="modelloSelezionato"
+        />
+      </v-stepper-content>
+
+      <!-- Una volta selezionato il modello ci sono le proprietà da visualizzare -->
+
+      <v-stepper-content step="3">
+        Misure
+        <v-row>
+          <v-col cols="4" class="py-0 my-0">
+            <v-subheader>Larghezza</v-subheader>
+          </v-col>
+          <v-col cols="7" class="py-0 my-0">
+            <v-text-field suffix="mm" @change="applicaMC(`L=${$event}`)"></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="4" class="py-0 my-0">
+            <v-subheader>Altezza DX</v-subheader>
+          </v-col>
+          <v-col cols="7" class="py-0 my-0">
+            <v-text-field suffix="mm" @change="applicaMC(`H_DX=${$event}`)"></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="4" class="py-0 my-0">
+            <v-subheader>Altezza SX</v-subheader>
+          </v-col>
+          <v-col cols="7" class="py-0 my-0">
+            <v-text-field suffix="mm" @change="applicaMC(`H_SX=${$event}`)"></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="4" class="py-0 my-0">
+            <v-subheader>Corda</v-subheader>
+          </v-col>
+          <v-col cols="7" class="py-0 my-0">
+            <v-text-field disabled suffix="mm" @change="applicaMC(`CORDA=${$event}`)"></v-text-field>
+          </v-col>
+        </v-row>
+      </v-stepper-content>
     </v-stepper>
-  </div>
+    <v-card-actions>
+      <v-btn text color="gray" @click="backStep()">Indietro</v-btn>
+      <v-spacer></v-spacer>
+      <v-btn text color="primary" @click="nextStep()">Avanti</v-btn>
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script>
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import ListaArticoli from '../gestione_cataloghi/listaArticoli'
 import ListaModelli from '../gestione_cataloghi/ListaModelli'
+import Vue from 'vue'
 
-export default {
+export default Vue.extend({
   components: { ListaArticoli, ListaModelli },
   data() {
     return {
@@ -63,7 +79,9 @@ export default {
       // listaArticoli: [],
       listaModelli: [],
       catalogoID: '',
-      mainKeyCounter: 0
+      mainKeyCounter: 0,
+      listaProprieta: [],
+      drawingCommands: ''
     }
   },
   computed: {
@@ -94,16 +112,47 @@ export default {
       this.listaModelli = articolo.JSModelli
       this.catalogoID = articolo.catalogoCodice
       // va allo step successivo
-      this.stepIndex = 2
+      this.nextStep()
     },
-    async modelloSelezionato(modello){
+    async modelloSelezionato(modello) {
       this.rilievoDet.catalogoID = this.catalogoID
       window.GPROD.SetCatalogoInUso(this.catalogoID)
       window.GPROD.IstanziaNuovoProdottoDaJSModello(JSON.stringify(modello))
-      
+
       let catalogo = await this.getCatalogoByID(this.catalogoID)
       window.GPROD.SetTables(JSON.stringify(catalogo.data.JSTables))
-      this.$router.push(`/dettaglio/add`)
+      // this.$router.push(`/dettaglio/add`)
+
+      this.nextStep()
+    },
+    applicaMC(comando) {
+      try {
+        console.dir(comando)
+        window.GPROD.ApplicaMC_x_Modifica(comando)
+        let pim = window.GPROD.GetPIMSerialized()
+        this.drawingCommands = JSON.parse(pim)
+      } catch (err) {
+        console.log(err)
+      }
+    },
+    ...mapActions('rilievoDet', ['save']),
+    ...mapMutations('rilievoDet', ['setMacroComandi', 'setDrawingCommands']),
+    salva() {
+      this.setDrawingCommands(this.drawingCommands)
+      this.setMacroComandi(window.GPROD.getMacrocomandi())
+      this.save()
+      
+    },
+    annulla() {
+      // Deve sbiancare il record!!!!!!!!!!!!!!!!!!!!!!!!
+      this.$emit('onExit')
+    },
+
+    backStep() {
+      this.stepIndex -= 1
+    },
+    nextStep() {
+      this.stepIndex += 1
     }
   },
   mounted() {
@@ -129,5 +178,5 @@ export default {
     //   this.caricaArticoli()
     // })
   }
-}
+})
 </script>

@@ -8,7 +8,7 @@
             <v-text-field
               outlined
               dense
-              clearable=""
+              clearable
               label="Cerca articolo..."
               append-icon="mdi-magnify"
               background-color="white"
@@ -26,7 +26,12 @@
         :key="i"
         class="d-flex align-content-start flex-wrap"
       >
-        <v-card color="white" @click="rowClick(item)" width="400" height="130">
+        <v-card
+          :color="(marcaRiga && articoloSelezionatoID == item._id) ? 'light-green lighten-2': 'white'"
+          @click="rowClick(item)"
+          width="400"
+          height="130"
+        >
           <div class="d-flex flex-no-wrap">
             <v-avatar class="ma-3" size="60" tile>
               <v-img
@@ -60,9 +65,18 @@
 
 <script>
 import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
+import Vue from 'vue'
 
-export default {
-  props: { modalita: { type: String, default: 'GestioneAnargafica' } },
+export default Vue.extend({
+  props: {
+    modalita: { type: String, default: 'GestioneAnargafica' },
+    marcaRiga: { type: Boolean, default: false }
+  },
+  data() {
+    return {
+      articoloSelezionatoID: {}
+    }
+  },
   computed: {
     ...mapState('articoli', { ui: 'ui', listaArticoli: 'list' }),
     ...mapGetters('articoli', ['getListaFiltrata'])
@@ -73,6 +87,7 @@ export default {
       this.$router.push(`/articoli/add`)
     },
     rowClick(articolo) {
+      this.articoloSelezionatoID = articolo._id
       if (this.modalita === 'SelezioneOggetto') {
         this.$emit('onSelected', articolo)
       } else {
@@ -80,5 +95,5 @@ export default {
       }
     }
   }
-}
+})
 </script>

@@ -23,9 +23,9 @@ export const mutations = {
 
 
 export const getters = {
-  noDeletedList: s => s.list.filter(visibleRecord),
-  isEdit: (s) => s.modalita === 'EDIT',
-  isAdd: (s) => s.modalita === 'ADD',
-  formTitle: (s, g) => (g.isEdit)?`Modifica ${s.ui.formTitleSuffix}`:`Aggiungi ${s.ui.formTitleSuffix}`,
-  buttonAddTitle: (s) => `Aggiungi ${s.ui.formTitleSuffix}`
+  // noDeletedList: s => s.list.filter(visibleRecord),
+  // isEdit: (s) => s.modalita === 'EDIT',
+  // isAdd: (s) => s.modalita === 'ADD',
+  // formTitle: (s, g) => (g.isEdit)?`Modifica ${s.ui.formTitleSuffix}`:`Aggiungi ${s.ui.formTitleSuffix}`,
+  // buttonAddTitle: (s) => `Aggiungi ${s.ui.formTitleSuffix}`
 }

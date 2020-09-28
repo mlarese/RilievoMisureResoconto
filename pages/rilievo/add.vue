@@ -3,7 +3,8 @@
 </template>
 
 <script>
-import Rilievo from '../../components/GestioneRilievo/Rilievo'
+// import Rilievo from '../../components/GestioneRilievo/Rilievo'
+import Rilievo from '../../components/gestione_rilievo/main'
 
 export default {
   layout: 'fullPage',

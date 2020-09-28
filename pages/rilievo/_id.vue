@@ -1,6 +1,6 @@
 <template>
   <div>
-    <GridRilievo />
+    <GridRilievo :id="rilievo._id"/>
     <!-- <popupPosEdit ref="popupPosEdit" />
     <BottomNavigation class="">
       <div slot="right">
@@ -14,7 +14,8 @@
 </template>
 
 <script>
-import GridRilievo from '../../components/GestioneRilievo/Rilievo'
+// import GridRilievo from '../../components/GestioneRilievo/Rilievo'
+import GridRilievo from '../../components/gestione_rilievo/main'
 import popupPosEdit from '../../components/GestioneRilievo/posizioneEdit'
 import { mapState, mapActions, mapMutations, mapGetters } from 'vuex'
 import { tr } from 'date-fns/locale'

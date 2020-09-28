@@ -7,6 +7,7 @@ export const state = () => {
     list: [],
     listaPosizioni: [],
     listaDettagli: [],
+    listaArtGen: [],
     listaSchedeGenerali: {},
     record: {},
     dbName: 'rilievi',
@@ -70,6 +71,9 @@ export const actions = {
       dispatch('loadDettagli').catch((e) => {
         console.log(e)
       })
+      dispatch('loadDatiGen').catch((e) => {
+        console.log(e)
+      })
     })
   },
   loadPosizioni({ dispatch, commit, state }) {
@@ -121,6 +125,31 @@ export const actions = {
       })
   },
 
+  loadDatiGen({dispatch, commit, state}){
+    const table = 'rilievoDG'
+
+    function mapFunctionDet(doc) {
+      emit(doc.rilievoID)
+    }
+
+    let reduceFunctionDet = {
+      key: state.record._id,
+      include_docs: true
+    }
+
+    dispatch(
+      'db/query',
+      { table, mapFunction: mapFunctionDet, reduceFunction: reduceFunctionDet },
+      root
+    )
+      .then((res) => {
+        commit('setArticoliGen', res)
+      })
+      .catch((e) => {
+        console.log(e)
+      })
+  },
+
   save({ dispatch, commit, state }) {
     const rec = state.record
     const table = state.dbName
@@ -155,6 +184,9 @@ export const mutations = {
   },
   setDettagli(state, payload = {}) {
     state.listaDettagli = payload
+  },
+  setArticoliGen(s, p){
+    s.listaArtGen = p
   },
   setRecordID(state, payload) {
     state.record._id = payload

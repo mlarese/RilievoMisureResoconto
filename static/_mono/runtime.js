@@ -49,6 +49,12 @@ var Module = {
 				// Public Shared Function GetTableSerialized(TableName As String) As String
 				window.GPROD.GetTableSerialized = Module.mono_bind_static_method(baseDLL + "GetTableSerialized")
 
+				// Public Shared Function GetTableRow(TabName As String, RowCode As String) As JSTableRow
+				window.GPROD.GetTableRow = Module.mono_bind_static_method(baseDLL + "GetTableRow")
+
+				// Public Shared Function GetTableRow_ParValue(TabName As String, RowCode As String, ParName As String) As String
+				window.GPROD.GetTableRow_ParValue = Module.mono_bind_static_method(baseDLL + "GetTableRow_ParValue")
+
 				// Public Shared Function SetProperty(propName As String, propVal As String) As String
 				window.GPROD.SetProperty = Module.mono_bind_static_method(baseDLL + "SetProperty")
 

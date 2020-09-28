@@ -44,8 +44,13 @@ export const actions = {
 
         for (let art of listaArt) {
 
-          const res = await dispatch('dm_resources/getRisorsaById', art.JSImmagineRisID, root)
-          Vue.set(art, 'risorsa', res)
+          try {
+            const res = await dispatch('dm_resources/getRisorsaById', art.JSImmagineRisID, root)
+            Vue.set(art, 'risorsa', res) 
+          } catch (error) {
+            // risorsa non presente
+          }
+
           Vue.set(art, 'catalogoDesc', cat.data.JSCatalogoDesc)
           Vue.set(art, 'aziendaDesc', cat.data.JSAzienda.JSDenominazione)
           Vue.set(art, 'catalogoCodice', cat.data.JSCatalogoID)

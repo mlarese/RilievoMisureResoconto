@@ -4,7 +4,7 @@
       <v-card
         v-for="rilievo in listRilievi"
         :key="rilievo._id"
-        @click="apriRilievo(rilievo._id)"
+        @click=" apriRilievo(rilievo._id) "
         class="mb-2"
       >
         <v-card-text>
@@ -25,7 +25,7 @@
         right
         class="mb-10"
         color="primary"
-        @click="creaNuovoRilievo()"
+        @click="creaNuovoRilievo"
       >
         <v-icon>mdi-plus</v-icon>
       </v-btn>
@@ -35,24 +35,24 @@
       <v-card>
         <v-card-title>
           <span class="headline">
-            Gestione rilievo
+            Nuovo rilievo
           </span>
         </v-card-title>
 
-        <v-card-text>
+        <v-card-text class="pt-5">
           <v-text-field
             v-model="rilievo.descrizione"
-            label="Descrizione"
+            label="Inserire una descrizione"
             required
             dense
-            class="py-2"
+            
           ></v-text-field>
         </v-card-text>
 
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="annullaModifiche()">Annulla</v-btn>
-          <v-btn color="blue darken-1" text @click="salvaModifiche()">Salva</v-btn>
+          <v-btn color="blue darken-1" text @click="salvaModifiche()">Crea</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -68,8 +68,9 @@
 <script>
 import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
 import EmptyList from '../General/EmptyList'
+import Vue from 'vue'
 
-export default {
+export default Vue.extend({
   props: {
     rifLavoroID: { default: null }
   },
@@ -109,5 +110,5 @@ export default {
       this.loadRilievi()
     }
   }
-}
+})
 </script>

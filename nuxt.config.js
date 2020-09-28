@@ -85,7 +85,7 @@ export default {
    */
   plugins: [
     '@/plugins/startup',
-    '@/plugins/filesystem',
+    // '@/plugins/filesystem',
     { src: '@/plugins/vuex-persist', ssr: false },
     // '@/plugins/swlisteners'
   ],
@@ -96,7 +96,8 @@ export default {
     // Doc: https://github.com/nuxt-community/eslint-module
     '@nuxtjs/eslint-module',
     '@nuxtjs/vuetify',
-    '@nuxtjs/dotenv'
+    '@nuxtjs/dotenv',
+    '@nuxt/typescript-build'
   ],
   /*
    ** Nuxt.js modules

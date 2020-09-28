@@ -6,11 +6,9 @@
           <b>{{ record.descrizione }}</b>
           <v-spacer></v-spacer>
         </div>
-        <div v-else>
-          Gestione rilievo
-        </div>
+        <div v-else>Gestione rilievo</div>
       </div>
-      <v-btn
+      <!-- <v-btn
         icon
         class="mr-1"
         @click="openEditForm()"
@@ -18,7 +16,7 @@
         v-if="$vuetify.breakpoint.xsOnly"
       >
         <v-icon>mdi-pencil</v-icon>
-      </v-btn>
+      </v-btn>-->
 
       <div slot="mainContent">
         <div v-if="$vuetify.breakpoint.smAndUp">
@@ -27,8 +25,9 @@
         </div>
 
         <v-tabs centered>
+          <v-tab>DATI GEN. 1</v-tab>
+          <v-tab>DATI GEN. 2</v-tab>
           <v-tab>FORI</v-tab>
-          <v-tab>SCHEDE</v-tab>
           <v-tab>DOCS</v-tab>
           <v-tab>FOTO</v-tab>
 
@@ -45,16 +44,81 @@
                 color="primary"
                 dark
                 small
-                @click="addPos()"
+                @click="showWizardArtGen = true"
                 class="ma-2"
               >
-                posizione<v-icon>mdi-plus</v-icon>
+                aggiungi articolo
+                <v-icon>mdi-plus</v-icon>
               </v-btn>
-              <v-row
-                v-for="pos in listaPosizioni"
-                :key="pos._id"
-                class="pa-0 ma-0"
+
+              <!-- Lista articoli generale con accordion -->
+
+              <v-expansion-panels focusable>
+                <v-expansion-panel v-for="(artGen, i) in listaArtGen" :key="i">
+                  <v-expansion-panel-header>{{ artGen.descrizioneArticolo }}</v-expansion-panel-header>
+                  <v-expansion-panel-content class="pt-2">
+                    <div v-for="(prop, j) in artGen.listaProp" :key="j">
+                      <p>{{ prop.Label }} : {{ prop.Value }}</p>
+                    </div>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </v-expansion-panels>
+            </v-container>
+          </v-tab-item>
+
+          <v-tab-item
+            :class="
+              $vuetify.breakpoint.xsOnly
+                ? 'tabs__content_small'
+                : 'tabs__content_large'
+            "
+          >
+            <v-container>
+              <v-btn
+                rounded
+                color="primary"
+                dark
+                small
+                @click="showWizardArtGen = true"
+                class="ma-2"
               >
+                aggiungi articolo
+                <v-icon>mdi-plus</v-icon>
+              </v-btn>
+
+              <!-- Lista articoli generale con tabs -->
+
+              <v-tabs show-arrows>
+                <v-tab v-for="(artGen, i) in listaArtGen" :key="i">{{ artGen.descrizioneArticolo }}</v-tab>
+
+                <v-tabs-slider></v-tabs-slider>
+
+                <v-tab-item v-for="(artGen, i) in listaArtGen" :key="i">
+                  <v-card>
+                    <v-card-text>
+                      <div v-for="(prop, j) in artGen.listaProp" :key="j">
+                        <p>{{ prop.Label }} : {{ prop.Value }}</p>
+                      </div>
+                    </v-card-text>
+                  </v-card>
+                </v-tab-item>
+              </v-tabs>
+            </v-container>
+          </v-tab-item>
+
+          <v-tab-item
+            :class="
+              $vuetify.breakpoint.xsOnly
+                ? 'tabs__content_small'
+                : 'tabs__content_large'
+            "
+          >
+            <v-container>
+              <v-btn rounded color="primary" dark small @click="addPos()" class="ma-2">
+                posizione
+                <v-icon>mdi-plus</v-icon>
+              </v-btn>
+              <v-row v-for="pos in listaPosizioni" :key="pos._id" class="pa-0 ma-0">
                 <v-col cols="12" sm="6" offset-sm="3">
                   <v-card>
                     <v-card-title class="blue white--text py-1">
@@ -90,7 +154,7 @@
                         @click="apriDettaglio(det._id)"
                       >
                         <v-card>
-                          <div class="d-flex flex-no-wrap ">
+                          <div class="d-flex flex-no-wrap">
                             <v-avatar size="125" tile>
                               <!-- <v-img :src="getIMG_base64(det.macroComandi)"></v-img> -->
                               <ImmagineDet
@@ -110,27 +174,19 @@
                                   </template>
                                   <v-list>
                                     <v-list-item>
-                                      <v-list-item-title
-                                        >Modifica</v-list-item-title
-                                      >
+                                      <v-list-item-title>Modifica</v-list-item-title>
                                     </v-list-item>
                                     <v-list-item>
-                                      <v-list-item-title
-                                        >Duplica</v-list-item-title
-                                      >
+                                      <v-list-item-title>Duplica</v-list-item-title>
                                     </v-list-item>
                                     <v-list-item>
-                                      <v-list-item-title
-                                        >Elimina</v-list-item-title
-                                      >
+                                      <v-list-item-title>Elimina</v-list-item-title>
                                     </v-list-item>
                                   </v-list>
                                 </v-menu>
                               </v-card-title>
 
-                              <v-card-subtitle
-                                v-text="det.Descrizione"
-                              ></v-card-subtitle>
+                              <v-card-subtitle v-text="det.Descrizione"></v-card-subtitle>
                             </div>
                           </div>
                         </v-card>
@@ -161,14 +217,16 @@
     </Panel>
     <popupPosEdit ref="popupPosEdit" />
 
-
     <v-dialog
       v-model="showArticoloSelection"
-      
       :fullscreen="$vuetify.breakpoint.xsOnly"
       max-width="700px"
     >
-    <selezioneArticoli />
+      <selezioneArticoli />
+    </v-dialog>
+
+    <v-dialog v-model="showWizardArtGen" :fullscreen="$vuetify.breakpoint.xsOnly" max-width="700px">
+      <wizardSchede @onExit="showWizardArtGen=false" @onSave="salvaArticoloGenerale" />
     </v-dialog>
   </div>
 </template>
@@ -191,18 +249,21 @@ import ImmagineDet from '~/components/GestioneRilievo/ImmagineDet'
 import popupPosEdit from '../../components/GestioneRilievo/posizioneEdit'
 import Panel from '../Containers/Panel'
 import selezioneArticoli from './selezioneArticoli'
+import wizardSchede from './wizardSchede'
 
 export default {
   components: {
     ImmagineDet,
     popupPosEdit,
     Panel,
-    selezioneArticoli
+    selezioneArticoli,
+    wizardSchede
   },
   props: [],
   computed: {
     ...mapState('rilievo', ['listaPosizioni']),
     ...mapState('rilievo', ['listaDettagli']),
+    ...mapState('rilievo', ['listaArtGen']),
     ...mapState('rilievo', ['record']),
     ...mapGetters('rilievo', ['formTitle', 'isEdit', 'isAdd', 'isView'])
   },
@@ -210,24 +271,42 @@ export default {
     return {
       imgWidth: 100,
       imgHeight: 100,
-      showArticoloSelection: false
+      showArticoloSelection: false,
+      showWizardArtGen: false
     }
   },
   methods: {
-    ...mapMutations('rilievoDet', { setDetRecordID: 'setRecordID', setRecordRilievoDet: 'setRecord', setRiferimentoAPosizione: 'setRiferimentoAPosizione', setRiferimentoARilievo: 'setRiferimentoARilievo' }),
+    ...mapMutations('rilievoDet', {
+      setDetRecordID: 'setRecordID',
+      setRecordRilievoDet: 'setRecord',
+      setRiferimentoAPosizione: 'setRiferimentoAPosizione',
+      setRiferimentoARilievo: 'setRiferimentoARilievo'
+    }),
     ...mapMutations('rilievoPos', ['setRecord']),
     ...mapActions('rilievoPos', { saveRow: 'save', deleteRow: 'deleteByID' }),
     ...mapActions('rilievo', { saveRilievo: 'save' }),
     ...mapMutations('rilievo', ['setViewMode']),
-    salvaModifiche(){
+    ...mapMutations('rilievoDG', { impostaArtGen: 'setRecord' }),
+    ...mapActions('rilievoDG', { salvaArtGen: 'save' }),
+
+    salvaArticoloGenerale(articoloResult) {
+      // SOLO PER PROTOTIPO
+      console.dir(articoloResult)
+      articoloResult.rilievoID = this.record._id
+      this.impostaArtGen(articoloResult)
+      this.salvaArtGen()
+      this.showWizardArtGen = false
+    },
+
+    salvaModifiche() {
       this.saveRilievo()
       this.setViewMode()
     },
-    annullaModifiche(){
+    annullaModifiche() {
       this.setViewMode()
     },
     addPos() {
-      this.$refs.popupPosEdit.open('Nuova posizione', '', 1).then((data) => {
+      this.$refs.popupPosEdit.open('Nuova posizione', '', 1).then(data => {
         if (data) {
           this.insertRow(data)
         }
@@ -250,7 +329,7 @@ export default {
       console.log(data._id)
       this.deleteRow(data._id)
     },
-    addDettaglio(posID){
+    addDettaglio(posID) {
       this.setRiferimentoARilievo(this.record._id)
       this.setRiferimentoAPosizione(posID)
       this.setDetRecordID()
@@ -280,10 +359,7 @@ export default {
           throw result.data
         }
 
-        let jsonDataString = window.GPROD.getDrawingCommands(
-          this.imgWidth,
-          this.imgHeight
-        )
+        let jsonDataString = window.GPROD.getDrawingCommands(this.imgWidth, this.imgHeight)
 
         let jsonDataObj = JSON.parse(jsonDataString)
 
