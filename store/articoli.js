@@ -74,7 +74,7 @@ export const actions = {
 
     for (const cat of listaCataloghi) {
 
-      if (cat.data.JSAzienda.JSUID = azienda && cat.data.JSCatalogoID === catCod) {
+      if (cat.data.JSAzienda.JSUID == azienda && cat.data.JSCatalogoID === catCod) {
 
         for (const art of cat.data.JSArticoli) {
 
@@ -84,16 +84,16 @@ export const actions = {
             commit('setUiRisorsaPrinc', risorsaPrinc)
             commit('setUiCatalogoDesc', cat.data.JSCatalogoDesc)
             commit('setUiAziendaDesc', cat.data.JSAzienda.JSDenominazione)
+            
+            for (const res of art.JSRisorse) {
+              var urlRes = await dispatch('dm_resources/getRisorsaById', res.JSRisID, root)
+              
+              Vue.set(res, 'risorsa', urlRes)
+              
+            }
+            commit('setRecord', art)
+            return art
           }
-
-          for (const res of art.JSRisorse) {
-            var urlRes = await dispatch('dm_resources/getRisorsaById', res.JSRisID, root)
-
-            Vue.set(res, 'risorsa', urlRes)
-
-          }
-          commit('setRecord', art)
-          return art
 
         }
       }

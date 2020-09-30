@@ -2,11 +2,11 @@
   <v-card flat height="100%">
     <v-stepper v-model="stepIndex" style="height: 100%">
       <!-- selezione articolo di partenza -->
-      <v-stepper-content step="0">
+      <v-stepper-content step="0" style="height: 100%">
         <v-card-title>
           Selezionare un articolo
         </v-card-title>
-        <ListaArticoli @onSelected="onArticoloSelezionato($event)" :modalita="'SelezioneOggetto'" :marcaRiga="true" />
+        <ListaArticoli @onSelected="onArticoloSelezionato($event)" :modalita="'SelezioneOggetto'" :marcaRiga="true" :style="{ height: 'calc(100vh - 150px)', 'overflow-y': 'auto' }" />
         <v-card-actions>
           <v-btn text color="gray" @click="exitWizard()">Annulla</v-btn>
           <v-spacer></v-spacer>
@@ -16,7 +16,7 @@
 
       <!-- elenco properties dell'articolo selezionato -->
       <v-stepper-content v-for="(prop, index) in articoloProperties" :key="index" :step="index + 1">
-        <p>{{ prop.Descrizione }}</p>
+        <p>{{ prop.propLabel }}</p>
 
         <v-radio-group v-if="prop.propTableName" v-model="prop.propValue">
           <v-radio v-for="(row, n) in getTableRows(prop.propTableName)" :key="n" :label="row.JSTabRowDesc" :value="row.JSTabRowCodice"></v-radio>
@@ -46,13 +46,14 @@
 <script lang="ts">
 import { Vue, Component, namespace, State, Getter, Emit } from 'nuxt-property-decorator'
 import ListaArticoli from '../gestione_cataloghi/listaArticoli.vue'
-import { JSArticolo, PropertyValued, JSTableRow, ArticoloConfigurato } from '@/store/articoloModel'
+import { JSArticolo, PropertyValued, JSTableRow, ArticoloGeneraleConfigurato } from '@/store/articoloModel'
 import { v4 as uuidv4 } from 'uuid'
 
 @Component({ components: { ListaArticoli }, name: 'wizardSchede' })
 export default class WizardSchede extends Vue {
   stepIndex = 0
   articoloProperties: PropertyValued[] = new Array<PropertyValued>()
+  catalogoSelezionato!: any
   articoloSelezionato: JSArticolo = new JSArticolo()
   GPROD: any = window.GPROD
 
@@ -139,20 +140,25 @@ export default class WizardSchede extends Vue {
   async onArticoloSelezionato(articolo: JSArticolo) {
     console.log(articolo)
 
-    let catalogo = await this.$store.dispatch('cataloghi/getById', articolo.catalogoCodice, { root: true })    
-    this.GPROD.SetTables(JSON.stringify(catalogo.data.JSTables))
+    let cat = await this.$store.dispatch('cataloghi/getById', articolo.catalogoCodice, { root: true })
+    if (cat) {
+      this.catalogoSelezionato = cat.data
 
-    this.articoloSelezionato = articolo
-    this.propertiesDatiGenerali()
+      this.GPROD.SetTables(JSON.stringify(this.catalogoSelezionato.JSTables))
+
+      this.articoloSelezionato = articolo
+      this.propertiesDatiGenerali()
+    }
   }
 
-  @Emit("onSave") onSalva(){
+  @Emit('onSave') onSalva() {
     // Verifica se si sta salvando un nuovo articolo
     // o modificando uno esistente
 
-    // Crea l'articolo generale 
-    let articoloDG = new ArticoloConfigurato()
+    // Crea l'articolo generale
+    let articoloDG = new ArticoloGeneraleConfigurato()
     articoloDG._id = uuidv4()
+    articoloDG.azienda = this.catalogoSelezionato.JSAzienda.JSUID
     articoloDG.catalogo = this.articoloSelezionato.catalogoCodice
     articoloDG.codice = this.articoloSelezionato.JSCodice
     articoloDG.descrizione = this.articoloSelezionato.JSDescrizione
@@ -162,17 +168,16 @@ export default class WizardSchede extends Vue {
     this.$store.commit('rilievoModule/setArticoloDG', articoloDG)
 
     // Salva il rilievo con le nuove impostazioni
-     this.$store.dispatch('rilievoModule/salva', undefined, {root: true})
+    this.$store.dispatch('rilievoModule/salva', undefined, { root: true })
 
-     // Sbianca lo stato di questo componente
+    // Sbianca lo stato di questo componente
   }
-
 
   nextStep() {
     this.stepIndex = this.stepIndex + 1
   }
 
-  @Emit("onExit") exitWizard() { }
+  @Emit('onExit') exitWizard() {}
 
   backStep() {
     this.stepIndex = this.stepIndex - 1

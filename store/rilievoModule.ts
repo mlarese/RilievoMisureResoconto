@@ -1,6 +1,6 @@
 
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
-import { ArticoloConfigurato } from '@/store/articoloModel'
+import { ArticoloGeneraleConfigurato, ArticoloSpecificoConfigurato } from '@/store/articoloModel'
 
 @Module({ name: 'rilievoModule', stateFactory: true })
 export default class RilievoModule extends VuexModule {
@@ -14,14 +14,15 @@ export default class RilievoModule extends VuexModule {
     }
 
     @Mutation
-    setID(id: string) {
-        this.record._id = id
+    setID(res: any) {
+        this.record._id = res.id
+        this.record._rev = res.rev
     }
 
     @Mutation
-    setArticoloDG(art: ArticoloConfigurato) {
+    setArticoloDG(art: ArticoloGeneraleConfigurato) {
         if (!this.record.listaArticoliGen) {
-            this.record.listaArticoliGen = new Array<ArticoloConfigurato>()
+            this.record.listaArticoliGen = new Array<ArticoloGeneraleConfigurato>()
             this.record.listaArticoliGen.push(art)
         } else {
             // Cerca se già esiste l'articolo in quanto è stato modificato
@@ -40,6 +41,7 @@ export default class RilievoModule extends VuexModule {
     // Carica il rilievo da DB
     @Action({ commit: 'setRecord', rawError: true })
     async loadByID(id: string) {
+        console.log(id)
         const rec = await this.context.dispatch('db/selectById', { table: this.ui.table, id }, { root: true })
         return rec
     }
@@ -54,13 +56,16 @@ export default class RilievoModule extends VuexModule {
             action = 'db/update'
         }
         res = await this.context.dispatch(action, { table: this.ui.table, data: this.record }, { root: true })
-        return res.id
+        console.log(res)
+        return res
     }
 
 }
 
 export class RilievoUI {
     visualizzaWizardSchede = false as boolean
+    visualizzaWizardPosizione = false as boolean
+    visualizzaWizardRilievo = false as boolean
     readonly table: string = 'rilievi'
 }
 
@@ -69,7 +74,7 @@ export class RilievoRecord {
     _rev: string | null = null
 
     // TESTATA
-    rifLavoroID: string | null = null
+    lavoroID: string | null = null
     descrizione: string | null = null
     dataConsegna: Date | null = null
     tipo: number = 0
@@ -77,10 +82,10 @@ export class RilievoRecord {
     utente = null as string | null
 
     // Dati generali <lista articoli configurati>
-    listaArticoliGen = [] as ArticoloConfigurato[]
+    listaArticoliGen = [] as ArticoloGeneraleConfigurato[]
 
     // Dati specifici <lista articoli configurati>
-    listaArticoliSpec = [] as ArticoloConfigurato[]
+    listaArticoliSpec = [] as ArticoloSpecificoConfigurato[]
 }
 
 

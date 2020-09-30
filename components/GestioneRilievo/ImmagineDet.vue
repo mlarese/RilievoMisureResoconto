@@ -14,7 +14,6 @@
 </template>
 
 <script>
-import { defaults } from 'pouchdb'
 export default {
   props: {
     drawingCommands: { default: '' },

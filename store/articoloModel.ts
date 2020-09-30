@@ -25,15 +25,28 @@ export class JSArticolo {
 
 
 
-class JSModelloART { }
+class JSModelloART {
+    JSModCodice: string = ''
+    JSModDesc: string = ''
+    JSModMacroCmd: string = ''
+    JSModPIM: string = ''
+}
 
 class JSRisorsa { }
 
-export class ArticoloConfigurato {
+export class ArticoloGeneraleConfigurato {
     _id: string | null = null
+    azienda: string = ''
     catalogo: string = ''
     codice: string = ''
     descrizione: string = ''
+    listaPropValued: Array<PropertyValued> = new Array<PropertyValued>()
+}
+
+export class ArticoloSpecificoConfigurato {
+    _id: string | null = null
+    rifPosID: string | null = null
+    rifSchedaID: string | null = null
     listaPropValued: Array<PropertyValued> = new Array<PropertyValued>()
 }
 

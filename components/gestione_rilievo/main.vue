@@ -17,9 +17,11 @@
 
         <v-tabs centered>
           <v-tab>SCHEDE</v-tab>
-          <v-tab>FORI</v-tab>
+          <v-tab>POSIZIONI</v-tab>
+          <v-tab>RIEPILOGO 1</v-tab>
+          <v-tab>RIEPILOGO 2</v-tab>
 
-          <v-tab-item :class="$vuetify.breakpoint.xsOnly ? 'c_small' : 'c_large'">
+          <v-tab-item :class="$vuetify.breakpoint.xsOnly ? 'c_small' : 'c_large'" class="pa-0">
             <!-- SCHEDE - dati generali -->
             <schede />
           </v-tab-item>
@@ -33,30 +35,30 @@
     </Panel>
 
     <!-- Wizard per dati generali -->
-    <v-dialog
-      v-model="ui.visualizzaWizardSchede"
-      :fullscreen="$vuetify.breakpoint.xsOnly"
-      max-width="700px"
-      @onExit="chiudiWizardSchede"
-      @onSave="salvaArticoloGenerale"
-    >
-      <wizardSchede />
+    <v-dialog v-model="ui.visualizzaWizardSchede" :fullscreen="$vuetify.breakpoint.xsOnly" max-width="700px">
+      <wizardSchede @onExit="chiudiWizardSchede" @onSave="salvaArticoloGenerale" />
+    </v-dialog>
+
+    <!-- WIZARD DEL RILIEVO -->
+    <v-dialog v-model="ui.visualizzaWizardRilievo" :fullscreen="$vuetify.breakpoint.xsOnly" max-width="700px">
+      <wizardRilievo />
     </v-dialog>
   </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component, namespace, State, Getter, Prop } from 'nuxt-property-decorator'
+import { Vue, Component, namespace, State, Getter, Prop, Action } from 'nuxt-property-decorator'
 
 import Panel from '../Containers/Panel.vue'
 import Schede from '../gestione_rilievo/schede.vue'
 import Fori from '../gestione_rilievo/fori.vue'
 import wizardSchede from '@/components/GestioneRilievo/wizardSchede.vue'
+import wizardRilievo from '@/components/gestione_rilievo/wizardRilievo.vue'
 
 import { getRilievoModule } from '~/store'
 import { RilievoRecord } from '~/store/rilievoModule'
 
-@Component({ components: { Panel, Schede, Fori, wizardSchede }, name: 'rilievo' })
+@Component({ components: { Panel, Schede, Fori, wizardSchede, wizardRilievo }, name: 'rilievo' })
 export default class RilievoMain extends Vue {
   get record() {
     return getRilievoModule(this.$store).record
@@ -66,7 +68,7 @@ export default class RilievoMain extends Vue {
   }
 
   salvaArticoloGenerale() {
-    console.log('salvato')
+    this.chiudiWizardSchede()
   }
 
   chiudiWizardSchede() {
@@ -76,7 +78,9 @@ export default class RilievoMain extends Vue {
   @Prop({ type: String, default: '' }) readonly id!: string
 
   mounted() {
-    this.$store.dispatch('rilievoModule/loadByID', this.id, { root: true })
+    this.$store.dispatch('rilievoModule/loadByID', this.id, { root: true }).then(() => {
+      this.$store.dispatch('posizioneModule/loadPosizioni', this.record.lavoroID, { root: true })
+    })
   }
 }
 </script>
