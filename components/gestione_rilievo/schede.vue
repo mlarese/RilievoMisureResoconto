@@ -36,16 +36,12 @@
 
 <script lang="ts">
 import { Vue, Component, namespace, State, Getter } from 'nuxt-property-decorator'
-import { getRilievoModule } from '~/store'
+import { RilievoRecord, RilievoUI } from '@/store/rilievoModule'
 
 @Component({ components: {}, name: 'schede' })
 export default class RilievoSchede extends Vue {
-  get record() {
-    return getRilievoModule(this.$store).record
-  }
-  get ui() {
-    return getRilievoModule(this.$store).ui
-  }
+  @State(state => state.rilievoModule.record) record !: RilievoRecord
+  @State(state => state.rilievoModule.ui) ui!: RilievoUI
 
   get listaArticoliGen() {
     return this.record.listaArticoliGen

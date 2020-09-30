@@ -104,7 +104,7 @@
 import { Vue, Component, namespace, State, Getter, Prop } from 'nuxt-property-decorator'
 import ImmagineDet from '@/components/GestioneRilievo/ImmagineDet.vue'
 
-import { getRilievoModule } from '~/store'
+import { RilievoRecord, RilievoUI } from '@/store/rilievoModule'
 import { ArticoloGeneraleConfigurato, ArticoloSpecificoConfigurato, JSArticolo, PropertyValued, JSTableRow } from '@/store/articoloModel'
 import JSArtProp from '~/models/JSArtProp'
 import { eachDayOfInterval } from 'date-fns'
@@ -238,24 +238,28 @@ export default class RilievoFori extends Vue {
 
   onSalva() {}
 
-  get rilievoRecord() {
-    return getRilievoModule(this.$store).record
-  }
-  get ui() {
-    return getRilievoModule(this.$store).ui
-  }
+  @State(state => state.rilievoModule.record) record !: RilievoRecord
+  @State(state => state.rilievoModule.ui) ui!: RilievoUI
+
+  removeEmpty (obj: any) {
+      Object.entries(obj).forEach(([key, val]) => (val && typeof val === 'object' && this.removeEmpty(val)) || ((val === null || val === '') && delete obj[key]))
+      return obj
+    }
+  
 
   async mounted() {
     if (!this.articoloDaEditareID) return
 
     // Cerca l'articolo generico
-    let articoloDaEditare: any = this.rilievoRecord.listaArticoliSpec.find(art => art._id == this.articoloDaEditareID)
-    let art = this.rilievoRecord.listaArticoliGen.find(art => art._id == articoloDaEditare.rifSchedaID)
+    let articoloDaEditare: any = this.record.listaArticoliSpec.find(art => art._id == this.articoloDaEditareID)
+    let art = this.record.listaArticoliGen.find(art => art._id == articoloDaEditare.rifSchedaID)
     this.articoloGenerico = art as ArticoloGeneraleConfigurato
 
     let cat = await this.$store.dispatch('cataloghi/getById', this.articoloGenerico.catalogo, { root: true })
     if (cat) {
-      this.GPROD.SetTables(JSON.stringify(cat.data.JSTables))
+      // this.GPROD.SetTables(JSON.stringify(cat.data.JSTables))
+      let a = this.removeEmpty(cat.data)
+      this.GPROD.AddJSCatalogo(JSON.stringify(a))
     }
 
     // Carica l'articolo per ottenere le properties e i MC

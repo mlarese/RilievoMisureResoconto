@@ -48,23 +48,18 @@
 import { Vue, Component, namespace, State, Getter } from 'nuxt-property-decorator'
 import wizardPosizione from '@/components/gestione_rilievo/wizardPosizione.vue'
 import wizardMisure from '@/components/gestione_rilievo/wizardMisure.vue'
-
-import { getRilievoModule } from '~/store'
+import { RilievoRecord, RilievoUI } from '@/store/rilievoModule'
 import { Posizione } from '@/store/posizioneModule'
 import { ArticoloGeneraleConfigurato, ArticoloSpecificoConfigurato } from '@/store/articoloModel'
 
 @Component({ components: { wizardPosizione, wizardMisure }, name: 'Fori' })
 export default class RilievoFori extends Vue {
   @Getter('posizioneModule/posizioni') posizioni!: Posizione[]
+  @State(state => state.rilievoModule.record) record!: RilievoRecord
+  @State(state => state.rilievoModule.ui) ui!: RilievoUI
+
   visualizzaWizardMisure = false
   articoloDaEditareID: string = ''
-
-  get record() {
-    return getRilievoModule(this.$store).record
-  }
-  get ui() {
-    return getRilievoModule(this.$store).ui
-  }
 
   apriWM(artID: string) {
     this.visualizzaWizardMisure = true

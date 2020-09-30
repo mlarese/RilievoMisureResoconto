@@ -55,17 +55,12 @@ import Fori from '../gestione_rilievo/fori.vue'
 import wizardSchede from '@/components/GestioneRilievo/wizardSchede.vue'
 import wizardRilievo from '@/components/gestione_rilievo/wizardRilievo.vue'
 
-import { getRilievoModule } from '~/store'
-import { RilievoRecord } from '~/store/rilievoModule'
+import { RilievoRecord, RilievoUI } from '@/store/rilievoModule'
 
 @Component({ components: { Panel, Schede, Fori, wizardSchede, wizardRilievo }, name: 'rilievo' })
 export default class RilievoMain extends Vue {
-  get record() {
-    return getRilievoModule(this.$store).record
-  }
-  get ui() {
-    return getRilievoModule(this.$store).ui
-  }
+  @State(state => state.rilievoModule.record) record !: RilievoRecord
+  @State(state => state.rilievoModule.ui) ui!: RilievoUI
 
   salvaArticoloGenerale() {
     this.chiudiWizardSchede()

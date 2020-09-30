@@ -1,66 +1,69 @@
 
-import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
+import { GetterTree, ActionTree, MutationTree } from 'vuex'
 import { ArticoloGeneraleConfigurato, ArticoloSpecificoConfigurato } from '@/store/articoloModel'
 
-@Module({ name: 'rilievoModule', stateFactory: true })
-export default class RilievoModule extends VuexModule {
-
+export const state = () => ({
     // Rilievo vero e proprio
-    record = new RilievoRecord()
+    record: new RilievoRecord(),
+    // Dati a supporto
+    ui: new RilievoUI()
+})
 
-    @Mutation
-    setRecord(rec: RilievoRecord) {
-        this.record = rec
-    }
+export type RootState = ReturnType<typeof state>
 
-    @Mutation
-    setID(res: any) {
-        this.record._id = res.id
-        this.record._rev = res.rev
-    }
+export const getters: GetterTree<RootState, RootState> = {
+}
 
-    @Mutation
-    setArticoloDG(art: ArticoloGeneraleConfigurato) {
-        if (!this.record.listaArticoliGen) {
-            this.record.listaArticoliGen = new Array<ArticoloGeneraleConfigurato>()
-            this.record.listaArticoliGen.push(art)
+export const mutations: MutationTree<RootState> = {
+
+    setRecord: (s, rec: RilievoRecord) => {
+        s.record = rec
+    },
+
+    setID: (s, res: any) => {
+        s.record._id = res.id
+        s.record._rev = res.rev
+    },
+
+    setArticoloDG: (s, art: ArticoloGeneraleConfigurato) => {
+        if (!s.record.listaArticoliGen) {
+            s.record.listaArticoliGen = new Array<ArticoloGeneraleConfigurato>()
+            s.record.listaArticoliGen.push(art)
         } else {
             // Cerca se già esiste l'articolo in quanto è stato modificato
-            const indice = this.record.listaArticoliGen.findIndex(a => a._id === art._id)
+            const indice = s.record.listaArticoliGen.findIndex(a => a._id === art._id)
             if (indice > -1) {
-                this.record.listaArticoliGen.splice(indice, 1, art)
+                s.record.listaArticoliGen.splice(indice, 1, art)
             } else {
-                this.record.listaArticoliGen.push(art)
+                s.record.listaArticoliGen.push(art)
             }
         }
     }
+}
 
-    // Dati a supporto
-    ui = new RilievoUI()
+export const actions: ActionTree<RootState, RootState> = {
 
     // Carica il rilievo da DB
-    @Action({ commit: 'setRecord', rawError: true })
-    async loadByID(id: string) {
+    loadByID: async ({ commit, dispatch, state }, id: string) => {
         console.log(id)
-        const rec = await this.context.dispatch('db/selectById', { table: this.ui.table, id }, { root: true })
-        return rec
-    }
+        const rec = await dispatch('db/selectById', { table: state.ui.table, id }, { root: true })
+        commit('setRecord', rec)
+    },
 
-    @Action({ commit: 'setID', rawError: true })
-    async salva() {
+    salva: async ({ commit, dispatch, state }) => {
         let res
         let action: string
-        if (this.record._id) {
+        if (state.record._id) {
             action = 'db/insertInto'
         } else {
             action = 'db/update'
         }
-        res = await this.context.dispatch(action, { table: this.ui.table, data: this.record }, { root: true })
-        console.log(res)
-        return res
+        res = await dispatch(action, { table: state.ui.table, data: state.record }, { root: true })
+        commit('setRecord', res)
     }
 
 }
+
 
 export class RilievoUI {
     visualizzaWizardSchede = false as boolean
@@ -87,6 +90,71 @@ export class RilievoRecord {
     // Dati specifici <lista articoli configurati>
     listaArticoliSpec = [] as ArticoloSpecificoConfigurato[]
 }
+
+
+// import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
+// import { ArticoloGeneraleConfigurato, ArticoloSpecificoConfigurato } from '@/store/articoloModel'
+
+// @Module({ name: 'rilievoModule', stateFactory: true })
+// export default class RilievoModule extends VuexModule {
+
+//     // Rilievo vero e proprio
+//     record = new RilievoRecord()
+//     // Dati a supporto
+//     ui = new RilievoUI()
+//     @Mutation
+//     setRecord(rec: RilievoRecord) {
+//         this.record = rec
+//     }
+
+//     @Mutation
+//     setID(res: any) {
+//         this.record._id = res.id
+//         this.record._rev = res.rev
+//     }
+
+//     @Mutation
+//     setArticoloDG(art: ArticoloGeneraleConfigurato) {
+//         if (!this.record.listaArticoliGen) {
+//             this.record.listaArticoliGen = new Array<ArticoloGeneraleConfigurato>()
+//             this.record.listaArticoliGen.push(art)
+//         } else {
+//             // Cerca se già esiste l'articolo in quanto è stato modificato
+//             const indice = this.record.listaArticoliGen.findIndex(a => a._id === art._id)
+//             if (indice > -1) {
+//                 this.record.listaArticoliGen.splice(indice, 1, art)
+//             } else {
+//                 this.record.listaArticoliGen.push(art)
+//             }
+//         }
+//     }
+
+
+
+//     // Carica il rilievo da DB
+//     @Action({ commit: 'setRecord', rawError: true })
+//     async loadByID(id: string) {
+//         console.log(id)
+//         const rec = await this.context.dispatch('db/selectById', { table: this.ui.table, id }, { root: true })
+//         return rec
+//     }
+
+//     @Action({ commit: 'setID', rawError: true })
+//     async salva() {
+//         let res
+//         let action: string
+//         if (this.record._id) {
+//             action = 'db/insertInto'
+//         } else {
+//             action = 'db/update'
+//         }
+//         res = await this.context.dispatch(action, { table: this.ui.table, data: this.record }, { root: true })
+//         console.log(res)
+//         return res
+//     }
+
+// }
+
 
 
 

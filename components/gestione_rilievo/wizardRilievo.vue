@@ -142,7 +142,7 @@ import { Vue, Component, namespace, State, Getter } from 'nuxt-property-decorato
 import { v4 as uuidv4 } from 'uuid'
 import wizardPosizione from '@/components/gestione_rilievo/wizardPosizione.vue'
 
-import { getRilievoModule } from '~/store'
+import { RilievoRecord, RilievoUI } from '@/store/rilievoModule'
 import { Posizione } from '@/store/posizioneModule'
 import { ArticoloGeneraleConfigurato, ArticoloSpecificoConfigurato } from '@/store/articoloModel'
 
@@ -170,8 +170,8 @@ export default class RilievoFori extends Vue {
     // Crea un nuovo articolo specifico per ogni articolo generico
     // In questa fase non sarà ancora configurato
 
-    if (!this.rilievoRecord.listaArticoliSpec) {
-      this.rilievoRecord.listaArticoliSpec = new Array<ArticoloSpecificoConfigurato>()
+    if (!this.record.listaArticoliSpec) {
+      this.record.listaArticoliSpec = new Array<ArticoloSpecificoConfigurato>()
     }
 
     for (const artGen of this.articoliSelezionati) {
@@ -179,21 +179,17 @@ export default class RilievoFori extends Vue {
       articoloSpec._id = uuidv4()
       articoloSpec.rifPosID = this.posizioneSelezionata._id
       articoloSpec.rifSchedaID = artGen._id
-      this.rilievoRecord.listaArticoliSpec.push(articoloSpec)
+      this.record.listaArticoliSpec.push(articoloSpec)
     }
 
     await this.$store.dispatch('rilievoModule/salva', undefined, { root: true })
   }
 
   get listaArticoliGen() {
-    return this.rilievoRecord.listaArticoliGen
+    return this.record.listaArticoliGen
   }
 
-  get rilievoRecord() {
-    return getRilievoModule(this.$store).record
-  }
-  get ui() {
-    return getRilievoModule(this.$store).ui
-  }
+ @State(state => state.rilievoModule.record) record !: RilievoRecord
+  @State(state => state.rilievoModule.ui) ui!: RilievoUI
 }
 </script>
