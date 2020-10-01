@@ -73,9 +73,7 @@ export default class RilievoMain extends Vue {
   @Prop({ type: String, default: '' }) readonly id!: string
 
   mounted() {
-    this.$store.dispatch('rilievoModule/loadByID', this.id, { root: true }).then(() => {
-      this.$store.dispatch('posizioneModule/loadPosizioni', this.record.lavoroID, { root: true })
-    })
+    this.$store.dispatch('posizioneModule/loadPosizioni', this.record.lavoroID, { root: true })
   }
 }
 </script>

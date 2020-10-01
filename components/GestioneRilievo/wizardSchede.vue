@@ -6,7 +6,12 @@
         <v-card-title>
           Selezionare un articolo
         </v-card-title>
-        <ListaArticoli @onSelected="onArticoloSelezionato($event)" :modalita="'SelezioneOggetto'" :marcaRiga="true" :style="{ height: 'calc(100vh - 150px)', 'overflow-y': 'auto' }" />
+        <ListaArticoli
+          @onSelected="onArticoloSelezionato($event)"
+          :modalita="'SelezioneOggetto'"
+          :marcaRiga="true"
+          :style="{ height: 'calc(100vh - 150px)', 'overflow-y': 'auto' }"
+        />
         <v-card-actions>
           <v-btn text color="gray" @click="exitWizard()">Annulla</v-btn>
           <v-spacer></v-spacer>
@@ -171,13 +176,23 @@ export default class WizardSchede extends Vue {
     this.$store.dispatch('rilievoModule/salva', undefined, { root: true })
 
     // Sbianca lo stato di questo componente
+    this.clearMe()
+  }
+
+  clearMe() {
+    this.stepIndex = 0
+    this.articoloProperties = new Array<PropertyValued>()
+    this.catalogoSelezionato = {}
+    this.articoloSelezionato = new JSArticolo()
   }
 
   nextStep() {
     this.stepIndex = this.stepIndex + 1
   }
 
-  @Emit('onExit') exitWizard() {}
+  @Emit('onExit') exitWizard() {
+    this.clearMe()
+  }
 
   backStep() {
     this.stepIndex = this.stepIndex - 1

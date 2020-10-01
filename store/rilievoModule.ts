@@ -25,6 +25,10 @@ export const mutations: MutationTree<RootState> = {
         s.record._rev = res.rev
     },
 
+    clearUI: (s) => {
+        s.ui = new RilievoUI()
+    },
+
     setArticoloDG: (s, art: ArticoloGeneraleConfigurato) => {
         if (!s.record.listaArticoliGen) {
             s.record.listaArticoliGen = new Array<ArticoloGeneraleConfigurato>()
@@ -54,12 +58,13 @@ export const actions: ActionTree<RootState, RootState> = {
         let res
         let action: string
         if (state.record._id) {
-            action = 'db/insertInto'
-        } else {
             action = 'db/update'
+        } else {
+            action = 'db/insertInto'
         }
         res = await dispatch(action, { table: state.ui.table, data: state.record }, { root: true })
-        commit('setRecord', res)
+        commit('setID', res)
+        return res
     }
 
 }
@@ -73,12 +78,13 @@ export class RilievoUI {
 }
 
 export class RilievoRecord {
-    _id: string | null = null
-    _rev: string | null = null
+    _id: string  = ''
+    _rev: string  = ''
 
     // TESTATA
     lavoroID: string | null = null
     descrizione: string | null = null
+    note: string | null = null
     dataConsegna: Date | null = null
     tipo: number = 0
     dataCreazione: Date | null = null

@@ -6,7 +6,7 @@
 
       <!-- Elenco schede già compilate -->
       <v-expansion-panels focusable>
-        <v-expansion-panel v-for="(artGen, i) in listaArticoliGen" :key="i">
+        <v-expansion-panel v-for="(artGen, i) in record.listaArticoliGen" :key="i">
           <v-expansion-panel-header>
             <v-row no-gutters dense>
               <v-col>{{ artGen.descrizione }}</v-col>
@@ -42,10 +42,6 @@ import { RilievoRecord, RilievoUI } from '@/store/rilievoModule'
 export default class RilievoSchede extends Vue {
   @State(state => state.rilievoModule.record) record !: RilievoRecord
   @State(state => state.rilievoModule.ui) ui!: RilievoUI
-
-  get listaArticoliGen() {
-    return this.record.listaArticoliGen
-  }
 
   aggiungiArticoloClick() {
     this.ui.visualizzaWizardSchede = true
