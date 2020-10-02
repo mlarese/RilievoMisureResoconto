@@ -9,23 +9,17 @@
       </v-card> -->
 
       <v-list>
-        
-      <v-list-item-group
-        color="primary"
-      >
-        <v-list-item
-          v-for="(item, i) in listRilievi"
-          :key="i"
-          @click="apriRilievo(item._id)"
-        >
-          <v-list-item-content>
-            <v-list-item-title v-text="item.descrizione"></v-list-item-title>
-            <v-list-item-subtitle v-text="`${item.utente} - ${item.dataConsegna}`"></v-list-item-subtitle>
-          <v-divider></v-divider>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list-item-group>
-    </v-list>
+        <v-list-item-group color="primary">
+          <v-list-item v-for="(item, i) in listRilievi" :key="i" @click="apriRilievo(item._id)">
+            <v-list-item-content>
+              <v-list-item-title v-text="item.descrizione"></v-list-item-title>
+              <v-list-item-subtitle> {{ item.utente }} - {{ item.dataCreazione | dmy }}</v-list-item-subtitle>
+              
+              <v-divider></v-divider>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
 
       <EmptyList
         v-if="listRilievi == null || listRilievi.lenght == 0"
@@ -73,7 +67,6 @@
                     readonly
                     v-bind="attrs"
                     v-on="on"
-                    hide-details
                   ></v-text-field>
                 </template>
                 <v-date-picker v-model="rilievo.dataConsegna" scrollable>
@@ -164,7 +157,7 @@ export default Vue.extend({
       }
 
       this.setRecord(rilievoRecord)
-      let { id } = this.salva()
+      let { id } = await this.salva()
 
       // this.rilievo._id = ''
       // const id = await this.saveRilievo()

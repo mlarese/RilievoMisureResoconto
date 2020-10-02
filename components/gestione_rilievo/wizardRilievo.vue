@@ -38,7 +38,7 @@
         <v-card-actions flat class="pa-0 ma-0">
           <v-btn text outlined color="green" @click="exit">ANNULA</v-btn>
           <v-spacer></v-spacer>
-          <v-btn text outlined color="green" @click="nextStep">AVANTI<v-icon>mdi-chevron-right</v-icon></v-btn>
+          <v-btn text outlined color="green" @click="nextStep" :disabled="posizioneSelezionata._id == ''">AVANTI<v-icon>mdi-chevron-right</v-icon></v-btn>
         </v-card-actions>
       </v-stepper-content>
 
@@ -52,32 +52,24 @@
 
             <v-list two-line>
               <v-list-item-group v-model="articoliSelezionati" multiple color="primary">
-                <template v-for="(artGen, index) in listaArticoliGen">
+                <template v-for="artGen in listaArticoliGen">
                   <v-list-item :key="artGen._id" :value="artGen">
                     <template v-slot:default="{ active }">
                       <v-list-item-content>
                         <v-list-item-title v-text="artGen.descrizione"></v-list-item-title>
-
-                        <!-- <v-list-item-subtitle class="text--primary" v-text="item.headline"></v-list-item-subtitle>
-
-                      <v-list-item-subtitle v-text="item.subtitle"></v-list-item-subtitle> -->
+                        <v-list-item-subtitle class="text--primary" v-text="artGen.subDescrizione"></v-list-item-subtitle>
                       </v-list-item-content>
 
                       <v-list-item-action>
-                        <!-- <v-list-item-action-text v-text="item.action"></v-list-item-action-text> -->
-
                         <v-icon v-if="!active">
                           mdi-checkbox-blank-circle-outline
                         </v-icon>
-
                         <v-icon v-else>
                           mdi-checkbox-marked-circle-outline
                         </v-icon>
                       </v-list-item-action>
                     </template>
                   </v-list-item>
-
-                  <v-divider v-if="index < articoliSelezionati.length - 1" :key="index"></v-divider>
                 </template>
               </v-list-item-group>
             </v-list>
@@ -91,7 +83,7 @@
         <v-card-actions flat class="pa-0 ma-0">
           <v-btn text outlined color="green" @click="backStep"><v-icon>mdi-chevron-left</v-icon>INDIETRO</v-btn>
           <v-spacer></v-spacer>
-          <v-btn text outlined color="green" @click="nextStep">AVANTI<v-icon>mdi-chevron-right</v-icon></v-btn>
+          <v-btn text outlined color="green" @click="nextStep" :disabled="articoliSelezionati.length == 0">AVANTI<v-icon>mdi-chevron-right</v-icon></v-btn>
         </v-card-actions>
       </v-stepper-content>
 
@@ -122,7 +114,7 @@
               <v-list-item v-for="(art, i) in articoliSelezionati" :key="i">
                 <v-list-item-content>
                   <v-list-item-title>{{ art.descrizione }}</v-list-item-title>
-                  <v-list-item-subtitle>...altre info</v-list-item-subtitle>
+                  <v-list-item-subtitle class="text--primary" v-text="art.subDescrizione"></v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
             </v-list>
@@ -180,6 +172,9 @@ export default class RilievoFori extends Vue {
   }
 
   exit() {
+    this.articoliSelezionati = new Array<ArticoloGeneraleConfigurato>()
+    this.posizioneSelezionata = new Posizione()
+    this.stepIndex = 0
     this.ui.visualizzaWizardRilievo = false
   }
 

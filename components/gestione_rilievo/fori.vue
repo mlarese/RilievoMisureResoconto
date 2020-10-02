@@ -39,7 +39,7 @@
     </v-dialog>
 
     <v-dialog v-model="visualizzaWizardMisure" :fullscreen="$vuetify.breakpoint.xsOnly" max-width="400px">
-      <wizardMisure :articoloDaEditareID="articoloDaEditareID" />
+      <wizardMisure v-if="visualizzaWizardMisure" :articoloDaEditareID="articoloDaEditareID" />
     </v-dialog>
   </div>
 </template>

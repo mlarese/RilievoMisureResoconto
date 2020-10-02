@@ -54,6 +54,11 @@ export const actions: ActionTree<RootState, RootState> = {
         commit('setRecord', rec)
     },
 
+    reload: async ({ commit, dispatch, state }) => {
+        const rec = await dispatch('db/selectById', { table: state.ui.table, id: state.record._id }, { root: true })
+        commit('setRecord', rec)
+    },
+
     salva: async ({ commit, dispatch, state }) => {
         let res
         let action: string
@@ -64,19 +69,17 @@ export const actions: ActionTree<RootState, RootState> = {
         }
         res = await dispatch(action, { table: state.ui.table, data: state.record }, { root: true })
         commit('setID', res)
+        await dispatch('reload')
         return res
     }
 
 }
-
-
 export class RilievoUI {
     visualizzaWizardSchede = false as boolean
     visualizzaWizardPosizione = false as boolean
     visualizzaWizardRilievo = false as boolean
     readonly table: string = 'rilievi'
 }
-
 export class RilievoRecord {
     _id: string  = ''
     _rev: string  = ''
@@ -91,12 +94,11 @@ export class RilievoRecord {
     utente = null as string | null
 
     // Dati generali <lista articoli configurati>
-    listaArticoliGen = [] as ArticoloGeneraleConfigurato[]
+    listaArticoliGen = new Array<ArticoloGeneraleConfigurato>(new ArticoloGeneraleConfigurato())
 
     // Dati specifici <lista articoli configurati>
-    listaArticoliSpec = [] as ArticoloSpecificoConfigurato[]
+    listaArticoliSpec = new Array<ArticoloSpecificoConfigurato>(new ArticoloSpecificoConfigurato())
 }
-
 
 // import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 // import { ArticoloGeneraleConfigurato, ArticoloSpecificoConfigurato } from '@/store/articoloModel'

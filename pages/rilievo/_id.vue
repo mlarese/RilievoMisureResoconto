@@ -24,9 +24,9 @@ export default {
   layout: 'fullPage',
   components: { GridRilievo, popupPosEdit },
   props: [],
-  fetch({ store, params }) {
+  async fetch({ store, params }) {
     // store.dispatch('rilievo/getById', params.id, { root: true })
-    store.dispatch('rilievoModule/loadByID', params.id, { root: true })
+    await store.dispatch('rilievoModule/loadByID', params.id, { root: true })
   },
   computed: {
     ...mapState('rilievo', { rilievo: 'record' })

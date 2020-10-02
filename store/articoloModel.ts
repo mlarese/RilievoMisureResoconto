@@ -40,6 +40,7 @@ export class ArticoloGeneraleConfigurato {
     catalogo: string = ''
     codice: string = ''
     descrizione: string = ''
+    subDescrizione: string = ''
     listaPropValued: Array<PropertyValued> = new Array<PropertyValued>()
 }
 
@@ -55,8 +56,11 @@ export class PropertyValued {
     propName: string = ''
     propLabel: string = ''
     propValue: string = ''
+    propValueDecode: string = ''
     propTableName: string = ''
     isRequired: boolean = false
+    propPage: string = ''
+    propOrder: string = ''
 }
 
 export class JSTableRow {

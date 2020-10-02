@@ -10,6 +10,8 @@ export default class JSArtProp {
     JSAPropTables: string = ''
     JSAWizard: string = ''
     JSARequired: string = ''
+    JSAIsAutocalc : string = ''
+    JSADefault :string = ''
 
     private _isRequired: boolean = false;
     public get isRequired(): boolean {

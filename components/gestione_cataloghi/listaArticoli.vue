@@ -27,7 +27,7 @@
         class="d-flex align-content-start flex-wrap"
       >
         <v-card
-          :color="(marcaRiga && articoloSelezionatoID == item._id) ? 'light-green lighten-2': 'white'"
+          :color="(marcaRiga && articoloSelezionatoID == item._id) ? '#e4effa': 'white'"
           @click="rowClick(item)"
           width="400"
           height="130"

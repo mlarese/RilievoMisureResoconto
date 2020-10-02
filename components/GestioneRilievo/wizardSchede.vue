@@ -15,30 +15,69 @@
         <v-card-actions>
           <v-btn text color="gray" @click="exitWizard()">Annulla</v-btn>
           <v-spacer></v-spacer>
-          <v-btn text color="primary" @click="nextStep()">Avanti</v-btn>
+          <v-btn text color="primary" @click="nextStep()" :disabled="articoloSelezionato.JSCodice == ''">Avanti</v-btn>
+        </v-card-actions>
+      </v-stepper-content>
+
+      <v-stepper-content step="1" v-if="esisteStessoArticolo == 1" >
+        <span>Attenzione: è già stato inserito una scheda dello stesso tipo </span>
+        <span>E' necessario dare un nome differente </span>
+        <v-text-field v-model="subDescrizione"></v-text-field>
+        <v-card-actions>
+          <v-btn text color="gray" @click="exitWizard()">Annulla</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn text color="primary" @click="nextStep()" :disabled="subDescrizione == ''">Avanti</v-btn>
         </v-card-actions>
       </v-stepper-content>
 
       <!-- elenco properties dell'articolo selezionato -->
-      <v-stepper-content v-for="(prop, index) in articoloProperties" :key="index" :step="index + 1">
-        <p>{{ prop.propLabel }}</p>
+      <v-stepper-content v-for="(prop, index) in articoloProperties" :key="index" :step="index + 1 + esisteStessoArticolo">
+        <v-card-title>{{ prop.propLabel }}</v-card-title>
+        <v-divider></v-divider>
+        <!-- <v-radio-group v-if="prop.propTableName" v-model="prop.propValue">
+          <v-radio v-for="c in getTableRows(prop.propTableName)" :key="n" :label="row.JSTabRowDesc" :value="row.JSTabRowCodice"></v-radio>
 
-        <v-radio-group v-if="prop.propTableName" v-model="prop.propValue">
-          <v-radio v-for="(row, n) in getTableRows(prop.propTableName)" :key="n" :label="row.JSTabRowDesc" :value="row.JSTabRowCodice"></v-radio>
-
-          <!-- Opzione altro deve sempre essere visualizzata -->
           <v-row align="center" class="pa-0 ma-0" v-if="!prop.isRequired">
-            <v-radio value="altro"></v-radio>
-            <v-text-field v-model="prop.PropAltro" placeholder="Altro" :hide-details="true" dense></v-text-field>
+            <v-radio value="altro" ref="radioAltro"></v-radio>
+            <v-text-field v-model="prop.propValueDecode" placeholder="Altro" :hide-details="true" dense></v-text-field>
           </v-row>
-        </v-radio-group>
+        </v-radio-group> -->
+
+        <v-list :style="{ height: 'calc(100vh - 150px)', 'overflow-y': 'auto' }">
+          <v-list-item-group v-model="prop.propValue" color="primary">
+            <template v-for="(row, i) in getTableRows(prop.propTableName)">
+              <v-list-item :key="i" :value="row.JSTabRowCodice">
+                <template v-slot:default="{ active }">
+                  <v-list-item-content style="width: 100%">
+                    <v-list-item-title v-text="`${row.JSTabRowDesc}`"></v-list-item-title>
+                  </v-list-item-content>
+                  <v-list-item-icon>
+                    <v-icon v-if="active">mdi-check</v-icon>
+                  </v-list-item-icon>
+                </template>
+              </v-list-item>
+            </template>
+            <template v-if="!prop.isRequired">
+              <v-list-item value="altro">
+                <template v-slot:default="{ active }">
+                  <v-list-item-content>
+                    <v-text-field v-model="prop.propValueDecode" placeholder="Altro" persistent-hint hint="Inserire un valore manualmente" dense></v-text-field>
+                  </v-list-item-content>
+                  <v-list-item-icon>
+                    <v-icon v-if="active">mdi-check</v-icon>
+                  </v-list-item-icon>
+                </template>
+              </v-list-item>
+            </template>
+          </v-list-item-group>
+        </v-list>
 
         <v-card-actions>
           <v-btn text color="gray" @click="backStep()">Indietro</v-btn>
           <v-spacer></v-spacer>
 
-          <v-btn v-if="index + 1 < articoloProperties.length" text color="primary" @click="nextStep()"
-            >Avanti {{ index + 1 }} / {{ articoloProperties.length }}</v-btn
+          <v-btn v-if="index + 1 + esisteStessoArticolo < articoloProperties.length + esisteStessoArticolo" text color="primary" @click="nextStep()"
+            >Avanti {{ index + 1 + esisteStessoArticolo }} / {{ articoloProperties.length + esisteStessoArticolo }}</v-btn
           >
 
           <v-btn v-else text color="primary" @click="onSalva()">Salva</v-btn>
@@ -50,17 +89,22 @@
 
 <script lang="ts">
 import { Vue, Component, namespace, State, Getter, Emit } from 'nuxt-property-decorator'
+import { RilievoRecord, RilievoUI } from '@/store/rilievoModule'
+
 import ListaArticoli from '../gestione_cataloghi/listaArticoli.vue'
 import { JSArticolo, PropertyValued, JSTableRow, ArticoloGeneraleConfigurato } from '@/store/articoloModel'
 import { v4 as uuidv4 } from 'uuid'
 
 @Component({ components: { ListaArticoli }, name: 'wizardSchede' })
 export default class WizardSchede extends Vue {
+  @State(state => state.rilievoModule.record) record!: RilievoRecord
   stepIndex = 0
   articoloProperties: PropertyValued[] = new Array<PropertyValued>()
   catalogoSelezionato!: any
   articoloSelezionato: JSArticolo = new JSArticolo()
   GPROD: any = window.GPROD
+  esisteStessoArticolo = 0
+  subDescrizione: string = ''
 
   getTableRows(tableName: string) {
     if (!tableName) {
@@ -154,6 +198,18 @@ export default class WizardSchede extends Vue {
       this.articoloSelezionato = articolo
       this.propertiesDatiGenerali()
     }
+    this.verificaEsistenzaStessoArticolo()
+  }
+
+  verificaEsistenzaStessoArticolo() {
+    // Cerca se esiste un altro articolo generale dello stesso tipo
+    if (!this.record.listaArticoliGen) return 0
+    const art = this.record.listaArticoliGen.find(a => a.codice == this.articoloSelezionato.JSCodice)
+    if (art) {
+      this.esisteStessoArticolo = 1
+    } else {
+      this.esisteStessoArticolo = 0
+    }
   }
 
   @Emit('onSave') onSalva() {
@@ -168,6 +224,7 @@ export default class WizardSchede extends Vue {
     articoloDG.codice = this.articoloSelezionato.JSCodice
     articoloDG.descrizione = this.articoloSelezionato.JSDescrizione
     articoloDG.listaPropValued = this.articoloProperties
+    articoloDG.subDescrizione = this.subDescrizione
 
     // Assegna l'articolo al rilievo
     this.$store.commit('rilievoModule/setArticoloDG', articoloDG)

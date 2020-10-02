@@ -82,6 +82,10 @@ var Module = {
 				// Public Shared Function GetGruppoAnteInGestione() As String
 				window.GPROD.GetGruppoAnteInGestione = Module.mono_bind_static_method(baseDLL + "GetGruppoAnteInGestione")
 
+				// Public Function getGruppoAntePrincID() As String
+				window.GPROD.getGruppoAntePrincID = Module.mono_bind_static_method(baseDLL + "getGruppoAntePrincID")
+
+
 
 				// let fn3 = Module.mono_bind_static_method("[ICT_GestoreSerramenti_STD] ICT_GestoreSerramenti_STD.GestorePWApp:getComandiImmagine")
 				// window.GPROD.getDrawingCommands = fn3;
