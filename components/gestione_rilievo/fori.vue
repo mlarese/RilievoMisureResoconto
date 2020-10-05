@@ -39,7 +39,7 @@
     </v-dialog>
 
     <v-dialog v-model="visualizzaWizardMisure" :fullscreen="$vuetify.breakpoint.xsOnly" max-width="400px">
-      <wizardMisure v-if="visualizzaWizardMisure" :articoloDaEditareID="articoloDaEditareID" />
+      <wizardMisure v-if="visualizzaWizardMisure" :articoloDaEditareID="articoloDaEditareID" @onExit="exitWizardMisure" />
     </v-dialog>
   </div>
 </template>
@@ -64,6 +64,9 @@ export default class RilievoFori extends Vue {
   apriWM(artID: string) {
     this.visualizzaWizardMisure = true
     this.articoloDaEditareID = artID
+  }
+  exitWizardMisure(){
+    this.visualizzaWizardMisure = false
   }
 
   aggiungiNuovaPosizione() {

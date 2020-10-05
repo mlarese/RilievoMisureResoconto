@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card v-if="!isLoading">
     <v-stepper v-model="stepIndex">
       <!-- elenco properties dell'articolo selezionato -->
       <!-- <v-stepper-content :step="index" v-for="(page, index) in listaPagine" :key="index">
@@ -127,19 +127,6 @@
           </div>
 
           <div v-else>
-            <v-row class="mx-2 py-2" v-if="prop.propName == '#SER.PR_H_DX'">
-              <v-text-field v-if="getDati('FORMA').propValue == 'TR'" dense v-model="prop.propValue" :label="prop.propLabel" hide-details></v-text-field>
-              <v-text-field
-                v-else
-                v-show="false"
-                readonly
-                dense
-                v-model="getDati('#SER.PR_H_SX').propValue"
-                :label="prop.propLabel"
-                hide-details
-              ></v-text-field>
-            </v-row>
-
             <v-row v-if="prop.propName == '#GRP_ANTE.PR_NUMERO_ANTE'" class="mx-2">
               <v-col cols="auto" class="pa-0 ma-0 pt-4">
                 Ante
@@ -152,6 +139,11 @@
                   <v-btn value="4">4</v-btn>
                 </v-btn-toggle>
               </v-col>
+            </v-row>
+
+            <v-row class="mx-2 py-2" v-else-if="prop.propName == '#SER.PR_H_DX'">
+              <v-text-field v-if="getDati('FORMA').propValue == 'TR'" dense v-model="prop.propValue" :label="prop.propLabel" hide-details></v-text-field>
+              <v-text-field v-else v-show="false" readonly dense v-model="getDati('#SER.PR_H_SX').propValue" label="h dx" hide-details></v-text-field>
             </v-row>
 
             <v-row v-else class="mx-2 py-2">
@@ -170,8 +162,11 @@
         </div>
       </v-stepper-content>
 
-      <v-btn @click="backStep">indietro</v-btn>
-      <v-btn @click="nextStep">avanti</v-btn>
+      <v-btn v-if="stepIndex == 0" @click="exitWizard">Annulla</v-btn>
+      <v-btn v-else @click="backStep">indietro</v-btn>
+
+      <v-btn v-if="listaPagine.length == stepIndex" @click="onSalva">Salva</v-btn>
+      <v-btn v-else  @click="nextStep">Avanti</v-btn>
     </v-stepper>
   </v-card>
 </template>
@@ -180,6 +175,7 @@
 <script lang="ts">
 import { Vue, Component, namespace, State, Getter, Prop } from 'nuxt-property-decorator'
 import ImmagineDet from '@/components/GestioneRilievo/ImmagineDet.vue'
+import { v4 as uuidv4 } from 'uuid'
 
 import { RilievoRecord, RilievoUI } from '@/store/rilievoModule'
 import { ArticoloGeneraleConfigurato, ArticoloSpecificoConfigurato, JSArticolo, PropertyValued, JSTableRow } from '@/store/articoloModel'
@@ -199,15 +195,33 @@ export default class RilievoFori extends Vue {
   listaPagine: string[] = new Array<string>()
   GPROD: any = window.GPROD
   drawingCommands: string = ''
+  isLoading: boolean = true
 
   nextStep() {
     this.stepIndex++
-    console.log(this.stepIndex)
   }
 
   backStep() {
     this.stepIndex--
-    console.log(this.stepIndex)
+  }
+
+  exitWizard() {
+    this.$emit('onExit')
+  }
+
+  onSalva() {
+    // Crea l'articolo generale
+    let articoloSpec = this.record.listaArticoliSpec.find(art => art._id == this.articoloDaEditareID) as ArticoloSpecificoConfigurato
+    articoloSpec.listaPropValued = this.articoloProperties
+    articoloSpec.drawingCommads = this.drawingCommands
+
+    // Salva il rilievo con le nuove impostazioni
+    this.$store.dispatch('rilievoModule/salva', undefined, { root: true })
+
+    // Sbianca lo stato di questo componente
+    // this.clearMe()
+
+    this.exitWizard()
   }
 
   getDrawingCommands() {
@@ -218,13 +232,37 @@ export default class RilievoFori extends Vue {
     // Istanzia il prodotto da modello
     this.GPROD.IstanziaNuovoProdottoDaJSModello(JSON.stringify(modello))
     // Imposta le property x ora fisse
+    console.log(this.GPROD.getGruppoAntePrincID())
+    let valore
+    let exp //getParametroDaScript
+    exp = this.articoloAnag.JSProperties.find(p => p.JSAPropName == '#SER.PR_TIPO')?.JSAAutoCalcExp
+    valore = this.getParametroDaScript(exp as string)
+    if (valore) this.GPROD.ApplicaMC_x_Modifica(`TIPO=${valore}`)
 
-    
-    for (const p of this.articoloProperties) {
-      if (p.propValue) {
-        this.GPROD.ApplicaMC_x_Modifica(`${p.propName.replace('#SER.PR_', '')}=${p.propValue}`)
-      }
-    }
+    exp = this.articoloAnag.JSProperties.find(p => p.JSAPropName == '#SER.PR_FORMA')?.JSAAutoCalcExp
+    valore = this.getParametroDaScript(exp as string)
+    if (valore) this.GPROD.ApplicaMC_x_Modifica(`FORMA=${valore}`)
+
+    valore = this.articoloProperties.find(p => p.propName == '#SER.PR_L')?.propValue
+    if (valore) this.GPROD.ApplicaMC_x_Modifica(`L=${valore}`)
+
+    valore = this.articoloProperties.find(p => p.propName == '#SER.PR_H_SX')?.propValue
+    if (valore) this.GPROD.ApplicaMC_x_Modifica(`H_SX=${valore}`)
+
+    valore = this.articoloProperties.find(p => p.propName == '#SER.PR_H_DX')?.propValue
+    if (valore) this.GPROD.ApplicaMC_x_Modifica(`H_DX=${valore}`)
+
+    valore = this.articoloProperties.find(p => p.propName == '#GRP_ANTE.PR_NUMERO_ANTE')?.propValue
+    if (valore) this.GPROD.ApplicaMC_x_Modifica(`${this.GPROD.getGruppoAntePrincID()}.NUMERO_ANTE=${valore}`)
+
+    valore = this.getParValue(this.articoloProperties.find(p => p.propName == '#GRP_ANTE.PR_SISTEMA_APERTURA') as PropertyValued, 'APERTURA_ANTE')
+    if (valore) this.GPROD.ApplicaMC_x_Modifica(`${this.GPROD.getGruppoAntePrincID()}.APERTURA_ANTE=${valore}`)
+
+    // for (const p of this.articoloProperties) {
+    //   if (p.propValue) {
+    //     this.GPROD.ApplicaMC_x_Modifica(`${p.propName.replace('#SER.PR_', '')}=${p.propValue}`)
+    //   }
+    // }
 
     let pim = this.GPROD.GetPIMSerialized()
     this.drawingCommands = JSON.parse(pim)
@@ -273,7 +311,7 @@ export default class RilievoFori extends Vue {
 
   getParametroDaScript(script: string) {
     // Toglie l'uguale
-    script = script.substring(1, script.length)
+    if (script.startsWith('=')) script = script.substring(1, script.length)
     let getDati = 'this.' + script.split(').')[0] + ')'
     let Parametro = 'this.' + script.split(').')[1]
 
@@ -309,14 +347,16 @@ export default class RilievoFori extends Vue {
 
     // Prende la tabella
     if (prop && prop.propTableName && prop.propValue && par) {
-      let value = this.GPROD.GetTableRow_ParValue(prop.propTableName, prop.propValue, par)
+      let tName = prop.propTableName
+      if (prop.propTableName.startsWith('=')) {
+        tName = this.getParametroDaScript(prop.propTableName) as string
+      }
+      let value = this.GPROD.GetTableRow_ParValue(tName, prop.propValue, par)
       return value
     } else {
       return undefined
     }
   }
-
-  onSalva() {}
 
   removeEmpty(obj: any) {
     Object.entries(obj).forEach(([key, val]) => (val && typeof val === 'object' && this.removeEmpty(val)) || ((val === null || val === '') && delete obj[key]))
@@ -324,6 +364,7 @@ export default class RilievoFori extends Vue {
   }
 
   async mounted() {
+    this.isLoading = true
     if (!this.articoloDaEditareID) return
 
     // Cerca l'articolo generico
@@ -378,6 +419,7 @@ export default class RilievoFori extends Vue {
       //   }
     }
     console.log(this.dictProperty)
+    this.isLoading = false
   }
 }
 </script>
