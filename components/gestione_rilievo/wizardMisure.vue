@@ -84,7 +84,7 @@
         </v-card>
       </v-stepper-content> -->
 
-      <v-stepper-content :step="index" v-for="(page, index) in listaPagine" :key="index">
+      <v-stepper-content :step="index" v-for="(page, index) in listaPagine" :key="index" :style="{ height: 'calc(100vh - 40px)' }">
         <div v-for="(prop, pi) in getProprietaDellaPagina(page)" :key="pi">
           <div v-if="prop.propTableName">
             <v-list>
@@ -147,7 +147,14 @@
             </v-row>
 
             <v-row v-else class="mx-2 py-2">
-              <v-text-field dense v-model="prop.propValue" :label="prop.propLabel" hide-details></v-text-field>
+              <v-text-field
+                dense
+                v-model="prop.propValue"
+                :label="prop.propLabel"
+                hide-details
+                append-icon="mdi-keyboard-outline"
+                @click:append="openKeyboard(prop.propName)"
+              ></v-text-field>
             </v-row>
           </div>
         </div>
@@ -166,8 +173,11 @@
       <v-btn v-else @click="backStep">indietro</v-btn>
 
       <v-btn v-if="listaPagine.length == stepIndex" @click="onSalva">Salva</v-btn>
-      <v-btn v-else  @click="nextStep">Avanti</v-btn>
+      <v-btn v-else @click="nextStep">Avanti</v-btn>
     </v-stepper>
+    <v-dialog v-model="keyboard" max-width="400px">
+      <keyPad />
+    </v-dialog>
   </v-card>
 </template>
 
@@ -175,13 +185,14 @@
 <script lang="ts">
 import { Vue, Component, namespace, State, Getter, Prop } from 'nuxt-property-decorator'
 import ImmagineDet from '@/components/GestioneRilievo/ImmagineDet.vue'
+import keyPad from '@/components/General/keyboard.vue'
 import { v4 as uuidv4 } from 'uuid'
 
 import { RilievoRecord, RilievoUI } from '@/store/rilievoModule'
 import { ArticoloGeneraleConfigurato, ArticoloSpecificoConfigurato, JSArticolo, PropertyValued, JSTableRow } from '@/store/articoloModel'
 import JSArtProp from '~/models/JSArtProp'
 
-@Component({ components: { ImmagineDet }, name: 'Misure' })
+@Component({ components: { ImmagineDet, keyPad }, name: 'Misure' })
 export default class RilievoFori extends Vue {
   stepIndex = 0
   @Prop({ type: String, default: '' }) readonly articoloDaEditareID!: string
@@ -196,6 +207,11 @@ export default class RilievoFori extends Vue {
   GPROD: any = window.GPROD
   drawingCommands: string = ''
   isLoading: boolean = true
+  keyboard: boolean = false
+
+  openKeyboard(propName: string) {
+      this.keyboard = true
+  }
 
   nextStep() {
     this.stepIndex++
@@ -213,7 +229,7 @@ export default class RilievoFori extends Vue {
     // Crea l'articolo generale
     let articoloSpec = this.record.listaArticoliSpec.find(art => art._id == this.articoloDaEditareID) as ArticoloSpecificoConfigurato
     articoloSpec.listaPropValued = this.articoloProperties
-    articoloSpec.drawingCommads = this.drawingCommands
+    articoloSpec.drawingCommands = this.drawingCommands
 
     // Salva il rilievo con le nuove impostazioni
     this.$store.dispatch('rilievoModule/salva', undefined, { root: true })

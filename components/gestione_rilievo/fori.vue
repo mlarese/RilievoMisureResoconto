@@ -10,16 +10,22 @@
         <!-- Visualizza l'elenco delle posizioni -->
         <v-card v-for="(pos, i) in posizioni" :key="i" class="mb-2">
           <v-toolbar color="teal" dark dense>
-            <v-toolbar-title>{{ pos.descrizione }}</v-toolbar-title>
+            <v-toolbar-title>{{ pos.posizione }} - {{ pos.descrizione }}</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-btn icon><v-icon>mdi-pencil</v-icon></v-btn>
           </v-toolbar>
+          <p v-if="getArticoliDellaPosizione(pos._id).length == 0" class="pa-2">Nessun articolo presente</p>
 
           <!-- PER OGNI POSIZIONE ELENCA GLI ARTICOLI -->
-          <v-list>
+          <v-list v-else>
             <v-list-item v-for="(art, i) in getArticoliDellaPosizione(pos._id)" :key="i">
+              <v-list-item-icon v-if="art.listaPropValued.length == 0">
+                <v-icon color="red">mdi-alert</v-icon>
+              </v-list-item-icon>
+
               <v-list-item-content>
-                <v-list-item-title>{{ i }}</v-list-item-title>
+                <v-list-item-title>{{ getArtGen(art.rifSchedaID).descrizione }}</v-list-item-title>
+                <v-list-item-subtitle>{{ getArtGen(art.rifSchedaID).subDescrizione }}</v-list-item-subtitle>
               </v-list-item-content>
 
               <v-list-item-icon>
@@ -65,7 +71,7 @@ export default class RilievoFori extends Vue {
     this.visualizzaWizardMisure = true
     this.articoloDaEditareID = artID
   }
-  exitWizardMisure(){
+  exitWizardMisure() {
     this.visualizzaWizardMisure = false
   }
 
@@ -81,11 +87,17 @@ export default class RilievoFori extends Vue {
     this.ui.visualizzaWizardPosizione = false
   }
 
+  getArtGen(artGenID: string) {
+    let a = this.record.listaArticoliGen.find(a => (a._id = artGenID))
+    return a
+  }
+
   getArticoliDellaPosizione(posID: string): ArticoloSpecificoConfigurato[] {
     if (!this.record.listaArticoliSpec) {
       return []
     }
-    return this.record.listaArticoliSpec.filter(art => art.rifPosID === posID)
+    let lista = this.record.listaArticoliSpec.filter(art => art.rifPosID === posID)
+    return lista
   }
 
   // mounted(){

@@ -24,7 +24,7 @@
         <span>E' necessario dare un nome differente </span>
         <v-text-field v-model="subDescrizione"></v-text-field>
         <v-card-actions>
-          <v-btn text color="gray" @click="exitWizard()">Annulla</v-btn>
+          <v-btn text color="gray" @click="backStep()">Indietro</v-btn>
           <v-spacer></v-spacer>
           <v-btn text color="primary" @click="nextStep()" :disabled="subDescrizione == ''">Avanti</v-btn>
         </v-card-actions>

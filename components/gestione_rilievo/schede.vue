@@ -19,7 +19,7 @@
             </v-expansion-panel-header>
             <v-expansion-panel-content class="pt-2">
               <div v-for="(prop, j) in artGen.listaPropValued" :key="j">
-                <p>{{ prop.propLabel }} : {{ prop.propValue }}</p>
+                <p>{{ prop.propLabel }} : {{ prop.propValue || prop.propValueDecode }}</p>
               </div>
 
               <v-card-actions class="pa-0">

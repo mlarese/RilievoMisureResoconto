@@ -36,7 +36,7 @@
         </v-card>
 
         <v-card-actions flat class="pa-0 ma-0">
-          <v-btn text outlined color="green" @click="exit">ANNULA</v-btn>
+          <v-btn text color="gray" @click="exit">ANNULA</v-btn>
           <v-spacer></v-spacer>
           <v-btn text outlined color="green" @click="nextStep" :disabled="posizioneSelezionata._id == ''">AVANTI<v-icon>mdi-chevron-right</v-icon></v-btn>
         </v-card-actions>
@@ -45,15 +45,15 @@
       <!-- Selezione articoli -->
       <v-stepper-content step="1">
         <v-card flat :style="{ height: 'calc(100vh - 80px)' }">
-          <v-card-title>Selezionare gli articoli per:</v-card-title>
-          <v-subheader>{{ posizioneSelezionata.descrizione }}</v-subheader>
+          <v-card-title>Seleziona gli articoli per:</v-card-title>
+          <v-subheader>{{ posizioneSelezionata.posizione }} - {{ posizioneSelezionata.descrizione }}</v-subheader>
           <v-card-text>
             <!-- Visualizza gli articoli delle schede -->
 
             <v-list two-line>
               <v-list-item-group v-model="articoliSelezionati" multiple color="primary">
-                <template v-for="artGen in listaArticoliGen">
-                  <v-list-item :key="artGen._id" :value="artGen">
+                <template v-for="(artGen, iag) in listaArticoliGen">
+                  <v-list-item :key="iag" :value="artGen">
                     <template v-slot:default="{ active }">
                       <v-list-item-content>
                         <v-list-item-title v-text="artGen.descrizione"></v-list-item-title>
@@ -81,7 +81,7 @@
         </v-card>
 
         <v-card-actions flat class="pa-0 ma-0">
-          <v-btn text outlined color="green" @click="backStep"><v-icon>mdi-chevron-left</v-icon>INDIETRO</v-btn>
+          <v-btn text color="gray" @click="backStep"><v-icon>mdi-chevron-left</v-icon>INDIETRO</v-btn>
           <v-spacer></v-spacer>
           <v-btn text outlined color="green" @click="nextStep" :disabled="articoliSelezionati.length == 0">AVANTI<v-icon>mdi-chevron-right</v-icon></v-btn>
         </v-card-actions>
@@ -119,12 +119,12 @@
               </v-list-item>
             </v-list>
           </v-card-text>
-          <v-card-actions flat class="pa-0 ma-0">
-            <v-btn text outlined color="green" @click="backStep"><v-icon>mdi-chevron-left</v-icon>INDIETRO</v-btn>
-            <v-spacer></v-spacer>
-            <v-btn text outlined color="green" @click="salvaPosizione">SALVA</v-btn>
-          </v-card-actions>
         </v-card>
+        <v-card-actions flat class="pa-0 ma-0">
+          <v-btn text color="gray" @click="backStep"><v-icon>mdi-chevron-left</v-icon>INDIETRO</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn text outlined color="green" @click="salvaPosizione">SALVA</v-btn>
+        </v-card-actions>
       </v-stepper-content>
     </v-stepper>
 
@@ -195,6 +195,8 @@ export default class RilievoFori extends Vue {
     }
 
     await this.$store.dispatch('rilievoModule/salva', undefined, { root: true })
+
+    this.exit()
   }
 
   get listaArticoliGen() {

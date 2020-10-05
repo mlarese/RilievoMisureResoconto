@@ -49,7 +49,7 @@ export class ArticoloSpecificoConfigurato {
     rifPosID: string | null = null
     rifSchedaID: string | null = null
     listaPropValued: Array<PropertyValued> = new Array<PropertyValued>()
-    drawingCommads : string = ''
+    drawingCommands : string = ''
 }
 
 
