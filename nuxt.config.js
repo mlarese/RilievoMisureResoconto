@@ -6,7 +6,7 @@ let routerBase = '/'
 // }
 
 export default {
-  mode: 'spa',
+  ssr: false,
   router: {
     mode: 'hash',
     base: routerBase,
@@ -94,7 +94,6 @@ export default {
    */
   buildModules: [
     // Doc: https://github.com/nuxt-community/eslint-module
-    '@nuxtjs/eslint-module',
     '@nuxtjs/vuetify',
     '@nuxtjs/dotenv',
     '@nuxt/typescript-build'

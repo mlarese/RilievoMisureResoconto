@@ -295,7 +295,7 @@ export default {
   },
   data() {
     return {
-      currentTab: null,
+      currentTab: "1",
       takenImage: null,
       isDialogErrorVisible: false,
       isPreviewVisible: false,

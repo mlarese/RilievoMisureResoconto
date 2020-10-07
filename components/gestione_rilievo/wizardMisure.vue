@@ -1,6 +1,6 @@
 <template>
-  <v-card v-if="!isLoading">
-    <v-stepper v-model="stepIndex">
+  <div>
+    <v-stepper v-model="stepIndex" v-if="!isLoading">
       <!-- elenco properties dell'articolo selezionato -->
       <!-- <v-stepper-content :step="index" v-for="(page, index) in listaPagine" :key="index">
         <v-card v-if="page == 'PWA.WIZSER_MISURE'">
@@ -84,15 +84,15 @@
         </v-card>
       </v-stepper-content> -->
 
-      <v-stepper-content :step="index" v-for="(page, index) in listaPagine" :key="index" :style="{ height: 'calc(100vh - 40px)' }">
+      <v-stepper-content :step="index" v-for="(page, index) in listaPagine" :key="index" :style="`height:${height}px`">
         <div v-for="(prop, pi) in getProprietaDellaPagina(page)" :key="pi">
           <div v-if="prop.propTableName">
             <v-list>
-              <v-list-item-subtitle v-text="prop.propLabel" />
+              <v-card-title>{{ prop.propLabel }}</v-card-title>
               <v-divider></v-divider>
               <v-list-item-group v-model="prop.propValue" color="primary">
                 <template v-for="(row, i) in getTableRows(prop.propTableName)">
-                  <v-list-item :key="i" :value="row.JSTabRowCodice">
+                  <v-list-item :key="i" :value="row.JSTabRowCodice" @click="prop.propValueDecode = row.JSTabRowDesc">
                     <template v-slot:default="{ active }">
                       <v-list-item-content style="width: 100%">
                         <v-list-item-title v-text="`${row.JSTabRowDesc}`"></v-list-item-title>
@@ -127,22 +127,27 @@
           </div>
 
           <div v-else>
-            <v-row v-if="prop.propName == '#GRP_ANTE.PR_NUMERO_ANTE'" class="mx-2">
-              <v-col cols="auto" class="pa-0 ma-0 pt-4">
-                Ante
-              </v-col>
-              <v-col cols="auto" class="pa-0 ma-0">
-                <v-btn-toggle v-model="prop.propValue" tile group color="primary">
-                  <v-btn value="1">1</v-btn>
-                  <v-btn value="2">2</v-btn>
-                  <v-btn value="3">3</v-btn>
-                  <v-btn value="4">4</v-btn>
-                </v-btn-toggle>
-              </v-col>
-            </v-row>
+            <div v-if="prop.propName == '#GRP_ANTE.PR_NUMERO_ANTE'" class="mx-2">
+                <v-card-title>Numero ante</v-card-title>
+              <v-divider></v-divider>
+              <v-btn-toggle v-model="prop.propValue" tile group color="primary">
+                <v-btn value="1">1</v-btn>
+                <v-btn value="2">2</v-btn>
+                <v-btn value="3">3</v-btn>
+                <v-btn value="4">4</v-btn>
+              </v-btn-toggle>
+            </div>
 
             <v-row class="mx-2 py-2" v-else-if="prop.propName == '#SER.PR_H_DX'">
-              <v-text-field v-if="getDati('FORMA').propValue == 'TR'" dense v-model="prop.propValue" :label="prop.propLabel" hide-details></v-text-field>
+              <v-text-field
+                v-if="getDati('FORMA').propValue == 'TR'"
+                dense
+                v-model="prop.propValue"
+                :label="prop.propLabel"
+                hide-details
+                append-icon="mdi-keyboard-outline"
+                @click:append="openKeyboard(prop.propName)"
+              ></v-text-field>
               <v-text-field v-else v-show="false" readonly dense v-model="getDati('#SER.PR_H_SX').propValue" label="h dx" hide-details></v-text-field>
             </v-row>
 
@@ -158,27 +163,30 @@
             </v-row>
           </div>
         </div>
+
+        <v-footer absolute>
+          <v-btn text color="gray" v-if="stepIndex == 0" @click="exitWizard">Annulla</v-btn>
+          <v-btn text color="gray" v-else @click="backStep"><v-icon>mdi-chevron-left</v-icon>indietro</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn text color="primary" @click="nextStep">Avanti</v-btn>
+        </v-footer>
       </v-stepper-content>
 
       <v-stepper-content :step="listaPagine.length">
         <!-- VISUALIZZA IMMAGINE -->
-        <v-btn @click="getDrawingCommands">genera img</v-btn>
-        <div>
-          <!-- <v-img :src="imgBase64" width="600" height="600" /> -->
-          <ImmagineDet :drawingCommands="drawingCommands" :imgWidth="200" :imgHeight="200"></ImmagineDet>
-        </div>
+        <ImmagineDet :drawingCommands="drawingCommands" :imgWidth="300" :imgHeight="getHeight - 50"></ImmagineDet>
+
+        <v-footer absolute>
+          <v-btn text color="gray" @click="backStep"><v-icon>mdi-chevron-left</v-icon>indietro</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn text outlined color="green" @click="onSalva">Salva</v-btn>
+        </v-footer>
       </v-stepper-content>
-
-      <v-btn v-if="stepIndex == 0" @click="exitWizard">Annulla</v-btn>
-      <v-btn v-else @click="backStep">indietro</v-btn>
-
-      <v-btn v-if="listaPagine.length == stepIndex" @click="onSalva">Salva</v-btn>
-      <v-btn v-else @click="nextStep">Avanti</v-btn>
     </v-stepper>
     <v-dialog v-model="keyboard" max-width="400px">
-      <keyPad />
+      <keyPad v-if="keyboard" @onSave="keyboardSave" @onAbort="keyboardAbort" />
     </v-dialog>
-  </v-card>
+  </div>
 </template>
 
 
@@ -195,9 +203,11 @@ import JSArtProp from '~/models/JSArtProp'
 @Component({ components: { ImmagineDet, keyPad }, name: 'Misure' })
 export default class RilievoFori extends Vue {
   stepIndex = 0
-  @Prop({ type: String, default: '' }) readonly articoloDaEditareID!: string
   @State(state => state.rilievoModule.record) record!: RilievoRecord
   @State(state => state.rilievoModule.ui) ui!: RilievoUI
+
+  @Prop({ type: String, default: '' }) readonly articoloDaEditareID!: string
+  @Prop({ type: Number, default: 600 }) height!: Number
 
   articoloProperties: PropertyValued[] = new Array<PropertyValued>()
   articoloGenerico!: ArticoloGeneraleConfigurato
@@ -209,11 +219,29 @@ export default class RilievoFori extends Vue {
   isLoading: boolean = true
   keyboard: boolean = false
 
+  propName_x_Keyboard: string = ''
+
   openKeyboard(propName: string) {
-      this.keyboard = true
+    this.propName_x_Keyboard = propName
+    this.keyboard = true
+  }
+
+  keyboardSave(valore: string) {
+    let p = this.articoloProperties.find(p => p.propName == this.propName_x_Keyboard) as PropertyValued
+    p.propValue = valore
+
+    this.keyboardAbort()
+  }
+
+  keyboardAbort() {
+    this.propName_x_Keyboard = ''
+    this.keyboard = false
   }
 
   nextStep() {
+    if (this.stepIndex == this.listaPagine.length - 1) {
+      this.getDrawingCommands()
+    }
     this.stepIndex++
   }
 
@@ -302,27 +330,35 @@ export default class RilievoFori extends Vue {
       return []
     }
 
+    let nomeTabella: string | undefined = tableName
+
     if (tableName.startsWith('=')) {
       // Valuta lo script
       // =getDati("SERIE").Parametro("V_TELAI")
 
-      let nomeTabellaDaParametro = this.getParametroDaScript(tableName)
+      nomeTabella = this.getParametroDaScript(tableName)
+    }
 
-      if (nomeTabellaDaParametro) {
-        const tab = JSON.parse(this.GPROD.GetTableSerialized(nomeTabellaDaParametro))
-        return tab.JSTableRows
-      } else {
-        return []
+    if (nomeTabella) {
+      const tab = JSON.parse(this.GPROD.GetTableSerialized(nomeTabella))
+
+      if (tab) {
+        if (nomeTabella.includes('APERTURA')) {
+          // filtra le rows
+          return this.filtraTableRows_x_Aperture(tab.JSTableRows)
+        } else {
+          return tab.JSTableRows
+        }
       }
     } else {
-      const tab = JSON.parse(this.GPROD.GetTableSerialized(tableName))
-      return tab.JSTableRows
+      return []
     }
+  }
 
-    const tab = JSON.parse(this.GPROD.GetTableSerialized(tableName))
-    if (tab) {
-      return tab.JSTableRows
-    }
+  filtraTableRows_x_Aperture(rows: JSTableRow[]) {
+    let ante = this.articoloProperties.find(p => p.propName == '#GRP_ANTE.PR_NUMERO_ANTE')?.propValue as string
+
+    return rows.filter(r => r.JSTabRowCodice.startsWith(ante))
   }
 
   getParametroDaScript(script: string) {
@@ -436,6 +472,15 @@ export default class RilievoFori extends Vue {
     }
     console.log(this.dictProperty)
     this.isLoading = false
+  }
+
+  get getHeight() {
+    let offset = -10
+    if (this.$vuetify.breakpoint.xsOnly) {
+      return this.$vuetify.breakpoint.height - 36 //+ offset
+    } else {
+      return 600 //+ offset
+    }
   }
 }
 </script>

@@ -46,7 +46,7 @@
         <v-list :style="{ height: 'calc(100vh - 150px)', 'overflow-y': 'auto' }">
           <v-list-item-group v-model="prop.propValue" color="primary">
             <template v-for="(row, i) in getTableRows(prop.propTableName)">
-              <v-list-item :key="i" :value="row.JSTabRowCodice">
+              <v-list-item :key="i" :value="row.JSTabRowCodice" @click="prop.propValueDecode = row.JSTabRowDesc">
                 <template v-slot:default="{ active }">
                   <v-list-item-content style="width: 100%">
                     <v-list-item-title v-text="`${row.JSTabRowDesc}`"></v-list-item-title>
@@ -221,6 +221,7 @@ export default class WizardSchede extends Vue {
     articoloDG._id = uuidv4()
     articoloDG.azienda = this.catalogoSelezionato.JSAzienda.JSUID
     articoloDG.catalogo = this.articoloSelezionato.catalogoCodice
+    articoloDG.artClass = this.articoloSelezionato.JSArticleClass
     articoloDG.codice = this.articoloSelezionato.JSCodice
     articoloDG.descrizione = this.articoloSelezionato.JSDescrizione
     articoloDG.listaPropValued = this.articoloProperties

@@ -1,6 +1,6 @@
 <template>
-  <v-card style="height: 100%;">
-    <v-card-text :style="{ height: 'calc(100% - 36px)' }">
+  <v-card flat :style="`height:${getHeight}px`">
+    <v-card-text :style="{ height: 'calc(100% - 36px)', overflow: 'auto' }">
       <!-- Aggiungere nuova scheda dati generali -->
       <!-- <v-btn rounded color="primary" dark small @click="aggiungiArticoloClick" class="ma-2"> aggiungi articolo <v-icon>mdi-plus</v-icon> </v-btn> -->
 
@@ -36,7 +36,7 @@
         <v-row align="center" justify="center">
           <v-col>
             <v-alert border="left" dense elevation="3" text color="primary">
-              Non sono ancora presenti schede. <br /> 
+              Non sono ancora presenti schede. <br />
               Usa il pulsante qui in basso per aggiungerne
             </v-alert>
           </v-col>
@@ -45,9 +45,9 @@
     </v-card-text>
     <v-card-actions class="py-0 d-flex justify-center">
       <v-btn width="50%" text outlined color="indigo" @click="aggiungiArticoloClick"><v-icon>mdi-plus</v-icon> AGGIUNGI SCHEDA</v-btn>
-      <v-btn width="50%" text outlined color="indigo" @click="apriWizardRilievo"
-        v-if="record.listaArticoliGen && record.listaArticoliGen.length > 0"
-      ><v-icon>mdi-tape-measure</v-icon>INIZIA RILIEVO</v-btn>
+      <v-btn width="50%" text outlined color="indigo" @click="apriWizardRilievo" v-if="record.listaArticoliGen && record.listaArticoliGen.length > 0"
+        ><v-icon>mdi-tape-measure</v-icon>INIZIA RILIEVO</v-btn
+      >
     </v-card-actions>
   </v-card>
 </template>
@@ -68,6 +68,15 @@ export default class RilievoSchede extends Vue {
 
   apriWizardRilievo() {
     this.ui.visualizzaWizardRilievo = true
+  }
+
+  get getHeight() {
+    let offset = -10
+    if (this.$vuetify.breakpoint.xsOnly) {
+      return this.$vuetify.breakpoint.height - 120 //+ offset
+    } else {
+      return this.$vuetify.breakpoint.height - 300 //+ offset
+    }
   }
 
   editArtGen(id: string) {}

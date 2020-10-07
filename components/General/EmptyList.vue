@@ -1,4 +1,5 @@
 <template>
+<v-container class="fill-height">
     <v-row align="center" >
       <v-col cols="12" sm="8">
         <v-img
@@ -8,10 +9,11 @@
           class="mb-5"
         ></v-img>
 
-        <p class="title">{{ title }}</p>
-        <p class="caption font-weight-light" style="margin-top: -20px;">{{ subtitle }}</p>
+        <p class="title text-center">{{ title }}</p>
+        <p class="caption font-weight-light text-center" style="margin-top: -20px;">{{ subtitle }}</p>
       </v-col>
     </v-row>
+</v-container>
 </template>
 
 <script>

@@ -1,7 +1,7 @@
 <template>
   <div style="height: 100%;">
-    <v-card style="height: 100%;">
-      <v-card-text :style="{ height: 'calc(100% - 36px)' }">
+    <v-card flat :style="`height:${getHeight}px`">
+      <v-card-text :style="{ height: 'calc(100% - 36px)', 'overflow-y': 'auto' }">
         <!-- <v-btn rounded color="primary" dark small @click="aggiungiNuovaPosizione()" class="ma-2">
           posizione
           <v-icon>mdi-plus</v-icon>
@@ -88,8 +88,13 @@ export default class RilievoFori extends Vue {
   }
 
   getArtGen(artGenID: string) {
-    let a = this.record.listaArticoliGen.find(a => (a._id = artGenID))
-    return a
+    // let a = this.record.listaArticoliGen.find(a => (a._id = artGenID))
+    // return a
+    for (const art of this.record.listaArticoliGen){
+      if (art._id == artGenID){
+        return art
+      }
+    }
   }
 
   getArticoliDellaPosizione(posID: string): ArticoloSpecificoConfigurato[] {
@@ -100,8 +105,13 @@ export default class RilievoFori extends Vue {
     return lista
   }
 
-  // mounted(){
-  //   this.$store.dispatch('posizioneModule/loadPosizioni', this.record.lavoroID, {root: true})
-  // }
+  get getHeight() {
+    let offset = -10
+    if (this.$vuetify.breakpoint.xsOnly) {
+      return this.$vuetify.breakpoint.height - 120 //+ offset
+    } else {
+      return this.$vuetify.breakpoint.height - 300 //+ offset
+    }
+  }
 }
 </script>

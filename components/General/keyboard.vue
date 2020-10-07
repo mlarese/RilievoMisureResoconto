@@ -52,8 +52,16 @@ export default class RilievoFori extends Vue {
     this.valore = ''
   }
 
-  SalvaEChiudi() {}
+  SalvaEChiudi() {
+    this.$emit("onSave", this.valore)
+  }
 
-  annulla() {}
+  annulla() {
+    this.$emit("onAbort")
+  }
+
+  mounted(){
+    this.valore = ''
+  }
 }
 </script>

@@ -52,6 +52,7 @@ export const actions: ActionTree<RootState, RootState> = {
         console.log(id)
         const rec = await dispatch('db/selectById', { table: state.ui.table, id }, { root: true })
         commit('setRecord', rec)
+        commit('clearUI')
     },
 
     reload: async ({ commit, dispatch, state }) => {

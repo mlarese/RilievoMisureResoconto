@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+      "importsNotUsedAsValues": "preserve",
       "experimentalDecorators": true,
       "target": "es2018",
       "module": "esnext",
@@ -25,7 +26,12 @@
       },
       "types": [
         "@types/node",
-        "@nuxt/types"
+        "@nuxt/types",
+        "vuetify"
+      ],
+      "typeRoots": [
+        "./node_modules/@types",
+        "./node_modules/vuetify/types"
       ]
     },
     "exclude": [

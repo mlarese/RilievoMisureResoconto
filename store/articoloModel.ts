@@ -38,6 +38,7 @@ export class ArticoloGeneraleConfigurato {
     _id: string | null = null
     azienda: string = ''
     catalogo: string = ''
+    artClass = ''
     codice: string = ''
     descrizione: string = ''
     subDescrizione: string = ''
