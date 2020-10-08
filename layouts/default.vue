@@ -36,6 +36,12 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
+
+      <template v-slot:append>
+        <div class="pa-2">
+          <p class="text-center">4Innovation srl &copy; V3.0.2</p>
+        </div>
+      </template>
     </v-navigation-drawer>
 
     <v-app-bar app clipped-left color="grey lighten-4" class="elevation-5 pl-1 mb-3">

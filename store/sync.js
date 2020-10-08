@@ -5,8 +5,8 @@ const emptyFn = function () { }
 const root = { root: true }
 export const state = () => {
   return {
-    synchronized: false, // la app sta sincronizzando i dati
-    ui: {syncLog: ''},
+    synchronizing: false, // la app sta sincronizzando i dati
+    ui: {syncLog: '', progrex: 0, message: ''},
     listaOggettiLocali: [],
     listaRisorseLocali: []
   }
@@ -35,6 +35,8 @@ export const actions = {
     try {
       commit('setSynchronizing', true)
       commit('newLog', 'Inizio sincronizzazione')
+      commit('setMessage', 'Inizio sincronizzazione')
+      commit('resetProgrex')
 
       commit('logMe', 'Carica le risorse locali')
       const risorseLocali = await dispatch('dm_resources/load', {}, root)
@@ -84,27 +86,37 @@ export const actions = {
         listaDaInviare.push(objToSend)
       })
       
+      commit('setMessage', 'Upload dati')
       commit('logMe', `Inizio Upload al ws degli oggetti locali`)
       const url = '/api/sincronizza/uploadAllHeaders'
       const apiResponse = await dispatch('api/post', { url, data: listaDaInviare }, root)
       commit('logMe', `Invio terminato`)
 
-      // Nessun dato da aggiornare
       if (apiResponse.data) {
         // Il ws ci risponderà con un elenco di oggetti che vanno ulteriormente sincronizzati
         commit('logMe', `Ricevuti ${apiResponse.data.length} oggetti da sincronizzare`)
-
+        commit('setMessage', 'Download dati')
+        
+        let increment = 100 / apiResponse.data.length
         for (var obj of apiResponse.data) {
           commit('logMe', `Inizio azione ${obj.action} di ${obj.tipo} - ${obj._id}`)
           // Ottiene la tabella del DB in funzione del tipo oggetto
           let table = dbList[obj.tipo]
           await dispatch(obj.action, { table, data: obj })
-        }
 
+          commit('setProgrex', increment)
+        }
+        
       } else {
+        // Nessun dato da aggiornare
         commit('logMe', `Nessun dato da sincronizzare`)
       }
+      
+      let ora = new Date()
+      let ore = ora.getHours()
+      let minuti = ora.getMinutes()
 
+      commit('setMessage', `OK! Completata alle ${ore}:${minuti} `)
       commit('logMe', `Sincronizzazione completata!`)
 
     } catch (err) {
@@ -268,7 +280,7 @@ export const mutations = {
     s.listaOggettiLocali = p
   },
   newLog(s, p) {
-    s.ui.syncLog = 'Versione app: 3.0.1'
+    s.ui.syncLog = 'Versione app: 3.0.2'
     s.ui.syncLog = p
   },
   logMe(s, p) {
@@ -276,6 +288,15 @@ export const mutations = {
       s.ui.syncLog = ''
     }
     s.ui.syncLog = s.ui.syncLog.concat('\r\n', p)
+  },
+  setMessage(s, p){
+    s.ui.message = p
+  },  
+  setProgrex(s, p){
+    s.ui.progrex += p
+  },
+  resetProgrex(s){
+    s.ui.progrex = 0
   },
   setDbStatus(s, p) {
     s.dbStatus = p
@@ -285,9 +306,6 @@ export const mutations = {
   },
   setStatusUpdated(s, p) {
     s.statusUpdated = p
-  },
-  setSynchronized(s, p) {
-    s.synchronized = p
   },
   setSynchronizing(s, p) {
     s.synchronizing = p
