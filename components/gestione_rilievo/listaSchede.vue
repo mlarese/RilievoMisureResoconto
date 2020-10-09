@@ -6,7 +6,10 @@
           <v-expansion-panel-header>
             <v-row class="py-0" no-gutters>
               <v-col cols="12" class="py-0">
-                <v-input :hint="artGen.subDescrizione" dense persistent-hint :hide-details="artGen.subDescrizione == ''">
+                <v-input v-if="(artGen.subDescrizione)" :hint="artGen.descrizione" dense persistent-hint>
+                  {{ artGen.subDescrizione }}
+                </v-input>
+                <v-input v-else dense persistent-hint>
                   {{ artGen.descrizione }}
                 </v-input>
               </v-col>
@@ -14,7 +17,7 @@
           </v-expansion-panel-header>
           <v-expansion-panel-content class="pt-2">
             <div v-for="(prop, j) in artGen.listaPropValued" :key="j">
-              <p>{{ prop.propLabel }} : {{ prop.propValue || prop.propValueDecode }}</p>
+              <p>{{ prop.propLabel }} : {{ prop.propValueDecode }}</p>
             </div>
 
             <v-card-actions class="pa-0">

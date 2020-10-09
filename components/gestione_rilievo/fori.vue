@@ -36,9 +36,11 @@
           </v-list>
         </v-card>
       </v-card-text>
-      <v-card-actions class="py-0 d-flex justify-center">
+      <v-btn absolute rounded dark bottom right color="primary" @click="aggiungiNuovaPosizione"> AGGIUNGI POSIZIONE <v-icon>mdi-plus</v-icon> </v-btn>
+
+      <!-- <v-card-actions class="py-0 d-flex justify-center">
         <v-btn text outlined color="indigo" @click="aggiungiNuovaPosizione()"><v-icon>mdi-plus</v-icon>AGGIUNGI POSIZIONE</v-btn>
-      </v-card-actions>
+      </v-card-actions> -->
     </v-card>
 
     <v-dialog v-model="ui.visualizzaWizardPosizione" max-width="400px">

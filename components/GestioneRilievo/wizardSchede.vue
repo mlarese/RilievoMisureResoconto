@@ -47,7 +47,7 @@
             <v-list :style="{ height: height - 150 + 'px', 'overflow-y': 'auto' }">
               <v-list-item-group v-model="prop.propValue" color="primary">
                 <template v-for="(row, i) in getTableRows(prop.propTableName)">
-                  <v-list-item :key="i" :value="row.JSTabRowCodice" @click="prop.propValueDecode = row.JSTabRowDesc">
+                  <v-list-item :key="i" :value="`${row.JSTabRowCodice}#_#${row.JSTabRowDesc}`">
                     <template v-slot:default="{ active }">
                       <v-list-item-content style="width: 100%">
                         <v-list-item-title v-text="`${row.JSTabRowDesc}`"></v-list-item-title>
@@ -173,12 +173,21 @@ export default class WizardSchede extends Vue {
 
     // Prende la tabella
     if (prop && prop.propTableName && prop.propValue && par) {
-      let value = this.GPROD.GetTableRow_ParValue(prop.propTableName, prop.propValue, par)
+      let value = this.GPROD.GetTableRow_ParValue(prop.propTableName, this.getPropValue(prop), par)
       return value
     } else {
       return undefined
     }
   }
+
+  getPropValue(prop: PropertyValued): string{
+    if (prop.propValue?.indexOf('#_#') > 0 ){
+      return prop.propValue.split('#_#')[0]
+    }else{
+      return prop.propValue
+    }
+  }
+
 
   propertiesDatiGenerali(): PropertyValued[] {
     if (this.articoloSelezionato) {
@@ -240,7 +249,17 @@ export default class WizardSchede extends Vue {
     articoloDG.artClass = this.articoloSelezionato.JSArticleClass
     articoloDG.codice = this.articoloSelezionato.JSCodice
     articoloDG.descrizione = this.articoloSelezionato.JSDescrizione
-    articoloDG.listaPropValued = this.articoloProperties
+    articoloDG.listaPropValued = new Array<PropertyValued>()
+    for (const p of this.articoloProperties) {
+      let valore = p.propValue
+      if (valore) {
+        if (valore.indexOf('#_#') > 0) {
+          p.propValue = valore.split('#_#')[0]
+          p.propValueDecode = valore.split('#_#')[1]
+        }
+      }
+      articoloDG.listaPropValued.push(p)
+    }
     articoloDG.subDescrizione = this.subDescrizione
 
     // Assegna l'articolo al rilievo
@@ -272,108 +291,8 @@ export default class WizardSchede extends Vue {
     this.stepIndex = this.stepIndex - 1
   }
 
-  goToStep(n: number) {
-    this.stepIndex = n
-  }
-
   mounted() {
     this.$store.dispatch('articoli/load', null, { root: true })
   }
 }
 </script>
-<!--
-<script>
-import { mapState, mapActions, mapMutations, mapGetters } from 'vuex'
-import ListaArticoli from '../gestione_cataloghi/listaArticoli'
-import Vue from 'vue'
-
-export default Vue.extend({
-  data() {
-    return {
-      articoloProperties: [],
-      articolo: {}
-    }
-  },
-  components: {
-    ListaArticoli
-  },
-
-  methods: {
-    ...mapActions('cataloghi', { getCatalogoByID: 'getById' }),
-    ...mapActions('articoli', { loadArticoli: 'load' }),
-    async onArticoloSelezionato(articolo) {
-      this.articolo = articolo
-
-      // una volta selezionato l'articolo possiamo caricare le properties
-      let listaVera = []
-      listaVera = articolo.JSProperties
-
-      let catalogo = await this.getCatalogoByID(articolo.catalogoCodice)
-      window.GPROD.SetTables(JSON.stringify(catalogo.data.JSTables))
-
-      this.articoloProperties = []
-
-      for (let realProp of listaVera) {
-        // JSADataType
-        let tmpProp = {
-          Descrizione: realProp.JSAPropLabel,
-          PropValue: '',
-          PropAltro: '',
-          PropName: realProp.JSAPropName
-        }
-
-        if (realProp.JSAPropTables) {
-          tmpProp.hasTableData = true
-          let myTable = JSON.parse(window.GPROD.GetTableSerialized(realProp.JSAPropTables))
-          tmpProp.Rows = myTable.JSTableRows
-        } else {
-          tmpProp.hasTableData = false
-        }
-
-        this.articoloProperties.push(tmpProp)
-      }
-    },
-
-    salva() {
-      console.dir(this.articoloProperties)
-
-      // SOLO PER DEMO
-      // Genera la lista delle proprieta
-      let listaPropResult = []
-      for (const prop of this.articoloProperties) {
-        let tmpProp = {
-          Label: prop.Descrizione,
-          Code: prop.PropName
-        }
-
-        if (prop.PropValue === 'altro') {
-          tmpProp.Value = prop.PropAltro
-        } else {
-          tmpProp.Value = this.decodeProp(prop.Rows, prop.PropValue)
-        }
-
-        listaPropResult.push(tmpProp)
-      }
-
-      let articoloResult = {
-        listaProp: listaPropResult,
-        codiceArticolo: this.articolo.JSCodice,
-        descrizioneArticolo: this.articolo.JSDescrizione
-      }
-
-      this.$emit('onSave', articoloResult)
-    },
-
-    decodeProp(rows, codiceProp) {
-      return rows.find(r => r.JSTabRowCodice).JSTabRowDesc
-    }
-  },
-  mounted() {
-    let filtro = {
-      soloGenerali: false
-    }
-    this.loadArticoli(filtro)
-  }
-})
-</script>
- -->

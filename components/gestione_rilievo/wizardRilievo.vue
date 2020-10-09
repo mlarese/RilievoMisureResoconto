@@ -4,8 +4,8 @@
       <!-- sezione SCHEDE -->
       <v-stepper-content step="-2" class="pa-0">
         <v-card :height="height">
-          <v-card-title> Articoli del rilievo </v-card-title>
-          <v-card-subtitle>In questa sezione sono presenti tutti gli articoli che </v-card-subtitle>
+          <v-card-title> Schede del rilievo </v-card-title>
+          <v-card-subtitle>In questa pagina sono presenti tutte le schede dei dati generali degli articoli </v-card-subtitle>
           <v-card-text class="pt-1" :style="{ height: height - 112 + 'px', 'overflow-y': 'auto' }">
             <listaSchede />
           </v-card-text>

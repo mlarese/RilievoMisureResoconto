@@ -17,8 +17,8 @@
     </v-input>
 
     <v-card-actions class="py-0 d-flex justify-center">
-      <v-btn text outlined color="indigo" @click="apriWizardRilievo">
-          <v-icon>mdi-tape-measure</v-icon>INIZIA RILIEVO</v-btn>
+      <v-btn x-large dark outlined color="green" @click="apriWizardRilievo">
+          <v-icon class="pr-2">mdi-tape-measure</v-icon>INIZIA RILIEVO</v-btn>
     </v-card-actions>
   </v-container>
 </template>

@@ -3,15 +3,9 @@
     <v-card-text :style="{ height: 'calc(100% - 36px)', overflow: 'auto' }">
       <listaSchede />
     </v-card-text>
-    <v-card-actions class="py-0 d-flex justify-center">
-      <v-btn width="50%" text outlined color="indigo" @click="aggiungiArticoloClick"><v-icon>mdi-plus</v-icon> AGGIUNGI SCHEDA</v-btn>
-      <v-btn width="50%" text outlined color="indigo" @click="apriWizardRilievo" v-if="record.listaArticoliGen && record.listaArticoliGen.length > 0"
-        ><v-icon>mdi-tape-measure</v-icon>INIZIA RILIEVO</v-btn
-      >
-    </v-card-actions>
+    <v-btn absolute rounded dark bottom right color="primary" @click="aggiungiArticoloClick"> AGGIUNGI SCHEDA <v-icon>mdi-plus</v-icon> </v-btn>
   </v-card>
 </template>
-
 
 <script lang="ts">
 import { Vue, Component, namespace, State, Getter } from 'nuxt-property-decorator'
@@ -26,10 +20,6 @@ export default class RilievoSchede extends Vue {
 
   aggiungiArticoloClick() {
     this.ui.visualizzaWizardSchede = true
-  }
-
-  apriWizardRilievo() {
-    this.ui.visualizzaWizardRilievo = true
   }
 
   get getHeight() {
