@@ -14,24 +14,19 @@
         </v-list-item-group>
       </v-list>
 
-      <v-container class="fill-height" v-if="listRilievi == null || listRilievi.length == 0">
-        <v-row align="center">
-          <v-col cols="12" sm="8" class="mx-auto">
-            <v-img :src="require('../../assets/images/rilievo-empty-list.png')" aspect-ratio="5" contain class="mb-5"></v-img>
-
-            <p class="title text-center">Nessun rilievo</p>
-            <p class="caption font-weight-light text-center" style="margin-top: -20px;">
-              Inizia cliccando sul pulsante qui in basso
-            </p>
-          </v-col>
-        </v-row>
+      <v-container class="fill-height d-flex flex-column align-center justify-center" v-if="listRilievi == null || listRilievi.length == 0">
+        <v-img :src="require('../../assets/images/rilievo-empty-list.png')" contain max-width="50%" max-height="50%"></v-img>
+        <p class="title text-center">Nussun rilievo presente</p>
+        <p class="caption font-weight-light text-center" style="margin-top: -20px;">
+          Inizia cliccando sul pulsante qui in basso
+        </p>
       </v-container>
 
       <v-btn absolute rounded dark bottom right color="primary" @click="creaNuovoRilievo"> Crea rilievo <v-icon>mdi-plus</v-icon> </v-btn>
     </v-container>
 
     <v-dialog :value="showNewRilievo" persistent max-width="400px">
-     <EditForm @onAbort="annullaModifiche" @onSave="salvaModifiche" :rilievo="rilievo" />
+      <EditForm @onAbort="annullaModifiche" @onSave="salvaModifiche" :rilievo="rilievo" />
     </v-dialog>
   </div>
 </template>

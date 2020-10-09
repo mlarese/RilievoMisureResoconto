@@ -32,15 +32,12 @@
         </v-expansion-panels>
       </div>
 
-      <v-container v-else fill-height fluid>
-        <v-row align="center" justify="center">
-          <v-col>
-            <v-alert border="left" dense elevation="3" text color="primary">
-              Non sono ancora presenti schede. <br />
-              Usa il pulsante qui in basso per aggiungerne
-            </v-alert>
-          </v-col>
-        </v-row>
+      <v-container v-else class="fill-height d-flex flex-column align-center justify-center">
+        <v-img :src="require('../../assets/images/schede-empty-list.png')" contain max-width="50%" max-height="50%"></v-img>
+        <p class="title text-center">Non sono state aggiunte chede</p>
+        <p class="caption font-weight-light text-center" style="margin-top: -20px;">
+          Usa il pulsante qui in basso per aggiungerne
+        </p>
       </v-container>
     </v-card-text>
     <v-card-actions class="py-0 d-flex justify-center">

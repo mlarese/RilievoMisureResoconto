@@ -32,11 +32,22 @@
     </v-row>
 
  <GalleryBox />
+
+ <v-dialog
+      v-if="isBrowserLoadImagesVisible"
+      :value="isBrowserLoadImagesVisible"
+      persistent
+      :fullscreen="$vuetify.breakpoint.xsOnly"
+      max-width="800px"
+    >
+      <BrowserLoadImages />
+    </v-dialog>
   </div>
 </template>
 
 <script>
 import GalleryBox from '../Risorse/GalleryBox'
+import BrowserLoadImages from '~/components/AppuntiMultimediali/BrowserLoadImages'
 import BrowserCompleteInput from '~/components/AppuntiMultimediali/BrowserCompleteInput'
 import BrowserSearch from '~/components/AppuntiMultimediali/BrowserSearch'
 import BrowserInput from '~/components/AppuntiMultimediali/BrowserInput'
@@ -46,12 +57,8 @@ import { appuntimm } from './browsermx'
   export default {
     mixins: [appuntimm],
     props: ['job'],
-    components: {BrowserSearch, BrowserInput, BrowserView, BrowserCompleteInput, GalleryBox},
+    components: {BrowserSearch, BrowserInput, BrowserView, BrowserCompleteInput, GalleryBox, BrowserLoadImages},
     mounted () {
-      // this.$nextTick(() => {
-      //   this.$vuetify.goTo('#end-appunti-browser-view', {offset: -1000})
-      // })
-      // this.$refs.BrowserView.scrollDown()
     },
     created() {
       this.setLavoroCorrente(this.job)

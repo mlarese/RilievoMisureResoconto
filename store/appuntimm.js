@@ -112,6 +112,7 @@ export const actions = {
       data: {
         EV_Type: 'Nota',
         EV_RifLavoroID: state.lavoroCorrente.job_id,
+        EV_RifPosizioneID: state.lavoroCorrente.pos_id,
         EV_Descrizione: comment,
         EV_Classificazione: null
       },
@@ -146,6 +147,7 @@ export const actions = {
       data: {
         EV_Type: 'Immagine',
         EV_RifLavoroID: state.lavoroCorrente.job_id,
+        EV_RifPosizioneID: state.lavoroCorrente.pos_id,
         EV_Descrizione: state.$record.data.EV_Descrizione,
         EV_Classificazione: state.$record.data.EV_Classificazione,
       },
@@ -179,6 +181,7 @@ export const actions = {
       data: {
         EV_Type: 'Immagine',
         EV_RifLavoroID: state.lavoroCorrente.job_id,
+        EV_RifPosizioneID: state.lavoroCorrente.pos_id,
         EV_Descrizione: state.$record.data.EV_Descrizione,
         EV_Classificazione: state.$record.data.EV_Classificazione,
       },
@@ -280,7 +283,7 @@ export const mutations = {
     s.ui.listaRisorse = []
     s.ui.message = ''
   },
-  showGallery(s, {lista, index}) {
+  showGallery(s, { lista, index }) {
     s.gallery.listaRisorseGallery = lista
     s.gallery.index = index
     s.gallery.isShowingGallery = true
@@ -290,7 +293,7 @@ export const mutations = {
     s.gallery.listaRisorseGallery = []
     s.gallery.index = -1
   },
-  setFilterText(s, p){
+  setFilterText(s, p) {
     s.ui.filter = ''
   }
 }
@@ -349,9 +352,17 @@ export const getters = {
       return (dateBool && textBool)
     })
   },
+  
   appuntiByDate: (s, g) => _orderBy(s.list.filter(o => {
-    return o.data.EV_RifLavoroID === s.lavoroCorrente.job_id
+    if (o.data.EV_RifLavoroID === s.lavoroCorrente.job_id) {
+      if (s.lavoroCorrente.pos_id) {
+        return o.data.EV_RifPosizioneID === s.lavoroCorrente.pos_id
+      } else {
+        return true
+      }
+    }
   }), 'insert_UTCDate'),
+
   isView: (s) => s.modalita === 'VIEW',
   isPhotocamera: (s) => s.modalita === 'PHOTOCAMERA',
   isEdit: (s) => s.modalita === 'EDIT',

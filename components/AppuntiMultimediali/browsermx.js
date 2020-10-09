@@ -9,7 +9,7 @@ export const appuntimm = {
     },
     computed: {
       ...mapGetters('app', ['modalOpened']),
-      ...mapGetters(namespace, ['appuntiByDate', 'appuntiFiltered', 'isEdit', 'isAdd', 'isView']),
+      ...mapGetters(namespace, ['appuntiByDate', 'appuntiFiltered', 'isEdit', 'isAdd', 'isView', 'isBrowserCompleteInputVisible', 'isBrowserLoadImagesVisible']),
       ...mapState(namespace, ['ui', 'lavoroCorrente', 'viewerStatus', '$record', '$files', 'gallery']),
       ...mapState(namespace, {'appuntiList': 'list'})
     }

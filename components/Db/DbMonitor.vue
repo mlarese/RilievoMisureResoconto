@@ -27,11 +27,11 @@
         <v-icon>{{ showLog ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
       </v-btn>
     </v-card-actions>
-    <v-divider></v-divider>
 
     <v-expand-transition>
       <div v-show="showLog">
-        <v-textarea clearable v-model="ui.syncLog" label="Log" dense readonly />
+        <v-divider></v-divider>
+        <v-textarea v-model="ui.syncLog" dense readonly hide-details/>
       </div>
     </v-expand-transition>
   </v-card>

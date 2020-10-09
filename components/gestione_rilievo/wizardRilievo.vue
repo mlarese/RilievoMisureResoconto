@@ -12,22 +12,28 @@
               <v-list-item-group v-model="posizioneSelezionataID" color="primary">
                 <template v-for="(pos, i) in posizioni">
                   <v-list-item :key="i" :value="pos._id" @click="onClick_ItemPos(pos._id)">
-                    <v-list-item-content>
-                      <v-list-item-title v-text="`${pos.posizione} - ${pos.descrizione}`"></v-list-item-title>
-                    </v-list-item-content>
+                    <template v-slot:default="{ active }">
+                      <v-list-item-content>
+                        <v-list-item-title v-text="`${pos.posizione} - ${pos.descrizione}`"></v-list-item-title>
+                      </v-list-item-content>
 
-                    <v-spacer></v-spacer>
-
-                    <v-icon v-if="pos && posizioneSelezionataID == pos._id">mdi-check</v-icon>
+                      <v-list-item-action>
+                        <v-icon v-if="active">mdi-check</v-icon>
+                      </v-list-item-action>
+                    </template>
                   </v-list-item>
+                  <v-divider v-if="i < posizioni.length -1" :key="i + 'div'"></v-divider>
                 </template>
               </v-list-item-group>
             </v-list>
 
-            <div v-else>
-              <p class="text-center">Nessuna posizione trovata</p>
-              <p class="text-center">Inizia cliccando sul pulsante (+) qui in basso</p>
-            </div>
+            <v-container v-else class="fill-height d-flex flex-column align-center justify-center">
+              <v-img :src="require('../../assets/images/posizione-empty-list.png')" contain max-width="50%" max-height="50%"></v-img>
+              <p class="title text-center">Nussuna posizione presente</p>
+              <p class="caption font-weight-light text-center" style="margin-top: -20px;">
+                Inizia cliccando sul pulsante (+) qui in basso
+              </p>
+            </v-container>
           </v-card-text>
 
           <v-footer absolute>
@@ -156,6 +162,7 @@
         </v-card>
       </v-stepper-content>
 
+      <!-- Articoli da misurare -->
       <v-stepper-content step="3" class="pa-0">
         <v-card :height="height">
           <v-card-title>E' ora di misurare...</v-card-title>
@@ -164,7 +171,7 @@
           </v-card-subtitle>
 
           <v-card-text style="overflow-y: auto;">
-            <v-list>
+            <v-list-item-group>
               <v-list-item v-for="(art, i) in getArticoliDellaPosizione(posizioneSelezionataID)" :key="i">
                 <v-list-item-icon v-if="art.listaPropValued.length == 0">
                   <v-icon color="red">mdi-alert</v-icon>
@@ -174,27 +181,46 @@
                   <v-icon color="green">mdi-checkbox-marked-circle-outline</v-icon>
                 </v-list-item-icon>
 
-                <v-list-item-content>
+                <v-list-item-content @click="apriWM(art._id)">
                   <v-list-item-title>{{ getArtGen(art.rifSchedaID).descrizione }}</v-list-item-title>
                   <v-list-item-subtitle>{{ getArtGen(art.rifSchedaID).subDescrizione }}</v-list-item-subtitle>
                 </v-list-item-content>
-
-                <v-list-item-icon>
-                  <v-icon @click="apriWM(art._id)">mdi-tape-measure</v-icon>
-                </v-list-item-icon>
               </v-list-item>
-            </v-list>
+              <v-divider></v-divider>
+            </v-list-item-group>
           </v-card-text>
 
-          <v-footer absolute>
-            <v-btn color="primary" dark absolute top fab :style="{ left: '50%', transform: 'translateX(-50%)' }">
+          <v-speed-dial absolute v-model="fab" bottom left direction="top" transition="slide-y-reverse-transition">
+            <template v-slot:activator>
+              <v-btn v-model="fab" color="blue darken-2" dark fab>
+                <v-icon v-if="fab">
+                  mdi-close
+                </v-icon>
+                <v-icon v-else>
+                  mdi-plus
+                </v-icon>
+              </v-btn>
+            </template>
+            <v-btn fab dark small color="green">
+              <v-icon>mdi-camera-plus-outline</v-icon>
+            </v-btn>
+            <v-btn fab dark small color="indigo">
               <v-icon>mdi-plus</v-icon>
             </v-btn>
+            <v-btn fab dark small color="red">
+              <v-icon>mdi-delete</v-icon>
+            </v-btn>
+          </v-speed-dial>
+
+          <v-footer absolute>
+            <!-- <v-btn color="primary" dark absolute top fab :style="{ left: '50%', transform: 'translateX(-50%)' }">
+              <v-icon>mdi-plus</v-icon>
+            </v-btn> -->
             <v-card
               elevation="0"
               :style="{
                 position: 'absolute',
-                left: '50%',
+                left: '43px',
                 top: '0px',
                 transform: 'translateX(-50%)',
                 'border-radius': '0 0 75px 75px',
@@ -206,7 +232,7 @@
             </v-card>
 
             <v-spacer></v-spacer>
-            <v-btn text outlined color="green" @click="stepIndex = 0">Cambia foro</v-btn>
+            <v-btn text outlined color="green" @click="stepIndex = 0">Cambia posizione</v-btn>
           </v-footer>
         </v-card>
       </v-stepper-content>
@@ -254,6 +280,7 @@ export default class RilievoFori extends Vue {
   @State(state => state.rilievoModule.ui) ui!: RilievoUI
   @Prop({ type: Number, default: 600 }) height!: Number
 
+  fab = false
   stepIndex = 0
   articoliSelezionati = new Array<ArticoloGeneraleConfigurato>()
   visualizzaNuovaPosizione = false
@@ -370,6 +397,18 @@ export default class RilievoFori extends Vue {
     } else {
       return 600 //+ offset
     }
+  }
+
+  mounted() {
+    document.addEventListener('keydown', event => {
+      console.log('keydown', event)
+      event.preventDefault()
+    })
+    document.addEventListener('keyup', event => {
+      console.log('keyup', event)
+      event.preventDefault()
+    })
+    // this.$el.onkeydown = (event: any) => { alert(event)}
   }
 }
 </script>

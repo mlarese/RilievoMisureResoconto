@@ -230,15 +230,7 @@
       <BrowserCompleteInput class="pa-2" />
     </v-dialog>
 
-    <v-dialog
-      v-if="isBrowserLoadImagesVisible"
-      :value="isBrowserLoadImagesVisible"
-      persistent
-      :fullscreen="$vuetify.breakpoint.xsOnly"
-      max-width="800px"
-    >
-      <BrowserLoadImages />
-    </v-dialog>
+    
   </div>
 </template>
 
@@ -278,7 +270,7 @@ import DatiAnagraficiEdit from '../gestione_lavori/DatiAnagrafici_Edit'
 import ListaRilievi from '../GestioneRilievo/listaRilievi'
 import Browser from '~/components/AppuntiMultimediali/Browser'
 import BrowserCompleteInput from '~/components/AppuntiMultimediali/BrowserCompleteInput'
-import BrowserLoadImages from '~/components/AppuntiMultimediali/BrowserLoadImages'
+
 
 const storeName = 'gestione_lavori'
 
@@ -290,7 +282,6 @@ export default {
     DatiAnagraficiEdit,
     ListaRilievi,
     BrowserCompleteInput,
-    BrowserLoadImages,
     Browser
   },
   data() {

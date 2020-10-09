@@ -19,7 +19,7 @@
         </v-card-actions>
       </v-stepper-content>
 
-      <v-stepper-content step="1" v-if="esisteStessoArticolo == 1" >
+      <v-stepper-content step="1" v-if="esisteStessoArticolo == 1">
         <span>Attenzione: è già stato inserito una scheda dello stesso tipo </span>
         <span>E' necessario dare un nome differente </span>
         <v-text-field v-model="subDescrizione"></v-text-field>
@@ -52,7 +52,7 @@
                     <v-list-item-title v-text="`${row.JSTabRowDesc}`"></v-list-item-title>
                   </v-list-item-content>
                   <v-list-item-icon>
-                    <v-icon v-if="active">mdi-check</v-icon>
+                    <v-icon class="pa-0" v-show="active">mdi-check</v-icon>
                   </v-list-item-icon>
                 </template>
               </v-list-item>
@@ -72,7 +72,7 @@
           </v-list-item-group>
         </v-list>
 
-        <v-card-actions>
+        <v-footer absolute>
           <v-btn text color="gray" @click="backStep()">Indietro</v-btn>
           <v-spacer></v-spacer>
 
@@ -81,7 +81,7 @@
           >
 
           <v-btn v-else text color="primary" @click="onSalva()">Salva</v-btn>
-        </v-card-actions>
+        </v-footer>
       </v-stepper-content>
     </v-stepper>
   </v-card>

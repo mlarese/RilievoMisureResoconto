@@ -9,10 +9,11 @@
 
         <!-- Visualizza l'elenco delle posizioni -->
         <v-card v-for="(pos, i) in posizioni" :key="i" class="mb-2">
-          <v-toolbar color="teal" dark dense>
+          <v-toolbar color="#e4effa" dense flat>
             <v-toolbar-title>{{ pos.posizione }} - {{ pos.descrizione }}</v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-btn icon><v-icon>mdi-pencil</v-icon></v-btn>
+            <v-btn icon @click="openMediaPos(pos._id)"><v-icon>mdi-folder-multiple-image</v-icon></v-btn>
+            <v-btn icon><v-icon>mdi-dots-vertical</v-icon></v-btn>
           </v-toolbar>
           <p v-if="getArticoliDellaPosizione(pos._id).length == 0" class="pa-2">Nessun articolo presente</p>
 
@@ -47,6 +48,18 @@
     <v-dialog v-model="visualizzaWizardMisure" :fullscreen="$vuetify.breakpoint.xsOnly" max-width="400px">
       <wizardMisure v-if="visualizzaWizardMisure" :articoloDaEditareID="articoloDaEditareID" @onExit="exitWizardMisure" />
     </v-dialog>
+
+    <v-dialog v-model="visualizzaMedia" :fullscreen="$vuetify.breakpoint.xsOnly">
+      <v-card>
+        <v-toolbar color="primary" dense dark>
+          <v-btn icon class="ml-1" @click="exitMultimedia()">
+            <v-icon>mdi-arrow-left</v-icon>
+          </v-btn>
+        </v-toolbar>
+
+        <media class="overflow-hidden" :job="rif_x_Media" :key="rif_x_Media.pos_id"/>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -54,18 +67,29 @@
 import { Vue, Component, namespace, State, Getter } from 'nuxt-property-decorator'
 import wizardPosizione from '@/components/gestione_rilievo/wizardPosizione.vue'
 import wizardMisure from '@/components/gestione_rilievo/wizardMisure.vue'
+import media from '@/components/AppuntiMultimediali/Browser.vue'
 import { RilievoRecord, RilievoUI } from '@/store/rilievoModule'
 import { Posizione } from '@/store/posizioneModule'
 import { ArticoloGeneraleConfigurato, ArticoloSpecificoConfigurato } from '@/store/articoloModel'
 
-@Component({ components: { wizardPosizione, wizardMisure }, name: 'Fori' })
+@Component({ components: { wizardPosizione, wizardMisure, media }, name: 'Fori' })
 export default class RilievoFori extends Vue {
   @Getter('posizioneModule/posizioni') posizioni!: Posizione[]
   @State(state => state.rilievoModule.record) record!: RilievoRecord
   @State(state => state.rilievoModule.ui) ui!: RilievoUI
 
+  visualizzaMedia = false
   visualizzaWizardMisure = false
   articoloDaEditareID: string = ''
+  rif_x_Media = {}
+
+  openMediaPos(pos_id: string) {
+    this.rif_x_Media = { job_id: this.record.lavoroID, pos_id }
+    this.visualizzaMedia = true
+  }
+  exitMultimedia(){
+    this.visualizzaMedia = false
+  }
 
   apriWM(artID: string) {
     this.visualizzaWizardMisure = true
@@ -90,8 +114,8 @@ export default class RilievoFori extends Vue {
   getArtGen(artGenID: string) {
     // let a = this.record.listaArticoliGen.find(a => (a._id = artGenID))
     // return a
-    for (const art of this.record.listaArticoliGen){
-      if (art._id == artGenID){
+    for (const art of this.record.listaArticoliGen) {
+      if (art._id == artGenID) {
         return art
       }
     }

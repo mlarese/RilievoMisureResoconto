@@ -97,12 +97,12 @@
     </Panel>
 
     <!-- Wizard per dati generali -->
-    <v-dialog v-model="ui.visualizzaWizardSchede" :fullscreen="$vuetify.breakpoint.xsOnly" max-width="400px"  max-height="400px">
+    <v-dialog v-model="ui.visualizzaWizardSchede" :fullscreen="$vuetify.breakpoint.xsOnly" persistent max-width="400px"  max-height="400px">
       <wizardSchede @onExit="chiudiWizardSchede" @onSave="salvaArticoloGenerale" />
     </v-dialog>
 
     <!-- WIZARD DEL RILIEVO -->
-    <v-dialog v-model="ui.visualizzaWizardRilievo" :fullscreen="$vuetify.breakpoint.xsOnly" max-width="400px"  :height="getHeightDialog">
+    <v-dialog v-model="ui.visualizzaWizardRilievo" :fullscreen="$vuetify.breakpoint.xsOnly" persistent max-width="400px"  :height="getHeightDialog">
       <wizardRilievo :height="getHeightDialog" />
     </v-dialog>
   </div>
