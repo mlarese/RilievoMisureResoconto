@@ -128,7 +128,7 @@
 
           <div v-else>
             <div v-if="prop.propName == '#GRP_ANTE.PR_NUMERO_ANTE'" class="mx-2">
-                <v-card-title>Numero ante</v-card-title>
+              <v-card-title>Numero ante</v-card-title>
               <v-divider></v-divider>
               <v-btn-toggle v-model="prop.propValue" tile group color="primary">
                 <v-btn value="1">1</v-btn>
@@ -294,7 +294,11 @@ export default class RilievoFori extends Vue {
     if (valore) this.GPROD.ApplicaMC_x_Modifica(`H_SX=${valore}`)
 
     valore = this.articoloProperties.find(p => p.propName == '#SER.PR_H_DX')?.propValue
-    if (valore) this.GPROD.ApplicaMC_x_Modifica(`H_DX=${valore}`)
+    if (valore) {
+      this.GPROD.ApplicaMC_x_Modifica(`H_DX=${valore}`)
+    } else {
+      this.GPROD.ApplicaMC_x_Modifica(`H_SX=${this.articoloProperties.find(p => p.propName == '#SER.PR_H_SX')?.propValue}`)
+    }
 
     valore = this.articoloProperties.find(p => p.propName == '#GRP_ANTE.PR_NUMERO_ANTE')?.propValue
     if (valore) this.GPROD.ApplicaMC_x_Modifica(`${this.GPROD.getGruppoAntePrincID()}.NUMERO_ANTE=${valore}`)

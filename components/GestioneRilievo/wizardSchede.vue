@@ -1,8 +1,8 @@
 <template>
-  <v-card flat height="100%">
-    <v-stepper v-model="stepIndex" style="height: 100%">
+  <v-card flat>
+    <v-stepper v-model="stepIndex">
       <!-- selezione articolo di partenza -->
-      <v-stepper-content step="0" style="height: 100%">
+      <v-stepper-content step="0" class="pa-0">
         <v-card-title>
           Selezionare un articolo
         </v-card-title>
@@ -10,85 +10,99 @@
           @onSelected="onArticoloSelezionato($event)"
           :modalita="'SelezioneOggetto'"
           :marcaRiga="true"
-          :style="{ height: 'calc(100vh - 150px)', 'overflow-y': 'auto' }"
+          :style="{ height: height - 65 + 'px', 'overflow-y': 'auto' }"
         />
-        <v-card-actions>
-          <v-btn text color="gray" @click="exitWizard()">Annulla</v-btn>
+        <v-footer absolute class="pa-4">
+          <v-btn large text color="gray" @click="exitWizard()">Annulla</v-btn>
           <v-spacer></v-spacer>
-          <v-btn text color="primary" @click="nextStep()" :disabled="articoloSelezionato.JSCodice == ''">Avanti</v-btn>
-        </v-card-actions>
+          <v-btn large text color="primary" @click="nextStep()" :disabled="articoloSelezionato.JSCodice == ''">Avanti</v-btn>
+        </v-footer>
       </v-stepper-content>
 
-      <v-stepper-content step="1" v-if="esisteStessoArticolo == 1">
-        <span>Attenzione: è già stato inserito una scheda dello stesso tipo </span>
-        <span>E' necessario dare un nome differente </span>
-        <v-text-field v-model="subDescrizione"></v-text-field>
-        <v-card-actions>
-          <v-btn text color="gray" @click="backStep()">Indietro</v-btn>
-          <v-spacer></v-spacer>
-          <v-btn text color="primary" @click="nextStep()" :disabled="subDescrizione == ''">Avanti</v-btn>
-        </v-card-actions>
+      <v-stepper-content step="1" v-if="esisteStessoArticolo == 1" class="pa-0">
+        <v-card>
+          <v-card-text :style="{ height: height + 'px', 'overflow-y': 'auto' }" class="pt-6">
+            <span>Attenzione: è già stato inserito una scheda dello stesso tipo </span>
+            <span>E' necessario dare un nome differente </span>
+            <v-text-field v-model="subDescrizione"></v-text-field>
+          </v-card-text>
+          <v-footer absolute class="pa-4">
+            <v-btn large text color="gray" @click="backStep()">Indietro</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn large text color="primary" @click="nextStep()" :disabled="subDescrizione == ''">Avanti</v-btn>
+          </v-footer>
+        </v-card>
       </v-stepper-content>
 
       <!-- elenco properties dell'articolo selezionato -->
-      <v-stepper-content v-for="(prop, index) in articoloProperties" :key="index" :step="index + 1 + esisteStessoArticolo">
-        <v-card-title>{{ prop.propLabel }}</v-card-title>
-        <v-divider></v-divider>
-        <!-- <v-radio-group v-if="prop.propTableName" v-model="prop.propValue">
-          <v-radio v-for="c in getTableRows(prop.propTableName)" :key="n" :label="row.JSTabRowDesc" :value="row.JSTabRowCodice"></v-radio>
-
-          <v-row align="center" class="pa-0 ma-0" v-if="!prop.isRequired">
-            <v-radio value="altro" ref="radioAltro"></v-radio>
-            <v-text-field v-model="prop.propValueDecode" placeholder="Altro" :hide-details="true" dense></v-text-field>
-          </v-row>
-        </v-radio-group> -->
-
-        <v-list :style="{ height: 'calc(100vh - 150px)', 'overflow-y': 'auto' }">
-          <v-list-item-group v-model="prop.propValue" color="primary">
-            <template v-for="(row, i) in getTableRows(prop.propTableName)">
-              <v-list-item :key="i" :value="row.JSTabRowCodice" @click="prop.propValueDecode = row.JSTabRowDesc">
-                <template v-slot:default="{ active }">
-                  <v-list-item-content style="width: 100%">
-                    <v-list-item-title v-text="`${row.JSTabRowDesc}`"></v-list-item-title>
-                  </v-list-item-content>
-                  <v-list-item-icon>
-                    <v-icon class="pa-0" v-show="active">mdi-check</v-icon>
-                  </v-list-item-icon>
+      <v-stepper-content v-for="(prop, index) in articoloProperties" :key="index" :step="index + 1 + esisteStessoArticolo" class="pa-0">
+        <v-card :height="height">
+          <v-card>
+            <v-card-title>
+              {{ prop.propLabel }}
+            </v-card-title>
+            <v-card-subtitle>Selezionare una delle opzioni presenti</v-card-subtitle>
+          </v-card>
+          <v-card-text class="py-0">
+            <v-list :style="{ height: height - 150 + 'px', 'overflow-y': 'auto' }">
+              <v-list-item-group v-model="prop.propValue" color="primary">
+                <template v-for="(row, i) in getTableRows(prop.propTableName)">
+                  <v-list-item :key="i" :value="row.JSTabRowCodice" @click="prop.propValueDecode = row.JSTabRowDesc">
+                    <template v-slot:default="{ active }">
+                      <v-list-item-content style="width: 100%">
+                        <v-list-item-title v-text="`${row.JSTabRowDesc}`"></v-list-item-title>
+                      </v-list-item-content>
+                      <v-list-item-action>
+                        <v-icon v-if="active">mdi-check</v-icon>
+                      </v-list-item-action>
+                    </template>
+                  </v-list-item>
                 </template>
-              </v-list-item>
-            </template>
-            <template v-if="!prop.isRequired">
-              <v-list-item value="altro">
-                <template v-slot:default="{ active }">
-                  <v-list-item-content>
-                    <v-text-field v-model="prop.propValueDecode" placeholder="Altro" persistent-hint hint="Inserire un valore manualmente" dense></v-text-field>
-                  </v-list-item-content>
-                  <v-list-item-icon>
-                    <v-icon v-if="active">mdi-check</v-icon>
-                  </v-list-item-icon>
+                <template v-if="!prop.isRequired">
+                  <v-list-item value="altro">
+                    <template v-slot:default="{ active }">
+                      <v-list-item-content>
+                        <v-text-field
+                          v-model="prop.propValueDecode"
+                          placeholder="Altro"
+                          persistent-hint
+                          hint="Inserire un valore manualmente"
+                          dense
+                        ></v-text-field>
+                      </v-list-item-content>
+                      <v-list-item-icon>
+                        <v-icon v-if="active">mdi-check</v-icon>
+                      </v-list-item-icon>
+                    </template>
+                  </v-list-item>
                 </template>
-              </v-list-item>
-            </template>
-          </v-list-item-group>
-        </v-list>
+              </v-list-item-group>
+            </v-list>
+          </v-card-text>
+          <v-footer absolute class="pa-4">
+            <v-btn large text color="gray" @click="backStep()">Indietro</v-btn>
+            <v-spacer></v-spacer>
 
-        <v-footer absolute>
-          <v-btn text color="gray" @click="backStep()">Indietro</v-btn>
-          <v-spacer></v-spacer>
+            <v-btn
+              large
+              :disabled="prop.propValue === undefined"
+              v-if="index + 1 + esisteStessoArticolo < articoloProperties.length + esisteStessoArticolo"
+              text
+              color="primary"
+              @click="nextStep()"
+              >Avanti {{ index + 1 + esisteStessoArticolo }} / {{ articoloProperties.length + esisteStessoArticolo }}</v-btn
+            >
 
-          <v-btn v-if="index + 1 + esisteStessoArticolo < articoloProperties.length + esisteStessoArticolo" text color="primary" @click="nextStep()"
-            >Avanti {{ index + 1 + esisteStessoArticolo }} / {{ articoloProperties.length + esisteStessoArticolo }}</v-btn
-          >
-
-          <v-btn v-else text color="primary" @click="onSalva()">Salva</v-btn>
-        </v-footer>
+            <v-btn large v-else text color="primary" @click="onSalva()">Salva</v-btn>
+          </v-footer>
+        </v-card>
       </v-stepper-content>
     </v-stepper>
   </v-card>
 </template>
 
 <script lang="ts">
-import { Vue, Component, namespace, State, Getter, Emit } from 'nuxt-property-decorator'
+import { Vue, Component, namespace, State, Getter, Emit, Prop } from 'nuxt-property-decorator'
 import { RilievoRecord, RilievoUI } from '@/store/rilievoModule'
 
 import ListaArticoli from '../gestione_cataloghi/listaArticoli.vue'
@@ -98,6 +112,8 @@ import { v4 as uuidv4 } from 'uuid'
 @Component({ components: { ListaArticoli }, name: 'wizardSchede' })
 export default class WizardSchede extends Vue {
   @State(state => state.rilievoModule.record) record!: RilievoRecord
+  @Prop({ type: Number, default: 600 }) height!: Number
+
   stepIndex = 0
   articoloProperties: PropertyValued[] = new Array<PropertyValued>()
   catalogoSelezionato!: any

@@ -49,7 +49,7 @@
       <wizardMisure v-if="visualizzaWizardMisure" :articoloDaEditareID="articoloDaEditareID" @onExit="exitWizardMisure" />
     </v-dialog>
 
-    <v-dialog v-model="visualizzaMedia" :fullscreen="$vuetify.breakpoint.xsOnly">
+    <v-dialog v-model="visualizzaMedia" :fullscreen="$vuetify.breakpoint.xsOnly" max-width="700px">
       <v-card>
         <v-toolbar color="primary" dense dark>
           <v-btn icon class="ml-1" @click="exitMultimedia()">
@@ -78,9 +78,10 @@ export default class RilievoFori extends Vue {
   @State(state => state.rilievoModule.record) record!: RilievoRecord
   @State(state => state.rilievoModule.ui) ui!: RilievoUI
 
-  visualizzaMedia = false
   visualizzaWizardMisure = false
   articoloDaEditareID: string = ''
+  
+  visualizzaMedia = false
   rif_x_Media = {}
 
   openMediaPos(pos_id: string) {

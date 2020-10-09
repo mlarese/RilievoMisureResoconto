@@ -74,10 +74,16 @@
         </div>
 
         <v-tabs centered>
+          <v-tab>RILIEVO</v-tab>
           <v-tab>SCHEDE</v-tab>
           <v-tab>POSIZIONI</v-tab>
           <v-tab>X ART</v-tab>
           <v-tab>X POS</v-tab>
+
+          <v-tab-item :class="$vuetify.breakpoint.xsOnly ? 'c_small' : 'c_large'" class="pa-0">
+            <!-- Dati del rilievo -->
+            <datiAnagrafici />
+          </v-tab-item>
 
           <v-tab-item :class="$vuetify.breakpoint.xsOnly ? 'c_small' : 'c_large'" class="pa-0">
             <!-- SCHEDE - dati generali -->
@@ -117,9 +123,11 @@ import Fori from '../gestione_rilievo/fori.vue'
 import wizardSchede from '@/components/GestioneRilievo/wizardSchede.vue'
 import wizardRilievo from '@/components/gestione_rilievo/wizardRilievo.vue'
 import listPerArticolo from '@/components/gestione_rilievo/riepilogoPerArticolo.vue'
+import datiAnagrafici from '@/components/gestione_rilievo/datiAnagrafici.vue'
+
 import { RilievoRecord, RilievoUI } from '@/store/rilievoModule'
 
-@Component({ components: { Panel, Schede, Fori, wizardSchede, wizardRilievo, listPerArticolo }, name: 'rilievo' })
+@Component({ components: { Panel, Schede, Fori, wizardSchede, wizardRilievo, listPerArticolo, datiAnagrafici }, name: 'rilievo' })
 export default class RilievoMain extends Vue {
   @State(state => state.rilievoModule.record) record !: RilievoRecord
   @State(state => state.rilievoModule.ui) ui!: RilievoUI

@@ -2,12 +2,7 @@
   <v-app :dark="dark">
     <notifications position="top right" style="margin-top:50px" />
 
-    <v-navigation-drawer
-      v-model="drawer"
-      :clipped="$vuetify.breakpoint.lgAndUp"
-      app
-      style="background: white;"
-    >
+    <v-navigation-drawer v-model="drawer" :clipped="$vuetify.breakpoint.lgAndUp" app style="background: white;">
       <!-- <v-img
         contain
         :src="require('../assets/images/logo.png')"
@@ -21,8 +16,8 @@
           </v-list-item-avatar>
 
           <v-list-item-content>
-            <v-list-item-title>{{utenteDesc}}</v-list-item-title>
-            <v-list-item-subtitle>{{aziendaDesc}}</v-list-item-subtitle>
+            <v-list-item-title>{{ utenteDesc }}</v-list-item-title>
+            <v-list-item-subtitle>{{ aziendaDesc }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
         <v-divider></v-divider>
@@ -37,7 +32,7 @@
         </v-list-item>
       </v-list>
 
-      <template v-slot:append>
+      <template v-slot:append>        
         <div class="pa-2">
           <p class="text-center">4Innovation srl &copy; V3.0.2</p>
         </div>
@@ -47,13 +42,7 @@
     <v-app-bar app clipped-left color="grey lighten-4" class="elevation-5 pl-1 mb-3">
       <slot name="header-left">
         <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-        <v-img
-          contain
-          height="30"
-          width="30px"
-          position="left"
-          :src="require('../assets/images/logo.png')"
-        />
+        <v-img contain height="30" width="30px" position="left" :src="require('../assets/images/logo.png')" />
       </slot>
       <v-spacer />
       <slot name="header-right">
@@ -104,18 +93,8 @@
       <v-card>
         <v-card-title class="headline">Profilo utente</v-card-title>
         <v-card-text>
-          <v-input
-            persistent-hint
-            hint="Utente"
-            prepend-icon="mdi-account-check-outline"
-            class="py-2"
-          >{{ utenteDesc }}</v-input>
-          <v-input
-            persistent-hint
-            hint="Azienda"
-            prepend-icon="mdi-factory"
-            class="py-2"
-          >{{ aziendaDesc }}</v-input>
+          <v-input persistent-hint hint="Utente" prepend-icon="mdi-account-check-outline" class="py-2">{{ utenteDesc }}</v-input>
+          <v-input persistent-hint hint="Azienda" prepend-icon="mdi-factory" class="py-2">{{ aziendaDesc }}</v-input>
         </v-card-text>
         <v-card-actions>
           <v-btn color="gray darken-1" text @click="logout">Logout</v-btn>
@@ -137,8 +116,7 @@ export default {
         {
           hid: 'vp',
           name: 'viewport',
-          content:
-            'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'
+          content: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'
         }
       ]
     }
@@ -148,10 +126,8 @@ export default {
       bottomNavActiveItem: '/',
       showMessageBadge: false,
       isDialogProfileVisible: false,
-      drawer:
-        this.$vuetify.breakpoint.name === 'lg' ||
-        this.$vuetify.breakpoint.name === 'xl',
-      tab: null
+      drawer: this.$vuetify.breakpoint.name === 'lg' || this.$vuetify.breakpoint.name === 'xl',
+      tab: null,
     }
   },
   watch: {
@@ -184,7 +160,8 @@ export default {
         .then(() => {
           this.$router.push('/login')
         })
-    }
+    },
+    
   }
 }
 </script>

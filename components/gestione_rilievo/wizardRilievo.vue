@@ -1,6 +1,42 @@
 <template>
   <div>
     <v-stepper v-model="stepIndex">
+      <!-- sezione SCHEDE -->
+      <v-stepper-content step="-2" class="pa-0">
+        <v-card :height="height">
+          <v-card-title> Articoli del rilievo </v-card-title>
+          <v-card-subtitle>In questa sezione sono presenti tutti gli articoli che </v-card-subtitle>
+          <v-card-text class="pt-1" :style="{ height: height - 112 + 'px', 'overflow-y': 'auto' }">
+            <listaSchede />
+          </v-card-text>
+
+          <v-footer absolute class="py-4">
+            <v-btn color="primary" dark absolute top fab @click="stepIndex = -1" class="fabCenter">
+              <v-icon>mdi-plus</v-icon>
+            </v-btn>
+            <v-card elevation="0" class="fabRientranza" />
+            <v-btn text large color="gray" @click="exit">ANNULA</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn
+              text
+              outlined
+              large
+              color="green"
+              @click="stepIndex = 0"
+              :disabled="record.listaArticoliGen === undefined || record.listaArticoliGen.length == 0"
+            >
+              AVANTI<v-icon>mdi-chevron-right</v-icon></v-btn
+            >
+          </v-footer>
+        </v-card>
+      </v-stepper-content>
+
+      <v-stepper-content step="-1" class="pa-0">
+        <v-card :height="height">
+          <wizardSchede :height="height" @onExit="chiudiWizardSchede" @onSave="salvaArticoloGenerale" />
+        </v-card>
+      </v-stepper-content>
+
       <!-- Selezione posizione -->
       <v-stepper-content step="0" class="pa-0">
         <v-card :height="height">
@@ -22,7 +58,7 @@
                       </v-list-item-action>
                     </template>
                   </v-list-item>
-                  <v-divider v-if="i < posizioni.length -1" :key="i + 'div'"></v-divider>
+                  <v-divider v-if="i < posizioni.length - 1" :key="i + 'div'"></v-divider>
                 </template>
               </v-list-item-group>
             </v-list>
@@ -36,7 +72,7 @@
             </v-container>
           </v-card-text>
 
-          <v-footer absolute>
+          <v-footer absolute class="py-4">
             <v-btn color="primary" dark absolute top fab @click="visualizzaNuovaPosizione = true" :style="{ left: '50%', transform: 'translateX(-50%)' }">
               <v-icon>mdi-plus</v-icon>
             </v-btn>
@@ -54,9 +90,9 @@
               }"
             >
             </v-card>
-            <v-btn text color="gray" @click="exit">ANNULA</v-btn>
+            <v-btn large text color="gray" @click="stepIndex = -2">INDIETRO</v-btn>
             <v-spacer></v-spacer>
-            <v-btn text outlined color="green" @click="nextStep_posizioneSelezionata" :disabled="posizioneSelezionata._id == ''">
+            <v-btn large text outlined color="green" @click="nextStep_posizioneSelezionata" :disabled="posizioneSelezionata._id == ''">
               AVANTI<v-icon>mdi-chevron-right</v-icon></v-btn
             >
           </v-footer>
@@ -96,7 +132,7 @@
             </v-list>
           </v-card-text>
 
-          <v-footer absolute>
+          <v-footer absolute class="py-4">
             <v-btn color="primary" dark absolute top fab :style="{ left: '50%', transform: 'translateX(-50%)' }">
               <v-icon>mdi-plus</v-icon>
             </v-btn>
@@ -114,9 +150,11 @@
               }"
             >
             </v-card>
-            <v-btn text color="gray" @click="backStep"><v-icon>mdi-chevron-left</v-icon>INDIETRO</v-btn>
+            <v-btn large text color="gray" @click="backStep"><v-icon>mdi-chevron-left</v-icon>INDIETRO</v-btn>
             <v-spacer></v-spacer>
-            <v-btn text outlined color="green" @click="nextStep" :disabled="articoliSelezionati.length == 0">AVANTI<v-icon>mdi-chevron-right</v-icon></v-btn>
+            <v-btn large text outlined color="green" @click="nextStep" :disabled="articoliSelezionati.length == 0"
+              >AVANTI<v-icon>mdi-chevron-right</v-icon></v-btn
+            >
           </v-footer>
         </v-card>
       </v-stepper-content>
@@ -154,10 +192,10 @@
             </v-list>
           </v-card-text>
 
-          <v-footer absolute>
-            <v-btn text color="gray" @click="backStep"><v-icon>mdi-chevron-left</v-icon>INDIETRO</v-btn>
+          <v-footer absolute class="py-4">
+            <v-btn large text color="gray" @click="backStep"><v-icon>mdi-chevron-left</v-icon>INDIETRO</v-btn>
             <v-spacer></v-spacer>
-            <v-btn text outlined color="green" @click="salvaPosizione">SALVA</v-btn>
+            <v-btn large text outlined color="green" @click="salvaPosizione">SALVA</v-btn>
           </v-footer>
         </v-card>
       </v-stepper-content>
@@ -165,6 +203,12 @@
       <!-- Articoli da misurare -->
       <v-stepper-content step="3" class="pa-0">
         <v-card :height="height">
+          <v-toolbar color="#e4effa">
+            <v-toolbar-title>{{ posizioneSelezionata.posizione }} - {{ posizioneSelezionata.descrizione }}</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-btn icon @click="openMediaPos(posizioneSelezionata._id)"><v-icon>mdi-folder-multiple-image</v-icon></v-btn>
+            <v-btn icon><v-icon>mdi-dots-vertical</v-icon></v-btn>
+          </v-toolbar>
           <v-card-title>E' ora di misurare...</v-card-title>
           <v-card-subtitle>
             Seleziona un articolo alla volta e segui le domande per la configurazione
@@ -189,50 +233,8 @@
               <v-divider></v-divider>
             </v-list-item-group>
           </v-card-text>
-
-          <v-speed-dial absolute v-model="fab" bottom left direction="top" transition="slide-y-reverse-transition">
-            <template v-slot:activator>
-              <v-btn v-model="fab" color="blue darken-2" dark fab>
-                <v-icon v-if="fab">
-                  mdi-close
-                </v-icon>
-                <v-icon v-else>
-                  mdi-plus
-                </v-icon>
-              </v-btn>
-            </template>
-            <v-btn fab dark small color="green">
-              <v-icon>mdi-camera-plus-outline</v-icon>
-            </v-btn>
-            <v-btn fab dark small color="indigo">
-              <v-icon>mdi-plus</v-icon>
-            </v-btn>
-            <v-btn fab dark small color="red">
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
-          </v-speed-dial>
-
-          <v-footer absolute>
-            <!-- <v-btn color="primary" dark absolute top fab :style="{ left: '50%', transform: 'translateX(-50%)' }">
-              <v-icon>mdi-plus</v-icon>
-            </v-btn> -->
-            <v-card
-              elevation="0"
-              :style="{
-                position: 'absolute',
-                left: '43px',
-                top: '0px',
-                transform: 'translateX(-50%)',
-                'border-radius': '0 0 75px 75px',
-                width: '75px',
-                height: '38px',
-                'background-color': 'white'
-              }"
-            >
-            </v-card>
-
-            <v-spacer></v-spacer>
-            <v-btn text outlined color="green" @click="stepIndex = 0">Cambia posizione</v-btn>
+          <v-footer absolute class="py-4">
+            <v-btn large class="mx-auto" text outlined color="green" @click="stepIndex = 0">Cambia posizione</v-btn>
           </v-footer>
         </v-card>
       </v-stepper-content>
@@ -244,6 +246,19 @@
 
     <v-dialog v-model="visualizzaNuovaPosizione" max-width="400px">
       <wizardPosizione @onExit="chiudiWizardPosizione" @onSave="salvaPosizioneLavoro" :lavoroID="record.lavoroID" />
+    </v-dialog>
+
+    <v-dialog v-model="visualizzaMedia" :fullscreen="$vuetify.breakpoint.xsOnly" max-width="700px">
+      <v-card>
+        <v-toolbar color="primary" dense dark flat>
+          <v-btn icon class="ml-1" @click="exitMultimedia()">
+            <v-icon>mdi-arrow-left</v-icon>
+          </v-btn>
+        </v-toolbar>
+        <v-card-text>
+          <media class="overflow-hidden" :job="rif_x_Media" :key="rif_x_Media.pos_id" />
+        </v-card-text>
+      </v-card>
     </v-dialog>
   </div>
 </template>
@@ -268,12 +283,15 @@ import { Vue, Component, namespace, State, Getter, Prop } from 'nuxt-property-de
 import { v4 as uuidv4 } from 'uuid'
 import wizardPosizione from '@/components/gestione_rilievo/wizardPosizione.vue'
 import wizardMisure from '@/components/gestione_rilievo/wizardMisure.vue'
+import media from '@/components/AppuntiMultimediali/Browser.vue'
+import listaSchede from '@/components/gestione_rilievo/listaSchede.vue'
+import wizardSchede from '@/components/GestioneRilievo/wizardSchede.vue'
 
 import { RilievoRecord, RilievoUI } from '@/store/rilievoModule'
 import { Posizione } from '@/store/posizioneModule'
 import { ArticoloGeneraleConfigurato, ArticoloSpecificoConfigurato } from '@/store/articoloModel'
 
-@Component({ components: { wizardPosizione, wizardMisure }, name: 'Fori' })
+@Component({ components: { wizardPosizione, wizardMisure, media, listaSchede, wizardSchede }, name: 'Fori' })
 export default class RilievoFori extends Vue {
   @Getter('posizioneModule/posizioni') posizioni!: Posizione[]
   @State(state => state.rilievoModule.record) record!: RilievoRecord
@@ -281,10 +299,28 @@ export default class RilievoFori extends Vue {
   @Prop({ type: Number, default: 600 }) height!: Number
 
   fab = false
-  stepIndex = 0
+  stepIndex = -2
   articoliSelezionati = new Array<ArticoloGeneraleConfigurato>()
   visualizzaNuovaPosizione = false
   posizioneSelezionataID = ''
+
+  visualizzaMedia = false
+  rif_x_Media = {}
+
+  openMediaPos(pos_id: string) {
+    this.rif_x_Media = { job_id: this.record.lavoroID, pos_id }
+    this.visualizzaMedia = true
+  }
+  exitMultimedia() {
+    this.visualizzaMedia = false
+  }
+
+  chiudiWizardSchede() {
+    this.stepIndex = -2
+  }
+  salvaArticoloGenerale() {
+    this.stepIndex = -2
+  }
 
   articoloDaEditareID = ''
   apriWM(id: string) {
@@ -346,7 +382,7 @@ export default class RilievoFori extends Vue {
   exit() {
     this.articoliSelezionati = new Array<ArticoloGeneraleConfigurato>()
     this.posizioneSelezionataID = ''
-    this.stepIndex = 0
+    this.stepIndex = -2
     this.ui.visualizzaWizardRilievo = false
   }
 
@@ -400,15 +436,32 @@ export default class RilievoFori extends Vue {
   }
 
   mounted() {
-    document.addEventListener('keydown', event => {
-      console.log('keydown', event)
-      event.preventDefault()
-    })
-    document.addEventListener('keyup', event => {
-      console.log('keyup', event)
-      event.preventDefault()
-    })
-    // this.$el.onkeydown = (event: any) => { alert(event)}
+    // document.addEventListener('keydown', event => {
+    //   console.log('keydown', event)
+    //   event.preventDefault()
+    // })
+    // document.addEventListener('keyup', event => {
+    //   console.log('keyup', event)
+    //   event.preventDefault()
+    // })
   }
 }
 </script>
+
+<style scoped>
+.fabRientranza {
+  position: absolute;
+  left: 50%;
+  top: 0px;
+  transform: translateX(-50%);
+  border-radius: 0 0 75px 75px;
+  width: 75px;
+  height: 38px;
+  background-color: white;
+}
+
+.fabCenter {
+  left: 50%;
+  transform: translateX(-50%);
+}
+</style>

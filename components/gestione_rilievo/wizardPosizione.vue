@@ -15,7 +15,7 @@
     </v-card>
 
     <v-card-actions class="pt-3">
-      <v-btn text @click="onAbort" color="grey darken-1">ANNULLA</v-btn>
+      <v-btn text @click="onAbort" color="grey darken-4">ANNULLA</v-btn>
       <v-spacer></v-spacer>
       <v-btn text @click="onSave" color="green">SALVA</v-btn>
     </v-card-actions>
