@@ -133,7 +133,7 @@
           </v-card-text>
 
           <v-footer absolute class="py-4">
-            <v-btn color="primary" dark absolute top fab :style="{ left: '50%', transform: 'translateX(-50%)' }">
+            <v-btn color="primary" dark absolute top fab :style="{ left: '50%', transform: 'translateX(-50%)' }" @click="aggiungiScheda">
               <v-icon>mdi-plus</v-icon>
             </v-btn>
             <v-card
@@ -302,9 +302,15 @@ export default class RilievoFori extends Vue {
 
   fab = false
   stepIndex = -2
+  return_stepIndex: number | undefined = undefined
   articoliSelezionati = new Array<ArticoloGeneraleConfigurato>()
   visualizzaNuovaPosizione = false
   posizioneSelezionataID = ''
+
+  aggiungiScheda() {
+    this.stepIndex = -1
+    this.return_stepIndex = 1
+  }
 
   visualizzaMedia = false
   rif_x_Media = {}
@@ -318,10 +324,20 @@ export default class RilievoFori extends Vue {
   }
 
   chiudiWizardSchede() {
-    this.stepIndex = -2
+    if (this.return_stepIndex == undefined) {
+      this.stepIndex = -2
+    } else {
+      this.stepIndex = this.return_stepIndex as number
+      this.return_stepIndex = undefined
+    }
   }
   salvaArticoloGenerale() {
-    this.stepIndex = -2
+     if (this.return_stepIndex == undefined) {
+      this.stepIndex = -2
+    } else {
+      this.stepIndex = this.return_stepIndex as number
+      this.return_stepIndex = undefined
+    }
   }
 
   articoloDaEditareID = ''
