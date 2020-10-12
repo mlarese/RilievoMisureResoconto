@@ -44,7 +44,7 @@
             <v-card-subtitle>Selezionare una delle opzioni presenti</v-card-subtitle>
           </v-card>
           <v-card-text class="py-0">
-            <v-list :style="{ height: height - 150 + 'px', 'overflow-y': 'auto' }">
+            <v-list :style="{ height: height - 150 + 'px', 'overflow-y': 'scroll' }">
               <v-list-item-group v-model="prop.propValue" color="primary">
                 <template v-for="(row, i) in getTableRows(prop.propTableName)">
                   <v-list-item :key="i" :value="`${row.JSTabRowCodice}#_#${row.JSTabRowDesc}`">
@@ -59,7 +59,7 @@
                   </v-list-item>
                 </template>
                 <template v-if="!prop.isRequired">
-                  <v-list-item value="altro">
+                  <v-list-item :value="'altro'">
                     <template v-slot:default="{ active }">
                       <v-list-item-content>
                         <v-text-field
@@ -70,9 +70,9 @@
                           dense
                         ></v-text-field>
                       </v-list-item-content>
-                      <v-list-item-icon>
+                      <v-list-item-action>
                         <v-icon v-if="active">mdi-check</v-icon>
-                      </v-list-item-icon>
+                      </v-list-item-action>
                     </template>
                   </v-list-item>
                 </template>
@@ -93,7 +93,7 @@
               >Avanti {{ index + 1 + esisteStessoArticolo }} / {{ articoloProperties.length + esisteStessoArticolo }}</v-btn
             >
 
-            <v-btn large v-else text color="primary" @click="onSalva()">Salva</v-btn>
+            <v-btn large v-else :disabled="!(prop.propValue)" text color="primary" @click="onSalva()">Salva</v-btn>
           </v-footer>
         </v-card>
       </v-stepper-content>
@@ -195,7 +195,7 @@ export default class WizardSchede extends Vue {
         this.articoloProperties = new Array<PropertyValued>()
 
         for (const propDef of this.articoloSelezionato.JSProperties) {
-          if (propDef.JSAWizard === 'PWA.DG') {
+          if (propDef.JSAWizard && propDef.JSAWizard.startsWith('PWA.DG')) {
             let prp = new PropertyValued()
             prp.propLabel = propDef.JSAPropLabel
             prp.propName = propDef.JSAPropName

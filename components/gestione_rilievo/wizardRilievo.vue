@@ -234,7 +234,9 @@
             </v-list-item-group>
           </v-card-text>
           <v-footer absolute class="py-4">
-            <v-btn large class="mx-auto" text outlined color="green" @click="stepIndex = 0">Cambia posizione</v-btn>
+            <v-btn large text color="gray" @click="exit">FINE</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn large text outlined color="green" @click="stepIndex = 0">Cambia posizione</v-btn>
           </v-footer>
         </v-card>
       </v-stepper-content>

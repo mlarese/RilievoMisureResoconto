@@ -104,10 +104,10 @@ export default Vue.extend({
       this.$router.push(`/rilievo/${id}`)
     }
   },
-  mounted() {
+  async mounted() {
     if (this.rifLavoroID) {
       this.setRiferimentoAlLavoro(this.rifLavoroID)
-      this.loadRilievi()
+      await this.loadRilievi()
     }
   }
 })

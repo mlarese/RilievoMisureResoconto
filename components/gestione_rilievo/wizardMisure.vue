@@ -168,7 +168,8 @@
           <v-btn text color="gray" v-if="stepIndex == 0" @click="exitWizard">Annulla</v-btn>
           <v-btn text color="gray" v-else @click="backStep"><v-icon>mdi-chevron-left</v-icon>indietro</v-btn>
           <v-spacer></v-spacer>
-          <v-btn text color="primary" @click="nextStep">Avanti</v-btn>
+          <v-btn v-if="articoloGenerico.artClass == '$PC_SER'" text color="primary" @click="nextStep">Avanti</v-btn>
+          <v-btn v-else text outlined color="green" @click="onSalva">Salva</v-btn>
         </v-footer>
       </v-stepper-content>
 
@@ -269,6 +270,11 @@ export default class RilievoFori extends Vue {
   }
 
   getDrawingCommands() {
+
+    if (this.articoloGenerico.artClass != '$PC_SER'){
+      // Non si deve generare l'immagine del serramento
+      return ''
+    }
     // Il codice del modello è indicato dalla serie
     const nomeModello = this.getParametroDaScript('=getDati("SERIE").Parametro("PROTOTIPO")')
     // Preleva il modello dell'articolo
@@ -297,7 +303,7 @@ export default class RilievoFori extends Vue {
     if (valore) {
       this.GPROD.ApplicaMC_x_Modifica(`H_DX=${valore}`)
     } else {
-      this.GPROD.ApplicaMC_x_Modifica(`H_SX=${this.articoloProperties.find(p => p.propName == '#SER.PR_H_SX')?.propValue}`)
+      this.GPROD.ApplicaMC_x_Modifica(`H_DX=${this.articoloProperties.find(p => p.propName == '#SER.PR_H_SX')?.propValue}`)
     }
 
     valore = this.articoloProperties.find(p => p.propName == '#GRP_ANTE.PR_NUMERO_ANTE')?.propValue
@@ -441,7 +447,7 @@ export default class RilievoFori extends Vue {
 
     for (const propAnag of this.articoloAnag.JSProperties) {
       // Crea un dictionary in funzione del wizard (se specificato) altrimenti ignora
-      if (propAnag.JSAWizard == 'PWA.DG') {
+      if (propAnag.JSAWizard && propAnag.JSAWizard.startsWith('PWA.DG')) {
         continue
       }
 

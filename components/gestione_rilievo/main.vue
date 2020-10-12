@@ -74,11 +74,10 @@
         </div>
 
         <v-tabs centered>
-          <v-tab>RILIEVO</v-tab>
+          <v-tab>GENERALE</v-tab>
           <v-tab>SCHEDE</v-tab>
           <v-tab>POSIZIONI</v-tab>
-          <v-tab>X ART</v-tab>
-          <v-tab>X POS</v-tab>
+          <v-tab>ARTICOLI</v-tab>
 
           <v-tab-item :class="$vuetify.breakpoint.xsOnly ? 'c_small' : 'c_large'" class="pa-0">
             <!-- Dati del rilievo -->
@@ -153,9 +152,14 @@ export default class RilievoMain extends Vue {
   get getHeightDialog() {
     let offset = -10
     if (this.$vuetify.breakpoint.xsOnly) {
-      return this.$vuetify.breakpoint.height //+ offset
+      return this.$vuetify.breakpoint.height
     } else {
-      return 600 //+ offset
+      if (this.$vuetify.breakpoint.height > 600){
+        return 600
+      }else
+      {
+        return this.$vuetify.breakpoint.height
+      }
     }
   }
 

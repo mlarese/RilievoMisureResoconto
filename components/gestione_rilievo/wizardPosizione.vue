@@ -6,13 +6,13 @@
       <v-text-field v-model="localPos.posizione" label="Posizione" hint="Ad esempio 1, 2 ecc" persistent-hint> </v-text-field>
       <v-text-field v-model="localPos.descrizione" label="Descrizione" hint="Ad esempio cucina, lato nord ecc." persistent-hint> </v-text-field>
     </v-card-text>
-
+<!-- 
     <p class="text-center pt-3">
       Scatta una nuova foto per ricordare la posizione
     </p>
     <v-card flat class="d-flex justify-center">
       <v-btn fab><v-icon>mdi-camera-plus-outline</v-icon></v-btn>
-    </v-card>
+    </v-card> -->
 
     <v-card-actions class="pt-3">
       <v-btn text @click="onAbort" color="grey darken-4">ANNULLA</v-btn>

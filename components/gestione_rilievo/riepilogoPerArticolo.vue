@@ -4,22 +4,20 @@
     <!-- Lista articoli generali -->
     <v-card v-for="(artGen, iag) in record.listaArticoliGen" :key="iag" class="mb-2">
       <v-card-title>
-        <v-input :hint="artGen.subDescrizione" dense persistent-hint :hide-details="artGen.subDescrizione == ''">
-          {{ artGen.descrizione }}
-        </v-input>
-        <v-subheader>
-          <div v-for="(prop, j) in artGen.listaPropValued" :key="j">
-            <p>{{ prop.propLabel }} : {{ prop.propValue || prop.propValueDecode }}</p>
-          </div>
-        </v-subheader>
+        <v-row class="py-0" no-gutters>
+          <v-col cols="12" class="py-0">
+            <v-input v-if="artGen.subDescrizione" dense hide-details> {{ artGen.descrizione }} - {{ artGen.subDescrizione }} </v-input>
+            <v-input v-else dense hide-details>
+              {{ artGen.descrizione }}
+            </v-input>
+          </v-col>
+        </v-row>
       </v-card-title>
-      <!-- <v-row v-for="(artSpec, ias) in getArtSpec_By_ArtGen(artGen._id)" :key="ias">
-        <v-col>{{ getPosizione(artSpec.rifPosID).posizione }} - {{ getPosizione(artSpec.rifPosID).descrizione }}</v-col>
-        <v-col v-if="visualizzaImg">
-          <ImmagineDet :drawingCommands="artSpec.drawingCommands" :imgWidth="50" :imgHeight="50"></ImmagineDet>
-        </v-col>
-        <v-col> </v-col>
-      </v-row> -->
+      <v-card-subtitle class="pb-0">
+        <div v-for="(prop, j) in artGen.listaPropValued" :key="j">
+          <p class="ma-0">{{ prop.propLabel }} : {{ prop.propValueDecode }}</p>
+        </div>
+      </v-card-subtitle>
 
       <!-- TABELLA PER SERRAMENTO -->
       <v-simple-table v-if="artGen.artClass == '$PC_SER'">
@@ -44,8 +42,36 @@
               <td>{{ getTipologia(artSpec) }}</td>
               <td>{{ getAnte(artSpec) }}</td>
               <td>{{ getApertura(artSpec) }}</td>
+              <td>{{ getLarghezza_SER(artSpec) }}</td>
+              <td>{{ getAltezza_SER(artSpec) }}</td>
+            </tr>
+          </tbody>
+        </template>
+      </v-simple-table>
+
+      <!-- TABELLA PER ALTRI ARTICOLI -->
+      <v-simple-table v-else>
+        <template v-slot:default>
+          <thead>
+            <tr>
+              <th class="text-left">Posizione</th>
+              <th class="text-left" v-if="visualizzaImg">Immagine</th>
+              <th>Larghezza</th>
+              <th>Altezza</th>
+              <th>Profondità</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(artSpec, ias) in getArtSpec_By_ArtGen(artGen._id)" :key="ias">
+              <td>{{ getPosizione(artSpec.rifPosID).posizione }} - {{ getPosizione(artSpec.rifPosID).descrizione }}</td>
+              <td v-if="visualizzaImg">
+                <v-avatar class="ma-3" size="60" tile>
+                  <myIMG :artGen="artGen" :key="ias + 'img'"></myIMG>
+                </v-avatar>
+              </td>
               <td>{{ getLarghezza(artSpec) }}</td>
               <td>{{ getAltezza(artSpec) }}</td>
+              <td>{{ getProfondita(artSpec) }}</td>
             </tr>
           </tbody>
         </template>
@@ -57,14 +83,15 @@
 <script lang="ts">
 import { Vue, Component, namespace, State, Getter, Prop } from 'nuxt-property-decorator'
 import ImmagineDet from '@/components/GestioneRilievo/ImmagineDet.vue'
+import myIMG from '@/components/gestione_rilievo/myImage.vue'
 
 import { RilievoRecord, RilievoUI } from '@/store/rilievoModule'
 import { ArticoloGeneraleConfigurato, ArticoloSpecificoConfigurato, JSArticolo, PropertyValued, JSTableRow } from '@/store/articoloModel'
 import JSArtProp from '~/models/JSArtProp'
 import { Posizione } from '~/store/posizioneModule'
 
-@Component({ components: { ImmagineDet }, name: 'riepilogoPerArticolo' })
-export default class RilievoFori extends Vue {
+@Component({ components: { ImmagineDet, myIMG }, name: 'riepilogoPerArticolo' })
+export default class Riepilogo_x_Art extends Vue {
   @State(state => state.rilievoModule.record) record!: RilievoRecord
   @State(state => state.rilievoModule.ui) ui!: RilievoUI
   @Getter('posizioneModule/posizioni') posizioni!: Posizione[]
@@ -97,11 +124,11 @@ export default class RilievoFori extends Vue {
     return artSpec.listaPropValued.find(p => p.propName == '#GRP_ANTE.PR_SISTEMA_APERTURA')?.propValue
   }
 
-  getLarghezza(artSpec: ArticoloSpecificoConfigurato) {
+  getLarghezza_SER(artSpec: ArticoloSpecificoConfigurato) {
     return artSpec.listaPropValued.find(p => p.propName == '#SER.PR_L')?.propValue
   }
 
-  getAltezza(artSpec: ArticoloSpecificoConfigurato) {
+  getAltezza_SER(artSpec: ArticoloSpecificoConfigurato) {
     let hsx = artSpec.listaPropValued.find(p => p.propName == '#SER.PR_H_SX')?.propValue
     let hdx = artSpec.listaPropValued.find(p => p.propName == '#SER.PR_H_DX')?.propValue
 
@@ -110,6 +137,27 @@ export default class RilievoFori extends Vue {
     } else {
       return hsx
     }
+  }
+
+  getLarghezza(artSpec: ArticoloSpecificoConfigurato) {
+    return artSpec.listaPropValued.find(p => p.propName == 'L')?.propValue
+  }
+
+  getAltezza(artSpec: ArticoloSpecificoConfigurato) {
+    return artSpec.listaPropValued.find(p => p.propName == 'H')?.propValue
+  }
+
+  getProfondita(artSpec: ArticoloSpecificoConfigurato) {
+    return artSpec.listaPropValued.find(p => p.propName == 'P')?.propValue
+  }
+
+  getImmagine(artGen: ArticoloGeneraleConfigurato) {
+    let id = `${artGen.azienda}.${artGen.catalogo}.${artGen.codice}`
+    this.$store.dispatch('articoli/getById', id).then(art => {
+      this.$store.dispatch('dm_resources/getRisorsaById', art.JSImmagineRisID).then(res => {
+        return res.thumbnailUrl
+      })
+    })
   }
 }
 </script>
