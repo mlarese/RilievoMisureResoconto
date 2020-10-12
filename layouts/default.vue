@@ -32,7 +32,7 @@
         </v-list-item>
       </v-list>
 
-      <template v-slot:append>        
+      <template v-slot:append>
         <div class="pa-2">
           <p class="text-center">4Innovation srl &copy; V3.0.2</p>
         </div>
@@ -96,6 +96,23 @@
           <v-input persistent-hint hint="Utente" prepend-icon="mdi-account-check-outline" class="py-2">{{ utenteDesc }}</v-input>
           <v-input persistent-hint hint="Azienda" prepend-icon="mdi-factory" class="py-2">{{ aziendaDesc }}</v-input>
         </v-card-text>
+        <v-card-actions class="py-0">
+          <v-card-subtitle>
+            Avanzate
+          </v-card-subtitle>
+          <v-spacer></v-spacer>
+
+          <v-btn icon @click="show = !show">
+            <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-cog' }}</v-icon>
+          </v-btn>
+        </v-card-actions>
+
+        <v-expand-transition>
+          <div v-show="show" class="px-2">
+            <v-text-field v-model="cmd" solo append-outer-icon="mdi-send" @click:append-outer="executeCMD"></v-text-field>
+          </div>
+        </v-expand-transition>
+
         <v-card-actions>
           <v-btn color="gray darken-1" text @click="logout">Logout</v-btn>
           <v-spacer></v-spacer>
@@ -128,6 +145,8 @@ export default {
       isDialogProfileVisible: false,
       drawer: this.$vuetify.breakpoint.name === 'lg' || this.$vuetify.breakpoint.name === 'xl',
       tab: null,
+      show: false,
+      cmd: ''
     }
   },
   watch: {
@@ -161,7 +180,21 @@ export default {
           this.$router.push('/login')
         })
     },
-    
+
+    executeCMD() {
+      if (this.cmd === 'CLEARSTORAGE') {
+        window.indexedDB
+          .databases()
+          .then(r => {
+            for (var i = 0; i < r.length; i++) window.indexedDB.deleteDatabase(r[i].name)
+          })
+          .then(() => {
+            alert('All data cleared.')
+          })
+      }else{
+        alert('Comando sconosciuto')
+      }
+    }
   }
 }
 </script>

@@ -2,11 +2,6 @@
   <div style="height: 100%;">
     <v-card flat :style="`height:${getHeight}px`">
       <v-card-text :style="{ height: 'calc(100% - 36px)', 'overflow-y': 'auto' }">
-        <!-- <v-btn rounded color="primary" dark small @click="aggiungiNuovaPosizione()" class="ma-2">
-          posizione
-          <v-icon>mdi-plus</v-icon>
-        </v-btn> -->
-
         <!-- Visualizza l'elenco delle posizioni -->
         <v-card v-for="(pos, i) in posizioni" :key="i" class="mb-2">
           <v-toolbar color="#e4effa" dense flat>
@@ -37,10 +32,6 @@
         </v-card>
       </v-card-text>
       <v-btn absolute rounded dark bottom right color="primary" @click="aggiungiNuovaPosizione"> AGGIUNGI POSIZIONE <v-icon>mdi-plus</v-icon> </v-btn>
-
-      <!-- <v-card-actions class="py-0 d-flex justify-center">
-        <v-btn text outlined color="indigo" @click="aggiungiNuovaPosizione()"><v-icon>mdi-plus</v-icon>AGGIUNGI POSIZIONE</v-btn>
-      </v-card-actions> -->
     </v-card>
 
     <v-dialog v-model="ui.visualizzaWizardPosizione" max-width="400px">
@@ -48,18 +39,19 @@
     </v-dialog>
 
     <v-dialog v-model="visualizzaWizardMisure" :fullscreen="$vuetify.breakpoint.xsOnly" max-width="400px">
-      <wizardMisure v-if="visualizzaWizardMisure" :articoloDaEditareID="articoloDaEditareID" @onExit="exitWizardMisure" />
+      <wizardMisure v-if="visualizzaWizardMisure" :height="getHeightDialog" :articoloDaEditareID="articoloDaEditareID" @onExit="exitWizardMisure" />
     </v-dialog>
 
     <v-dialog v-model="visualizzaMedia" :fullscreen="$vuetify.breakpoint.xsOnly" max-width="700px">
       <v-card>
-        <v-toolbar color="primary" dense dark>
+        <v-toolbar color="primary" dense dark flat>
           <v-btn icon class="ml-1" @click="exitMultimedia()">
             <v-icon>mdi-arrow-left</v-icon>
           </v-btn>
         </v-toolbar>
-
-        <media class="overflow-hidden" :job="rif_x_Media" :key="rif_x_Media.pos_id"/>
+        <v-card-text>
+          <media class="overflow-hidden" :job="rif_x_Media" :key="rif_x_Media.pos_id" />
+        </v-card-text>
       </v-card>
     </v-dialog>
   </div>
@@ -82,7 +74,7 @@ export default class RilievoFori extends Vue {
 
   visualizzaWizardMisure = false
   articoloDaEditareID: string = ''
-  
+
   visualizzaMedia = false
   rif_x_Media = {}
 
@@ -90,7 +82,7 @@ export default class RilievoFori extends Vue {
     this.rif_x_Media = { job_id: this.record.lavoroID, pos_id }
     this.visualizzaMedia = true
   }
-  exitMultimedia(){
+  exitMultimedia() {
     this.visualizzaMedia = false
   }
 
@@ -138,6 +130,20 @@ export default class RilievoFori extends Vue {
       return this.$vuetify.breakpoint.height - 120 //+ offset
     } else {
       return this.$vuetify.breakpoint.height - 300 //+ offset
+    }
+  }
+
+  get getHeightDialog() {
+    let offset = -10
+    if (this.$vuetify.breakpoint.xsOnly) {
+      return this.$vuetify.breakpoint.height
+    } else {
+      if (this.$vuetify.breakpoint.height > 600){
+        return 600
+      }else
+      {
+        return this.$vuetify.breakpoint.height
+      }
     }
   }
 }

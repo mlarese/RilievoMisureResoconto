@@ -1,43 +1,34 @@
 <template>
-    <v-card slot="back">
-      <v-card-text>
-        <div>
-          <v-text-field
-            v-model="utente"
-            label="Utente"
-            required
-            dense
-            outlined
-            readonly
-          ></v-text-field>
-          <v-text-field
-            v-model="azienda"
-            label="Azienda"
-            required
-            dense
-            outlined
-            readonly
-          ></v-text-field>
-        </div>
-      </v-card-text>
-      <v-card-actions>
-        <v-btn @click="logout">
-          logout
-        </v-btn>
-      </v-card-actions>
-    </v-card>
+  <v-card slot="back">
+    <v-card-text>
+      <div>
+        <v-text-field v-model="utente" label="Utente" required dense outlined readonly></v-text-field>
+        <v-text-field v-model="azienda" label="Azienda" required dense outlined readonly></v-text-field>
+      </div>
+    </v-card-text>
+
+  
+    <v-card-actions>
+      <v-btn @click="logout">
+        logout
+      </v-btn>
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex'
 export default {
   layout: 'fullPage',
+  data(){
+    return {
+      show: false
+    }
+  },
   fetch({ store }) {
     store.dispatch('auth/persistentUser', {}, { root: true })
   },
-  components: {
-    
-  },
+  components: {},
   computed: {
     ...mapState('auth', ['utente', 'azienda'])
   },

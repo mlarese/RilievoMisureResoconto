@@ -2,88 +2,6 @@
   <div>
     <v-stepper v-model="stepIndex" v-if="!isLoading">
       <!-- elenco properties dell'articolo selezionato -->
-      <!-- <v-stepper-content :step="index" v-for="(page, index) in listaPagine" :key="index">
-        <v-card v-if="page == 'PWA.WIZSER_MISURE'">
-          <p>wizard misure</p>
-
-          <div v-for="(prp, i) in getProprietaDellaPagina(page)" :key="i">
-            <div v-if="prp.propName == 'FORMA'">
-              <v-row>
-                <v-col cols="4">
-                  {{ prp.propLabel }}
-                </v-col>
-                <v-col class="py-0">
-                  <v-radio-group v-model="prp.propValue" class="py-0">
-                    <v-radio v-for="(row, n) in getTableRows(prp.propTableName)" :key="n" :label="row.JSTabRowDesc" :value="row.JSTabRowCodice"></v-radio>
-                  </v-radio-group>
-                </v-col>
-              </v-row>
-            </div>
-
-            <div v-if="prp.propName == '#SER.PR_L'">
-              <v-row>
-                <v-col cols="4">
-                  {{ prp.propLabel }}
-                </v-col>
-                <v-col class="py-0 mr-1">
-                  <v-text-field hide-details solo dense v-model="prp.propValue"></v-text-field>
-                </v-col>
-              </v-row>
-            </div>
-            <div v-if="prp.propName == '#SER.PR_H_SX'">
-              <v-row>
-                <v-col cols="4">
-                  {{ prp.propLabel }}
-                </v-col>
-                <v-col class="py-0  mr-1">
-                  <v-text-field hide-details solo dense v-model="prp.propValue"></v-text-field>
-                </v-col>
-              </v-row>
-            </div>
-            <div v-if="prp.propName == '#SER.PR_H_DX'">
-              <v-row>
-                <v-col cols="4">
-                  {{ prp.propLabel }}
-                </v-col>
-                <v-col class="py-0 mr-1">
-                  <v-text-field hide-details solo dense v-model="prp.propValue"></v-text-field>
-                </v-col>
-              </v-row>
-            </div>
-          </div>
-        </v-card>
-
-        <v-card v-if="page == 'PWA.WIZSER_GRPA'">
-          <p>Wizard gruppo ante</p>
-
-          <div v-for="(prp, i) in getProprietaDellaPagina(page)" :key="i">
-            <div v-if="prp.propName == '#GRP_ANTE.PR_NUMERO_ANTE'">
-              <v-row>
-                <v-col cols="4">
-                  {{ prp.propLabel }}
-                </v-col>
-                <v-col class="py-0 mr-1">
-                  <v-text-field hide-details solo dense v-model="prp.propValue"></v-text-field>
-                </v-col>
-              </v-row>
-            </div>
-
-            <div v-if="prp.propName == '#GRP_ANTE.PR_SISTEMA_APERTURA'">
-              <v-row>
-                <v-col cols="4">
-                  {{ prp.propLabel }}
-                </v-col>
-                <v-col class="py-0">
-                  <v-radio-group v-model="prp.propValue" class="py-0">
-                    <v-radio v-for="(row, n) in getTableRows(prp.propTableName)" :key="n" :label="row.JSTabRowDesc" :value="row.JSTabRowCodice"></v-radio>
-                  </v-radio-group>
-                </v-col>
-              </v-row>
-            </div>
-          </div>
-        </v-card>
-      </v-stepper-content> -->
-
       <v-stepper-content :step="index" v-for="(page, index) in listaPagine" :key="index" :style="`height:${height}px`">
         <div v-for="(prop, pi) in getProprietaDellaPagina(page)" :key="pi">
           <div v-if="prop.propTableName">
@@ -141,50 +59,50 @@
             <v-row class="mx-2 py-2" v-else-if="prop.propName == '#SER.PR_H_DX'">
               <v-text-field
                 v-if="getDati('FORMA').propValue == 'TR'"
-                dense
                 v-model="prop.propValue"
                 :label="prop.propLabel"
-                hide-details
                 append-icon="mdi-keyboard-outline"
                 @click:append="openKeyboard(prop.propName)"
+                @click="try_openKeyboard($event, prop.propName)"
+                :readonly="$vuetify.breakpoint.smAndDown"
               ></v-text-field>
-              <v-text-field v-else v-show="false" readonly dense v-model="getDati('#SER.PR_H_SX').propValue" label="h dx" hide-details></v-text-field>
+              <v-text-field v-else v-show="false" readonly v-model="getDati('#SER.PR_H_SX').propValue" label="h dx"></v-text-field>
             </v-row>
 
             <v-row v-else class="mx-2 py-2">
               <v-text-field
-                dense
                 v-model="prop.propValue"
                 :label="prop.propLabel"
-                hide-details
                 append-icon="mdi-keyboard-outline"
                 @click:append="openKeyboard(prop.propName)"
+                @click="try_openKeyboard($event, prop.propName)"
+                :readonly="$vuetify.breakpoint.smAndDown"
               ></v-text-field>
             </v-row>
           </div>
         </div>
 
-        <v-footer absolute>
-          <v-btn text color="gray" v-if="stepIndex == 0" @click="exitWizard">Annulla</v-btn>
-          <v-btn text color="gray" v-else @click="backStep"><v-icon>mdi-chevron-left</v-icon>indietro</v-btn>
+        <v-footer absolute class="py-4">
+          <v-btn large text color="gray" v-if="stepIndex == 0" @click="exitWizard">Annulla</v-btn>
+          <v-btn large text color="gray" v-else @click="backStep"><v-icon>mdi-chevron-left</v-icon>indietro</v-btn>
           <v-spacer></v-spacer>
-          <v-btn v-if="articoloGenerico.artClass == '$PC_SER'" text color="primary" @click="nextStep">Avanti</v-btn>
-          <v-btn v-else text outlined color="green" @click="onSalva">Salva</v-btn>
+          <v-btn large v-if="articoloGenerico.artClass == '$PC_SER'" text color="primary" @click="nextStep">Avanti</v-btn>
+          <v-btn large v-else text outlined color="green" @click="onSalva">Salva</v-btn>
         </v-footer>
       </v-stepper-content>
 
-      <v-stepper-content :step="listaPagine.length">
+      <v-stepper-content :step="listaPagine.length" :style="`height:${height}px`">
         <!-- VISUALIZZA IMMAGINE -->
         <ImmagineDet :drawingCommands="drawingCommands" :imgWidth="300" :imgHeight="getHeight - 50"></ImmagineDet>
 
-        <v-footer absolute>
-          <v-btn text color="gray" @click="backStep"><v-icon>mdi-chevron-left</v-icon>indietro</v-btn>
+        <v-footer absolute class="py-4">
+          <v-btn large text color="gray" @click="backStep"><v-icon>mdi-chevron-left</v-icon>indietro</v-btn>
           <v-spacer></v-spacer>
-          <v-btn text outlined color="green" @click="onSalva">Salva</v-btn>
+          <v-btn large text outlined color="green" @click="onSalva">Salva</v-btn>
         </v-footer>
       </v-stepper-content>
     </v-stepper>
-    <v-dialog v-model="keyboard" max-width="400px">
+    <v-dialog persistent v-model="keyboard" max-width="300px">
       <keyPad v-if="keyboard" @onSave="keyboardSave" @onAbort="keyboardAbort" />
     </v-dialog>
   </div>
@@ -221,6 +139,14 @@ export default class RilievoFori extends Vue {
   keyboard: boolean = false
 
   propName_x_Keyboard: string = ''
+
+  try_openKeyboard(e: any, propName: string) {
+    // Se siamo in modalità touch
+    if (this.$vuetify.breakpoint.smAndDown) {
+      e.preventDefault()
+      this.openKeyboard(propName)
+    }
+  }
 
   openKeyboard(propName: string) {
     this.propName_x_Keyboard = propName
@@ -270,8 +196,7 @@ export default class RilievoFori extends Vue {
   }
 
   getDrawingCommands() {
-
-    if (this.articoloGenerico.artClass != '$PC_SER'){
+    if (this.articoloGenerico.artClass != '$PC_SER') {
       // Non si deve generare l'immagine del serramento
       return ''
     }

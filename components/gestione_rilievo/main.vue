@@ -77,7 +77,8 @@
           <v-tab>GENERALE</v-tab>
           <v-tab>SCHEDE</v-tab>
           <v-tab>POSIZIONI</v-tab>
-          <v-tab>ARTICOLI</v-tab>
+          <v-tab>RIEPILOGO 1</v-tab>
+          <v-tab>RIEPILOGO 2</v-tab>
 
           <v-tab-item :class="$vuetify.breakpoint.xsOnly ? 'c_small' : 'c_large'" class="pa-0">
             <!-- Dati del rilievo -->
@@ -93,9 +94,15 @@
             <!-- FORI - posizioni -->
             <fori />
           </v-tab-item>
+
           <v-tab-item :class="$vuetify.breakpoint.xsOnly ? 'c_small' : 'c_large'">
             <!-- Lista Per articolo -->
             <list-per-articolo />
+          </v-tab-item>
+
+          <v-tab-item :class="$vuetify.breakpoint.xsOnly ? 'c_small' : 'c_large'">
+            <!-- Lista Per posizione -->
+            <listPerPosizione />
           </v-tab-item>
         </v-tabs>
       </div>
@@ -122,11 +129,12 @@ import Fori from '../gestione_rilievo/fori.vue'
 import wizardSchede from '@/components/GestioneRilievo/wizardSchede.vue'
 import wizardRilievo from '@/components/gestione_rilievo/wizardRilievo.vue'
 import listPerArticolo from '@/components/gestione_rilievo/riepilogoPerArticolo.vue'
+import listPerPosizione from '@/components/gestione_rilievo/riepilogoPerPosizione.vue'
 import datiAnagrafici from '@/components/gestione_rilievo/datiAnagrafici.vue'
 
 import { RilievoRecord, RilievoUI } from '@/store/rilievoModule'
 
-@Component({ components: { Panel, Schede, Fori, wizardSchede, wizardRilievo, listPerArticolo, datiAnagrafici }, name: 'rilievo' })
+@Component({ components: { Panel, Schede, Fori, wizardSchede, wizardRilievo, listPerArticolo, listPerPosizione, datiAnagrafici }, name: 'rilievo' })
 export default class RilievoMain extends Vue {
   @State(state => state.rilievoModule.record) record !: RilievoRecord
   @State(state => state.rilievoModule.ui) ui!: RilievoUI

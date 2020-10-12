@@ -6,7 +6,7 @@
         <v-card :height="height">
           <v-card-title> Schede del rilievo </v-card-title>
           <v-card-subtitle>In questa pagina sono presenti tutte le schede dei dati generali degli articoli </v-card-subtitle>
-          <v-card-text class="pt-1" :style="{ height: height - 112 + 'px', 'overflow-y': 'auto' }">
+          <v-card-text class="pt-1" :style="{ height: height - 180 + 'px', 'overflow-y': 'auto' }">
             <listaSchede />
           </v-card-text>
 

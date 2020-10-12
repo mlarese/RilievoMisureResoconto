@@ -101,7 +101,7 @@ export default class Riepilogo_x_Art extends Vue {
   getArtSpec_By_ArtGen(schedaID: string): any[] {
     // const unique = [...new Set(this.record.listaArticoliSpec.map(item => item.rifSchedaID))]
     if (this.record.listaArticoliSpec) {
-      return this.record.listaArticoliSpec.filter(art => art.rifSchedaID == schedaID)
+      return this.record.listaArticoliSpec.filter(art => art.rifSchedaID == schedaID && art.listaPropValued && art.listaPropValued.length > 0)
     } else {
       return []
     }
