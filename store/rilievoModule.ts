@@ -72,6 +72,11 @@ export const actions: ActionTree<RootState, RootState> = {
         commit('setID', res)
         await dispatch('reload')
         return res
+    },
+    
+    deleteArtGen: async ({ commit, dispatch, state }, id: string) => {
+        state.record.listaArticoliGen.splice(state.record.listaArticoliGen.findIndex(art => art._id == id), 1)
+        await dispatch('salva')
     }
 
 }

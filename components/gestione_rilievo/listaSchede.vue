@@ -1,4 +1,5 @@
 <template>
+  <div>
     <!-- Elenco schede già compilate -->
     <div v-if="record.listaArticoliGen && record.listaArticoliGen.length > 0">
       <v-expansion-panels focusable>
@@ -6,7 +7,7 @@
           <v-expansion-panel-header>
             <v-row class="py-0" no-gutters>
               <v-col cols="12" class="py-0">
-                <v-input v-if="(artGen.subDescrizione)" :hint="artGen.descrizione" dense persistent-hint>
+                <v-input v-if="artGen.subDescrizione" :hint="artGen.descrizione" dense persistent-hint>
                   {{ artGen.subDescrizione }}
                 </v-input>
                 <v-input v-else dense persistent-hint>
@@ -23,7 +24,7 @@
             <v-card-actions class="pa-0">
               <v-spacer></v-spacer>
               <v-btn text small @click="editArtGen(artGen._id)"><v-icon>mdi-pencil</v-icon>Modifica</v-btn>
-              <v-btn text small @click="deleteArtGen(artGen._id)"><v-icon>mdi-trash-can-outline </v-icon>Elimina</v-btn>
+              <v-btn text small @click="tryDeleteArtGen(artGen._id)"><v-icon>mdi-trash-can-outline </v-icon>Elimina</v-btn>
             </v-card-actions>
           </v-expansion-panel-content>
         </v-expansion-panel>
@@ -37,19 +38,63 @@
         Usa il pulsante qui in basso per aggiungerne
       </p>
     </v-container>
+
+    <v-dialog v-model="alertDeleteArt">
+      <v-card>
+        <v-card-title>
+          Attenzione
+        </v-card-title>
+        <v-card-text>
+          Nono è possibile eliminare questa scheda
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn>OK</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <confirmDialog ref="confirmDialog" />
+    <alertDialog ref="alertDialog" />
+  </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component, namespace, State, Getter } from 'nuxt-property-decorator'
 import { RilievoRecord, RilievoUI } from '@/store/rilievoModule'
+import confirmDialog from '@/components/General/ConfirmDialog.vue'
+import alertDialog from '@/components/General/AlertDialog.vue'
 
-@Component({ components: {}, name: 'listaSchede' })
+@Component({ components: { confirmDialog, alertDialog }, name: 'listaSchede' })
 export default class RilievoSchede extends Vue {
   @State(state => state.rilievoModule.record) record!: RilievoRecord
   @State(state => state.rilievoModule.ui) ui!: RilievoUI
 
+  confirmDeleteArt = false
+  alertDeleteArt = false
+
   editArtGen(id: string) {}
 
-  deleteArtGen(id: string) {}
+  async tryDeleteArtGen(id: string) {
+    // Verifica se questo articolo è già stato utilizzato
+
+    let lista = this.record.listaArticoliSpec.filter(art => art.rifSchedaID == id)
+    console.log(lista)
+    if (lista.length > 0) {
+      // NON è possbile cancellare
+      let dialog = this.$refs.alertDialog as any
+      dialog.open('Attenzione', 'non è possibile eliminare questa scheda in quanto è già stata utilizzata.', {})
+    } else {
+      let dialog = this.$refs.confirmDialog as any
+      let response = await dialog.open('Confermare', 'Si è certi di voler eliminare la scheda?', {})
+
+      if (response) {
+        // ELIMINA DEFINITIVAMENTE
+        this.$store.dispatch('rilievoModule/deleteArtGen', id)
+      }
+    }
+  }
+
+  deleteArt() {}
 }
 </script>

@@ -1,9 +1,9 @@
 <template>
-  <v-dialog persistent v-model="dialog" :max-width="options.width" :style="{ zIndex: options.zIndex }" @keydown.esc="cancel">
+    <v-dialog v-model="dialog" :max-width="options.width" :style="{ zIndex: options.zIndex }" @keydown.esc="cancel">
     <v-card>
       <v-toolbar dark :color="options.color" dense flat>
         <v-toolbar-items>
-          <v-icon>mdi-help-circle-outline</v-icon>
+          <v-icon>mdi-alert-outline</v-icon>
         </v-toolbar-items>
         <v-toolbar-title class="pl-2 white--text">{{ title }}</v-toolbar-title>
       </v-toolbar>
@@ -11,7 +11,6 @@
       <v-card-actions class="pt-0">
         <v-spacer></v-spacer>
         <v-btn color="primary darken-1" text @click.native="agree">OK</v-btn>
-        <v-btn color="grey" text @click.native="cancel">Annulla</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -26,7 +25,7 @@ export default {
     message: null,
     title: null,
     options: {
-      color: 'primary',
+      color: 'warning',
       width: 290,
       zIndex: 200
     }
