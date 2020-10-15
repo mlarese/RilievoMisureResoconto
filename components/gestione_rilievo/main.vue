@@ -77,8 +77,8 @@
           <v-tab>GENERALE</v-tab>
           <v-tab>SCHEDE</v-tab>
           <v-tab>POSIZIONI</v-tab>
-          <v-tab>RIEPILOGO 1</v-tab>
-          <v-tab>RIEPILOGO 2</v-tab>
+          <v-tab>RIEP X ART</v-tab>
+          <v-tab>RIEP X POS</v-tab>
 
           <v-tab-item :class="$vuetify.breakpoint.xsOnly ? 'c_small' : 'c_large'" class="pa-0">
             <!-- Dati del rilievo -->

@@ -81,16 +81,10 @@ export default class RilievoFori extends Vue {
 
   getLarghezza({ artSpec, artGen }: any) {
     if (artGen.artClass == '$PC_SER') {
-      let hsx = artSpec.listaPropValued.find((p: any) => p.propName == '#SER.PR_H_SX')?.propValue
-      let hdx = artSpec.listaPropValued.find((p: any) => p.propName == '#SER.PR_H_DX')?.propValue
-
-      if (hdx) {
-        return hsx + '/' + hdx
-      } else {
-        return hsx
-      }
+      return artSpec.listaPropValued.find((p: any) => p.propName == '#SER.PR_L')?.propValue
+    } else {
+      return artSpec.listaPropValued.find((p: any) => p.propName == 'L')?.propValue
     }
-    return artSpec.listaPropValued.find((p: any) => p.propName == 'H')?.propValue
   }
 
   getAltezza({ artSpec, artGen }: any) {

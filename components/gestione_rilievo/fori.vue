@@ -1,7 +1,8 @@
 <template>
   <div style="height: 100%;">
     <v-card flat :style="`height:${getHeight}px`">
-      <v-card-text :style="{ height: 'calc(100% - 36px)', 'overflow-y': 'auto' }">
+      <v-card-title>Posizioni di installazione </v-card-title>
+      <v-card-text :style="{ height: 'calc(100% - 36px)', 'overflow-y': 'auto' }" v-if="posizioni && posizioni.length > 0">
         <!-- Visualizza l'elenco delle posizioni -->
         <v-card v-for="(pos, i) in posizioni" :key="i" class="mb-2">
           <v-toolbar color="#e4effa" dense flat>
@@ -10,13 +11,17 @@
             <v-btn icon @click="openMediaPos(pos._id)"><v-icon>mdi-folder-multiple-image</v-icon></v-btn>
             <v-btn icon><v-icon>mdi-dots-vertical</v-icon></v-btn>
           </v-toolbar>
-          <p v-if="getArticoliDellaPosizione(pos._id).length == 0" class="pa-2">Nessun articolo presente</p>
+          <p v-if="getArticoliDellaPosizione(pos._id).length == 0" class="pa-2">Nessun articolo inserito in questa posizione</p>
 
           <!-- PER OGNI POSIZIONE ELENCA GLI ARTICOLI -->
           <v-list v-else>
             <v-list-item v-for="(art, i) in getArticoliDellaPosizione(pos._id)" :key="i">
               <v-list-item-icon v-if="art.listaPropValued.length == 0">
                 <v-icon color="red">mdi-alert</v-icon>
+              </v-list-item-icon>
+
+              <v-list-item-icon v-else>
+                <v-icon color="green">mdi-checkbox-marked-circle-outline</v-icon>
               </v-list-item-icon>
 
               <v-list-item-content>
@@ -31,7 +36,16 @@
           </v-list>
         </v-card>
       </v-card-text>
-      <v-btn absolute rounded dark bottom right color="primary" @click="aggiungiNuovaPosizione"> AGGIUNGI POSIZIONE <v-icon>mdi-plus</v-icon> </v-btn>
+      <v-card-text v-else>
+        <v-container class="fill-height d-flex flex-column align-center justify-center">
+          <v-img :src="require('../../assets/images/posizione-empty-list.png')" contain max-width="50%" max-height="50%"></v-img>
+          <p class="title text-center">Nussuna posizione presente</p>
+          <p class="caption font-weight-light text-center" style="margin-top: -20px;">
+            Inizia cliccando sul pulsante (+) qui in basso
+          </p>
+        </v-container>
+      </v-card-text>
+      <v-btn absolute rounded dark bottom right color="primary" @click="aggiungiNuovaPosizione"> <v-icon>mdi-plus</v-icon> AGGIUNGI POSIZIONE </v-btn>
     </v-card>
 
     <v-dialog v-model="ui.visualizzaWizardPosizione" max-width="400px">
@@ -138,10 +152,9 @@ export default class RilievoFori extends Vue {
     if (this.$vuetify.breakpoint.xsOnly) {
       return this.$vuetify.breakpoint.height
     } else {
-      if (this.$vuetify.breakpoint.height > 600){
+      if (this.$vuetify.breakpoint.height > 600) {
         return 600
-      }else
-      {
+      } else {
         return this.$vuetify.breakpoint.height
       }
     }

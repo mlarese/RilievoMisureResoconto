@@ -33,7 +33,7 @@
 
     <v-container v-else class="fill-height d-flex flex-column align-center justify-center">
       <v-img :src="require('../../assets/images/schede-empty-list.png')" contain max-width="50%" max-height="50%"></v-img>
-      <p class="title text-center">Non sono state aggiunte chede</p>
+      <p class="title text-center">Non sono state aggiunte schede</p>
       <p class="caption font-weight-light text-center" style="margin-top: -20px;">
         Usa il pulsante qui in basso per aggiungerne
       </p>
@@ -78,7 +78,10 @@ export default class RilievoSchede extends Vue {
   async tryDeleteArtGen(id: string) {
     // Verifica se questo articolo è già stato utilizzato
 
-    let lista = this.record.listaArticoliSpec.filter(art => art.rifSchedaID == id)
+    let lista: any[] = []
+    if (this.record.listaArticoliSpec) {
+      lista = this.record.listaArticoliSpec.filter(art => art.rifSchedaID == id && art.listaPropValued && art.listaPropValued.length > 0)
+    }
     console.log(lista)
     if (lista.length > 0) {
       // NON è possbile cancellare

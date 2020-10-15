@@ -3,23 +3,23 @@
     <p style="width: 100%; height:60px" class="pt-3 pr-10 text-h3 text-right font-weight-bold">{{ valore }}</p>
     <v-card-text>
       <v-card flat class="d-flex justify-center">
-        <v-btn fab large elevation="1" class="ma-2" @click="setValue(7)">7</v-btn>
-        <v-btn fab large elevation="1" class="ma-2" @click="setValue(8)">8</v-btn>
-        <v-btn fab large elevation="1" class="ma-2" @click="setValue(9)">9</v-btn>
+        <v-btn fab large elevation="1" class="ma-2" @click="setValue('7')">7</v-btn>
+        <v-btn fab large elevation="1" class="ma-2" @click="setValue('8')">8</v-btn>
+        <v-btn fab large elevation="1" class="ma-2" @click="setValue('9')">9</v-btn>
       </v-card>
       <v-card flat class="d-flex justify-center">
-        <v-btn fab large elevation="1" class="ma-2" @click="setValue(4)">4</v-btn>
-        <v-btn fab large elevation="1" class="ma-2" @click="setValue(5)">5</v-btn>
-        <v-btn fab large elevation="1" class="ma-2" @click="setValue(6)">6</v-btn>
+        <v-btn fab large elevation="1" class="ma-2" @click="setValue('4')">4</v-btn>
+        <v-btn fab large elevation="1" class="ma-2" @click="setValue('5')">5</v-btn>
+        <v-btn fab large elevation="1" class="ma-2" @click="setValue('6')">6</v-btn>
       </v-card>
       <v-card flat class="d-flex justify-center">
-        <v-btn fab large elevation="1" class="ma-2" @click="setValue(1)">1</v-btn>
-        <v-btn fab large elevation="1" class="ma-2" @click="setValue(2)">2</v-btn>
-        <v-btn fab large elevation="1" class="ma-2" @click="setValue(3)">3</v-btn>
+        <v-btn fab large elevation="1" class="ma-2" @click="setValue('1')">1</v-btn>
+        <v-btn fab large elevation="1" class="ma-2" @click="setValue('2')">2</v-btn>
+        <v-btn fab large elevation="1" class="ma-2" @click="setValue('3')">3</v-btn>
       </v-card>
       <v-card flat class="d-flex justify-center">
         <v-btn fab large elevation="1" class="ma-2" @click="deleteOnce"><v-icon>mdi-backspace-outline</v-icon></v-btn>
-        <v-btn fab large elevation="1" class="ma-2" @click="setValue(0)">0</v-btn>
+        <v-btn fab large elevation="1" class="ma-2" @click="setValue('0')">0</v-btn>
         <v-btn fab large elevation="1" class="ma-2" @click="deleteAll">C</v-btn>
       </v-card>
     </v-card-text>
@@ -40,7 +40,7 @@ export default class RilievoFori extends Vue {
 
   setValue(val: string) {
     if (this.valore == '0') {
-      this.valore = val
+      this.valore = val as string
     } else {
       this.valore = `${this.valore}${val}`
     }

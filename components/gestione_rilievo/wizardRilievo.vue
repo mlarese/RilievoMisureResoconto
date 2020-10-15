@@ -4,14 +4,32 @@
       <!-- sezione SCHEDE -->
       <v-stepper-content step="-2" class="pa-0">
         <v-card :height="height">
-          <v-card-title> Schede del rilievo </v-card-title>
-          <v-card-subtitle>In questa pagina sono presenti tutte le schede dei dati generali degli articoli </v-card-subtitle>
+          <v-toolbar flat>
+            <v-toolbar-title v-text="'Schede del rilievo'" />
+            <v-spacer></v-spacer>
+            <v-btn fab x-small @click="showInfo = !showInfo" class="blink_me" color="primary lighten-2"><v-icon>mdi-information-outline</v-icon></v-btn>
+          </v-toolbar>
+          <v-bottom-sheet v-model="showInfo" inset>
+            <v-sheet class="text-center" >
+              <v-btn class="mt-6" text color="red" @click="showInfo = !showInfo">
+                Chiudi
+              </v-btn>
+              <div class="pa-3">
+                La scheda è l'insieme delle caratteristiche che accomunano tutte le versioni di un articolo. <br>
+                Se effettuiamo il rilievo di 10 serramenti, molto probabilmente avranno tutti le stesse caratteristiche: 
+                modello, colore, ... <br>
+                Ecco che queste caratteristiche uguali relative all'articolo serramento, verranno inserite in questa pagina
+                una volta soltanto e poi semplicemente richiamate.
+              </div>
+            </v-sheet>
+          </v-bottom-sheet>
+
           <v-card-text class="pt-1" :style="{ height: height - 180 + 'px', 'overflow-y': 'auto' }">
             <listaSchede />
           </v-card-text>
 
           <v-footer absolute class="py-4">
-            <v-btn color="primary" dark absolute top fab @click="stepIndex = -1" class="fabCenter">
+            <v-btn color="primary" dark absolute top fab @click="apriWizardSchede" class="fabCenter">
               <v-icon>mdi-plus</v-icon>
             </v-btn>
             <v-card elevation="0" class="fabRientranza" />
@@ -31,6 +49,7 @@
         </v-card>
       </v-stepper-content>
 
+      <!-- WIZARD SCHEDE -->
       <v-stepper-content step="-1" class="pa-0">
         <v-card :height="height">
           <wizardSchede :height="height" @onExit="chiudiWizardSchede" @onSave="salvaArticoloGenerale" />
@@ -99,11 +118,11 @@
         </v-card>
       </v-stepper-content>
 
-      <!-- Selezione articoli -->
+      <!-- Selezione SCHEDE della POSIZIONE -->
       <v-stepper-content step="1" class="pa-0">
         <v-card :height="height">
           <v-card-title>Indicare gli articoli per la posizione</v-card-title>
-          <!-- <v-subheader>{{ posizioneSelezionata.posizione }} - {{ posizioneSelezionata.descrizione }}</v-subheader> -->
+          <v-card-subtitle>{{ posizioneSelezionata.posizione }} - {{ posizioneSelezionata.descrizione }}</v-card-subtitle>
 
           <!-- Visualizza gli articoli delle schede -->
           <v-card-text :style="{ height: height - 112 + 'px', 'overflow-y': 'auto' }">
@@ -229,6 +248,9 @@
                   <v-list-item-title>{{ getArtGen(art.rifSchedaID).descrizione }}</v-list-item-title>
                   <v-list-item-subtitle>{{ getArtGen(art.rifSchedaID).subDescrizione }}</v-list-item-subtitle>
                 </v-list-item-content>
+                <v-list-item-action>
+                  <v-icon @click="eliminaArtSpec(art._ID)">mdi-delete-outline</v-icon>
+                </v-list-item-action>
               </v-list-item>
               <v-divider></v-divider>
             </v-list-item-group>
@@ -277,6 +299,15 @@
 .content-body {
   display: table-cell;
 }
+
+.blink_me {
+  animation: blinker3 1.5s ease-in-out infinite alternate;
+}
+@keyframes blinker3 {
+  to {
+    opacity: 0.2;
+  }
+}
 </style>
 
 
@@ -299,6 +330,8 @@ export default class RilievoFori extends Vue {
   @State(state => state.rilievoModule.record) record!: RilievoRecord
   @State(state => state.rilievoModule.ui) ui!: RilievoUI
   @Prop({ type: Number, default: 600 }) height!: Number
+
+  showInfo = false
 
   fab = false
   stepIndex = -2
@@ -323,6 +356,11 @@ export default class RilievoFori extends Vue {
     this.visualizzaMedia = false
   }
 
+  apriWizardSchede() {
+    this.$store.dispatch('articoli/load')
+    this.stepIndex = -1
+  }
+
   chiudiWizardSchede() {
     if (this.return_stepIndex == undefined) {
       this.stepIndex = -2
@@ -332,7 +370,7 @@ export default class RilievoFori extends Vue {
     }
   }
   salvaArticoloGenerale() {
-     if (this.return_stepIndex == undefined) {
+    if (this.return_stepIndex == undefined) {
       this.stepIndex = -2
     } else {
       this.stepIndex = this.return_stepIndex as number
@@ -424,6 +462,8 @@ export default class RilievoFori extends Vue {
 
     this.nextStep()
   }
+
+  eliminaArtSpec(id: string) {}
 
   getArticoliDellaPosizione(posID: string): ArticoloSpecificoConfigurato[] {
     if (!this.record.listaArticoliSpec) {

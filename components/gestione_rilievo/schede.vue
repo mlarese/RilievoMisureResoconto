@@ -3,7 +3,7 @@
     <v-card-text :style="{ height: 'calc(100% - 36px)', overflow: 'auto' }">
       <listaSchede />
     </v-card-text>
-    <v-btn absolute rounded dark bottom right color="primary" @click="aggiungiArticoloClick"> AGGIUNGI SCHEDA <v-icon>mdi-plus</v-icon> </v-btn>
+    <v-btn absolute rounded dark bottom right color="primary" @click="aggiungiArticoloClick"><v-icon>mdi-plus</v-icon>AGGIUNGI SCHEDA</v-btn>
   </v-card>
 </template>
 

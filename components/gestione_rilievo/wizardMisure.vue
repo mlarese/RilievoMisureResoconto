@@ -61,6 +61,7 @@
                 v-if="getDati('FORMA').propValue == 'TR'"
                 v-model="prop.propValue"
                 :label="prop.propLabel"
+                hide-details
                 append-icon="mdi-keyboard-outline"
                 @click:append="openKeyboard(prop.propName)"
                 @click="try_openKeyboard($event, prop.propName)"
@@ -73,6 +74,7 @@
               <v-text-field
                 v-model="prop.propValue"
                 :label="prop.propLabel"
+                hide-details
                 append-icon="mdi-keyboard-outline"
                 @click:append="openKeyboard(prop.propName)"
                 @click="try_openKeyboard($event, prop.propName)"
@@ -93,7 +95,8 @@
 
       <v-stepper-content :step="listaPagine.length" :style="`height:${height}px`">
         <!-- VISUALIZZA IMMAGINE -->
-        <ImmagineDet :drawingCommands="drawingCommands" :imgWidth="300" :imgHeight="getHeight - 50"></ImmagineDet>
+        <v-card-title>Anteprima serramento</v-card-title>
+        <ImmagineDet :drawingCommands="drawingCommands" :imgWidth="350" :imgHeight="getHeight - 200"></ImmagineDet>
 
         <v-footer absolute class="py-4">
           <v-btn large text color="gray" @click="backStep"><v-icon>mdi-chevron-left</v-icon>indietro</v-btn>

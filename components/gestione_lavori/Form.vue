@@ -114,6 +114,7 @@
             <v-tab>INFO</v-tab>
             <v-tab>RILIEVI</v-tab>
             <v-tab>MEDIA</v-tab>
+            <v-tab>POSIZIONI</v-tab>
             <!-- <v-tab>FOTO</v-tab> -->
 
             <v-tabs-items v-model="currentTab" :touchless="isTabTouchless()">
@@ -149,6 +150,18 @@
                     class="overflow-hidden"
                     :job="{ job_id: $record._id }"
                   />
+                </v-card>
+              </v-tab-item>
+
+              <v-tab-item
+                :class="
+                  $vuetify.breakpoint.xsOnly
+                    ? 'tabs__content_small'
+                    : 'tabs__content_large'
+                "
+              >
+                <v-card flat class="pa-2">
+                  <Posizioni />
                 </v-card>
               </v-tab-item>
             </v-tabs-items>
@@ -270,7 +283,7 @@ import DatiAnagraficiEdit from '../gestione_lavori/DatiAnagrafici_Edit'
 import ListaRilievi from '../GestioneRilievo/listaRilievi'
 import Browser from '~/components/AppuntiMultimediali/Browser'
 import BrowserCompleteInput from '~/components/AppuntiMultimediali/BrowserCompleteInput'
-
+import Posizioni from '@/components/gestione_lavori/Posizioni'
 
 const storeName = 'gestione_lavori'
 
@@ -282,7 +295,8 @@ export default {
     DatiAnagraficiEdit,
     ListaRilievi,
     BrowserCompleteInput,
-    Browser
+    Browser,
+    Posizioni
   },
   data() {
     return {
@@ -428,6 +442,9 @@ export default {
         this.$record.data.GL_Oggetto && this.$record.data.GL_CommittenteDesc
       )
     }
+  },
+  mounted(){
+    this.$store.dispatch('posizioneModule/loadPosizioni', this.$record._id, { root: true })
   }
 }
 </script>

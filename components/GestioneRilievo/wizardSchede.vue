@@ -269,7 +269,7 @@ export default class WizardSchede extends Vue {
     this.$store.dispatch('rilievoModule/salva', undefined, { root: true })
 
     // Sbianca lo stato di questo componente e esce
-    this.exitWizard()
+    this.clearMe()
   }
 
   clearMe() {
