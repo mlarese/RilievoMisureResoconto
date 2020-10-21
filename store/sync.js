@@ -28,6 +28,7 @@ export const actions = {
     listaOggettiLocali.push(...listaCataloghi)
     const listaEventi = await dispatch('appuntimm/load', {}, { root: true })
     listaOggettiLocali.push(...listaEventi)
+    const listaPos = await dispatch('posizioneModule/getPosizioni_x_Sync', {}, {root: true})
 
     return listaOggettiLocali
   },

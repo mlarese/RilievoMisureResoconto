@@ -77,6 +77,12 @@ export const actions: ActionTree<RootState, RootState> = {
     deleteArtGen: async ({ commit, dispatch, state }, id: string) => {
         state.record.listaArticoliGen.splice(state.record.listaArticoliGen.findIndex(art => art._id == id), 1)
         await dispatch('salva')
+    },
+
+    deleteArtSpec: async({ commit, dispatch, state }, id: string) =>{
+        let index = state.record.listaArticoliSpec.findIndex(art => art._id == id)
+        state.record.listaArticoliSpec.splice(index , 1)
+        await dispatch('salva')
     }
 
 }

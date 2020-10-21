@@ -1,12 +1,13 @@
 <template>
-  <v-container class="mainContainer">
+  <v-container>
     <!-- FILTRO -->
     <v-row dense>
-      <v-col xs="12" md="6" lg="4">
-        <v-card class="elevation-0" height="50px">
+      <v-col xs="12" md="auto">
+        <v-card flat height="50px">
           <div class="d-flex">
-            <v-text-field outlined dense clearable label="Cerca lavoro..." append-icon="mdi-magnify" background-color="white" v-model="ui.filter.text" />
-            <v-btn icon color="primary" @click="ui.filter.preferito = !ui.filter.preferito" class="pl-2">
+            <v-btn v-if="$vuetify.breakpoint.smAndUp" @click="onAdd" rounded color="primary" class="mr-2"><v-icon>mdi-plus</v-icon>Nuovo lavoro</v-btn>
+            <v-text-field class="mr-2" outlined dense clearable label="Cerca..." append-icon="mdi-magnify" background-color="white" v-model="ui.filter.text" />
+            <v-btn icon color="primary" @click="ui.filter.preferito = !ui.filter.preferito">
               <v-icon v-if="ui.filter.preferito">mdi-heart</v-icon>
               <v-icon v-else>mdi-heart-outline</v-icon>
             </v-btn>
@@ -16,9 +17,10 @@
     </v-row>
 
     <!-- LISTA LAVORI -->
-    <v-row dense>
+    <div style="height: calc(100vh - 170px); overflow-y: auto;">
+      <v-row class="ma-0">
       <v-col v-for="(item, i) in getfilteredList" :key="i" xs="12" md="6" lg="4">
-        <v-card color="white" @click="openEditForm(item._id)" min-width="300" min-height="130" max-height="200">
+        <v-card @click="openEditForm(item._id)" min-width="300" min-height="130" max-height="200">
           <div class="d-flex flex-no-wrap">
             <v-avatar class="mt-6 ml-3" size="60">
               <v-img :src="item.imgURL || require('../../assets/images/lavoro.png')"></v-img>
@@ -35,9 +37,10 @@
           </v-card-actions>
         </v-card>
       </v-col>
-    </v-row>
+      </v-row>
+    </div>
 
-    <v-btn fab color="primary" class="mx-2 mb-12" dark fixed absolute bottom right @click="onAdd">
+    <v-btn v-if="$vuetify.breakpoint.xsOnly" fab color="primary" class="mx-2 mb-12" dark fixed absolute bottom right @click="onAdd">
       <v-icon>mdi-plus</v-icon>
     </v-btn>
   </v-container>

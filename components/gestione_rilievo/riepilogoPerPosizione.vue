@@ -12,11 +12,12 @@
             <thead>
               <tr>
                 <th class="text-left" v-if="visualizzaImg">Immagine</th>
+                <th>Q.tà</th>
                 <th class="text-left">Articolo</th>
                 <th>Larghezza</th>
                 <th>Altezza</th>
                 <th>Profondità</th>
-                <th>Desc</th>
+                <th>Note</th>
               </tr>
             </thead>
             <tbody>
@@ -28,11 +29,12 @@
                     <myIMG :artGen="art.artGen"></myIMG>
                   </v-avatar>
                 </td>
+                <td>{{ getQta(art) }}</td>
                 <td>{{ art.artGen.descrizione }}</td>
                 <td>{{ getLarghezza(art) }}</td>
                 <td>{{ getAltezza(art) }}</td>
                 <td>{{ getProfondita(art) }}</td>
-                <td></td>
+                <td>{{ getNote(art) }}</td>
               </tr>
             </tbody>
           </template>
@@ -79,18 +81,32 @@ export default class RilievoFori extends Vue {
     return listaResult
   }
 
+  getQta({ artSpec, artGen }: any){
+    return artSpec.listaPropValued.find((p: PropertyValued) => p.propName == '_QTA')?.propValue
+  }
+
+  getNote({ artSpec, artGen }: any){
+    //sreturn artSpec.listaPropValued.find((p: PropertyValued) => p.propName == 'NOTE')?.propValue
+    for (const p of artSpec.listaPropValued){
+      if (p.propName == '_NOTE'){
+        return p.propValue
+      }
+    }
+
+  }
+
   getLarghezza({ artSpec, artGen }: any) {
     if (artGen.artClass == '$PC_SER') {
-      return artSpec.listaPropValued.find((p: any) => p.propName == '#SER.PR_L')?.propValue
+      return artSpec.listaPropValued.find((p: PropertyValued) => p.propName == '#SER.PR_L')?.propValue
     } else {
-      return artSpec.listaPropValued.find((p: any) => p.propName == 'L')?.propValue
+      return artSpec.listaPropValued.find((p: PropertyValued) => p.propName == 'L')?.propValue
     }
   }
 
   getAltezza({ artSpec, artGen }: any) {
     if (artGen.artClass == '$PC_SER') {
-      let hsx = artSpec.listaPropValued.find((p: any) => p.propName == '#SER.PR_H_SX')?.propValue
-      let hdx = artSpec.listaPropValued.find((p: any) => p.propName == '#SER.PR_H_DX')?.propValue
+      let hsx = artSpec.listaPropValued.find((p: PropertyValued) => p.propName == '#SER.PR_H_SX')?.propValue
+      let hdx = artSpec.listaPropValued.find((p: PropertyValued) => p.propName == '#SER.PR_H_DX')?.propValue
 
       if (hdx) {
         return hsx + '/' + hdx
@@ -99,12 +115,12 @@ export default class RilievoFori extends Vue {
       }
     } else {
     }
-    return artSpec.listaPropValued.find((p: any) => p.propName == 'H')?.propValue
+    return artSpec.listaPropValued.find((p: PropertyValued) => p.propName == 'H')?.propValue
   }
 
   getProfondita({ artSpec, artGen }: any) {
     if (artGen.artClass == '$PC_SER') return ''
-    return artSpec.listaPropValued.find((p: any) => p.propName == 'P')?.propValue
+    return artSpec.listaPropValued.find((p: PropertyValued) => p.propName == 'P')?.propValue
   }
 }
 </script>

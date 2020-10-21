@@ -25,17 +25,20 @@
           <thead>
             <tr>
               <th class="text-left">Posizione</th>
+              <th>Q.tà</th>
               <th class="text-left" v-if="visualizzaImg">Immagine</th>
               <th>Tipo</th>
               <th>Ante</th>
               <th>Apertura</th>
               <th>Larghezza</th>
               <th>Altezza</th>
+              <th>Note</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(artSpec, ias) in getArtSpec_By_ArtGen(artGen._id)" :key="ias">
               <td>{{ getPosizione(artSpec.rifPosID).posizione }} - {{ getPosizione(artSpec.rifPosID).descrizione }}</td>
+              <td>{{ getQta(artSpec) }}</td>
               <td v-if="visualizzaImg">
                 <ImmagineDet :drawingCommands="artSpec.drawingCommands" :imgWidth="50" :imgHeight="50"></ImmagineDet>
               </td>
@@ -44,6 +47,7 @@
               <td>{{ getApertura(artSpec) }}</td>
               <td>{{ getLarghezza_SER(artSpec) }}</td>
               <td>{{ getAltezza_SER(artSpec) }}</td>
+              <td>{{ getNote(artSpec) }}</td>
             </tr>
           </tbody>
         </template>
@@ -55,15 +59,18 @@
           <thead>
             <tr>
               <th class="text-left">Posizione</th>
+              <th>Q.tà</th>
               <th class="text-left" v-if="visualizzaImg">Immagine</th>
               <th>Larghezza</th>
               <th>Altezza</th>
               <th>Profondità</th>
+              <th>Note</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(artSpec, ias) in getArtSpec_By_ArtGen(artGen._id)" :key="ias">
               <td>{{ getPosizione(artSpec.rifPosID).posizione }} - {{ getPosizione(artSpec.rifPosID).descrizione }}</td>
+              <td>{{ getQta(artSpec) }}</td>
               <td v-if="visualizzaImg">
                 <v-avatar class="ma-3" size="60" tile>
                   <myIMG :artGen="artGen" :key="ias + 'img'"></myIMG>
@@ -72,6 +79,7 @@
               <td>{{ getLarghezza(artSpec) }}</td>
               <td>{{ getAltezza(artSpec) }}</td>
               <td>{{ getProfondita(artSpec) }}</td>
+              <td>{{ getNote(artSpec) }}</td>
             </tr>
           </tbody>
         </template>
@@ -158,6 +166,16 @@ export default class Riepilogo_x_Art extends Vue {
         return res.thumbnailUrl
       })
     })
+  }
+
+  getQta(artSpec: ArticoloSpecificoConfigurato) {
+    return artSpec.listaPropValued.find((p: PropertyValued) => p.propName == '_QTA')?.propValue
+  }
+
+  getNote(artSpec: ArticoloSpecificoConfigurato) {
+    let n = artSpec.listaPropValued.find((p: PropertyValued) => p.propName == '_NOTE')?.propValue
+    console.log(n)
+    return n
   }
 }
 </script>

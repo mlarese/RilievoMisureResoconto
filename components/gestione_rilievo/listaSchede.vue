@@ -39,21 +39,6 @@
       </p>
     </v-container>
 
-    <v-dialog v-model="alertDeleteArt">
-      <v-card>
-        <v-card-title>
-          Attenzione
-        </v-card-title>
-        <v-card-text>
-          Nono è possibile eliminare questa scheda
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn>OK</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
     <confirmDialog ref="confirmDialog" />
     <alertDialog ref="alertDialog" />
   </div>
@@ -70,9 +55,6 @@ export default class RilievoSchede extends Vue {
   @State(state => state.rilievoModule.record) record!: RilievoRecord
   @State(state => state.rilievoModule.ui) ui!: RilievoUI
 
-  confirmDeleteArt = false
-  alertDeleteArt = false
-
   editArtGen(id: string) {}
 
   async tryDeleteArtGen(id: string) {
@@ -80,7 +62,7 @@ export default class RilievoSchede extends Vue {
 
     let lista: any[] = []
     if (this.record.listaArticoliSpec) {
-      lista = this.record.listaArticoliSpec.filter(art => art.rifSchedaID == id && art.listaPropValued && art.listaPropValued.length > 0)
+      lista = this.record.listaArticoliSpec.filter(art => art.rifSchedaID == id)
     }
     console.log(lista)
     if (lista.length > 0) {

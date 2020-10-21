@@ -10,16 +10,15 @@
             <v-btn fab x-small @click="showInfo = !showInfo" class="blink_me" color="primary lighten-2"><v-icon>mdi-information-outline</v-icon></v-btn>
           </v-toolbar>
           <v-bottom-sheet v-model="showInfo" inset>
-            <v-sheet class="text-center" >
+            <v-sheet class="text-center">
               <v-btn class="mt-6" text color="red" @click="showInfo = !showInfo">
                 Chiudi
               </v-btn>
               <div class="pa-3">
-                La scheda è l'insieme delle caratteristiche che accomunano tutte le versioni di un articolo. <br>
-                Se effettuiamo il rilievo di 10 serramenti, molto probabilmente avranno tutti le stesse caratteristiche: 
-                modello, colore, ... <br>
-                Ecco che queste caratteristiche uguali relative all'articolo serramento, verranno inserite in questa pagina
-                una volta soltanto e poi semplicemente richiamate.
+                La scheda è l'insieme delle caratteristiche che accomunano tutte le versioni di un articolo. <br />
+                Se effettuiamo il rilievo di 10 serramenti, molto probabilmente avranno tutti le stesse caratteristiche: modello, colore, ... <br />
+                Ecco che queste caratteristiche uguali relative all'articolo serramento, verranno inserite in questa pagina una volta soltanto e poi
+                semplicemente richiamate.
               </div>
             </v-sheet>
           </v-bottom-sheet>
@@ -127,9 +126,9 @@
           <!-- Visualizza gli articoli delle schede -->
           <v-card-text :style="{ height: height - 112 + 'px', 'overflow-y': 'auto' }">
             <v-list two-line>
-              <v-list-item-group v-model="articoliSelezionati" multiple color="primary">
+              <v-list-item-group v-model="articoliSelezionatiID" multiple color="primary">
                 <template v-for="(artGen, iag) in record.listaArticoliGen">
-                  <v-list-item :key="iag" :value="artGen">
+                  <v-list-item :key="iag" :value="artGen._id">
                     <template v-slot:default="{ active }">
                       <v-list-item-content>
                         <v-list-item-title v-text="artGen.descrizione"></v-list-item-title>
@@ -171,50 +170,7 @@
             </v-card>
             <v-btn large text color="gray" @click="backStep"><v-icon>mdi-chevron-left</v-icon>INDIETRO</v-btn>
             <v-spacer></v-spacer>
-            <v-btn large text outlined color="green" @click="nextStep" :disabled="articoliSelezionati.length == 0"
-              >AVANTI<v-icon>mdi-chevron-right</v-icon></v-btn
-            >
-          </v-footer>
-        </v-card>
-      </v-stepper-content>
-
-      <!-- Riepilogo -->
-      <v-stepper-content step="2" class="pa-0">
-        <v-card :height="height">
-          <v-card-title>Riepilogo posizione</v-card-title>
-
-          <v-card-text :style="{ height: height - 112 + 'px', 'overflow-y': 'auto' }">
-            <v-list two-line>
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title>{{ posizioneSelezionata.posizione }}</v-list-item-title>
-                  <v-list-item-subtitle>Posizione</v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title>{{ posizioneSelezionata.descrizione }}</v-list-item-title>
-                  <v-list-item-subtitle>Descrizione</v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-
-              <v-divider></v-divider>
-              <v-card-subtitle>Articoli scelti:</v-card-subtitle>
-
-              <v-list-item v-for="(art, i) in articoliSelezionati" :key="i">
-                <v-list-item-content>
-                  <v-list-item-title>{{ art.descrizione }}</v-list-item-title>
-                  <v-list-item-subtitle class="text--primary" v-text="art.subDescrizione"></v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-          </v-card-text>
-
-          <v-footer absolute class="py-4">
-            <v-btn large text color="gray" @click="backStep"><v-icon>mdi-chevron-left</v-icon>INDIETRO</v-btn>
-            <v-spacer></v-spacer>
-            <v-btn large text outlined color="green" @click="salvaPosizione">SALVA</v-btn>
+            <v-btn large text outlined color="green" @click="salvaPosizione" :disabled="articoliSelezionatiID.length == 0">SALVA</v-btn>
           </v-footer>
         </v-card>
       </v-stepper-content>
@@ -226,7 +182,17 @@
             <v-toolbar-title>{{ posizioneSelezionata.posizione }} - {{ posizioneSelezionata.descrizione }}</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-btn icon @click="openMediaPos(posizioneSelezionata._id)"><v-icon>mdi-folder-multiple-image</v-icon></v-btn>
-            <v-btn icon><v-icon>mdi-dots-vertical</v-icon></v-btn>
+
+            <v-menu transition="slide-y-transition">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn icon v-bind="attrs" v-on="on"><v-icon>mdi-dots-vertical</v-icon></v-btn>
+              </template>
+              <v-list>
+                <v-list-item @click="stepIndex = 1">
+                  <v-list-item-title>Aggiungi articolo</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </v-toolbar>
           <v-card-title>E' ora di misurare...</v-card-title>
           <v-card-subtitle>
@@ -249,7 +215,7 @@
                   <v-list-item-subtitle>{{ getArtGen(art.rifSchedaID).subDescrizione }}</v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-action>
-                  <v-icon @click="eliminaArtSpec(art._ID)">mdi-delete-outline</v-icon>
+                  <v-icon @click="eliminaArtSpec(art._id)">mdi-delete-outline</v-icon>
                 </v-list-item-action>
               </v-list-item>
               <v-divider></v-divider>
@@ -284,6 +250,8 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+
+    <confirmDialog ref="confirmDialog" />
   </div>
 </template>
 
@@ -319,12 +287,13 @@ import wizardMisure from '@/components/gestione_rilievo/wizardMisure.vue'
 import media from '@/components/AppuntiMultimediali/Browser.vue'
 import listaSchede from '@/components/gestione_rilievo/listaSchede.vue'
 import wizardSchede from '@/components/GestioneRilievo/wizardSchede.vue'
+import confirmDialog from '@/components/General/ConfirmDialog.vue'
 
 import { RilievoRecord, RilievoUI } from '@/store/rilievoModule'
 import { Posizione } from '@/store/posizioneModule'
 import { ArticoloGeneraleConfigurato, ArticoloSpecificoConfigurato } from '@/store/articoloModel'
 
-@Component({ components: { wizardPosizione, wizardMisure, media, listaSchede, wizardSchede }, name: 'Fori' })
+@Component({ components: { wizardPosizione, wizardMisure, media, listaSchede, wizardSchede, confirmDialog }, name: 'Fori' })
 export default class RilievoFori extends Vue {
   @Getter('posizioneModule/posizioni') posizioni!: Posizione[]
   @State(state => state.rilievoModule.record) record!: RilievoRecord
@@ -336,7 +305,7 @@ export default class RilievoFori extends Vue {
   fab = false
   stepIndex = -2
   return_stepIndex: number | undefined = undefined
-  articoliSelezionati = new Array<ArticoloGeneraleConfigurato>()
+  articoliSelezionatiID = new Array<string>() //new Array<ArticoloGeneraleConfigurato>()
   visualizzaNuovaPosizione = false
   posizioneSelezionataID = ''
 
@@ -411,12 +380,12 @@ export default class RilievoFori extends Vue {
   }
 
   nextStep_posizioneSelezionata() {
-    // Verifica se questa posizione è deve essere configurata
+    // Verifica se questa posizione deve essere configurata
     if (this.getArticoliDellaPosizione(this.posizioneSelezionataID).length > 0) {
       // Salta direttamente al rilievo
       this.stepIndex = 3
     } else {
-      this.articoliSelezionati = this.record.listaArticoliGen
+      this.articoliSelezionatiID = this.record.listaArticoliGen.map(a => a._id) as string[]
       this.nextStep()
     }
   }
@@ -436,7 +405,7 @@ export default class RilievoFori extends Vue {
   }
 
   exit() {
-    this.articoliSelezionati = new Array<ArticoloGeneraleConfigurato>()
+    this.articoliSelezionatiID = new Array<string>()
     this.posizioneSelezionataID = ''
     this.stepIndex = -2
     this.ui.visualizzaWizardRilievo = false
@@ -450,20 +419,28 @@ export default class RilievoFori extends Vue {
       this.record.listaArticoliSpec = new Array<ArticoloSpecificoConfigurato>()
     }
 
-    for (const artGen of this.articoliSelezionati) {
+    for (const artGenID of this.articoliSelezionatiID) {
       let articoloSpec = new ArticoloSpecificoConfigurato()
       articoloSpec._id = uuidv4()
       articoloSpec.rifPosID = this.posizioneSelezionata && this.posizioneSelezionata._id
-      articoloSpec.rifSchedaID = artGen._id
+      articoloSpec.rifSchedaID = artGenID
       this.record.listaArticoliSpec.push(articoloSpec)
     }
 
     await this.$store.dispatch('rilievoModule/salva', undefined, { root: true })
 
-    this.nextStep()
+    this.stepIndex = 3
   }
 
-  eliminaArtSpec(id: string) {}
+  async eliminaArtSpec(id: string) {
+    let dialog = this.$refs.confirmDialog as any
+    let response = await dialog.open('Confermare', 'Si è certi di voler eliminare larticolo?', {})
+
+    if (response) {
+      // ELIMINA DEFINITIVAMENTE
+      this.$store.dispatch('rilievoModule/deleteArtSpec', id)
+    }
+  }
 
   getArticoliDellaPosizione(posID: string): ArticoloSpecificoConfigurato[] {
     if (!this.record.listaArticoliSpec) {
@@ -476,12 +453,13 @@ export default class RilievoFori extends Vue {
   getArtGen(artGenID: string) {
     // let a = this.record.listaArticoliGen.find(a => (a._id = artGenID))
     // return a
-
+    let artBase = new ArticoloGeneraleConfigurato()
     for (const art of this.record.listaArticoliGen) {
       if (art._id == artGenID) {
-        return art
+        artBase = art
       }
     }
+    return artBase
   }
 
   get getHeight() {

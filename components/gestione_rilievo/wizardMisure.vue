@@ -66,6 +66,7 @@
                 @click:append="openKeyboard(prop.propName)"
                 @click="try_openKeyboard($event, prop.propName)"
                 :readonly="$vuetify.breakpoint.smAndDown"
+                type="number"
               ></v-text-field>
               <v-text-field v-else v-show="false" readonly v-model="getDati('#SER.PR_H_SX').propValue" label="h dx"></v-text-field>
             </v-row>
@@ -79,6 +80,7 @@
                 @click:append="openKeyboard(prop.propName)"
                 @click="try_openKeyboard($event, prop.propName)"
                 :readonly="$vuetify.breakpoint.smAndDown"
+                type="number"
               ></v-text-field>
             </v-row>
           </div>
@@ -88,16 +90,52 @@
           <v-btn large text color="gray" v-if="stepIndex == 0" @click="exitWizard">Annulla</v-btn>
           <v-btn large text color="gray" v-else @click="backStep"><v-icon>mdi-chevron-left</v-icon>indietro</v-btn>
           <v-spacer></v-spacer>
-          <v-btn large v-if="articoloGenerico.artClass == '$PC_SER'" text color="primary" @click="nextStep">Avanti</v-btn>
-          <v-btn large v-else text outlined color="green" @click="onSalva">Salva</v-btn>
+          <v-btn large text color="primary" @click="nextStep">Avanti</v-btn>
         </v-footer>
       </v-stepper-content>
 
       <v-stepper-content :step="listaPagine.length" :style="`height:${height}px`">
-        <!-- VISUALIZZA IMMAGINE -->
-        <v-card-title>Anteprima serramento</v-card-title>
-        <ImmagineDet :drawingCommands="drawingCommands" :imgWidth="350" :imgHeight="getHeight - 200"></ImmagineDet>
+        <v-card-title>Quantità prodotti</v-card-title>
+        <v-divider></v-divider>
+        <v-text-field
+          v-model="qta"
+          hide-details
+          append-icon="mdi-keyboard-outline"
+          @click:append="openKeyboard('qta')"
+          @click="try_openKeyboard($event, 'qta')"
+          :readonly="$vuetify.breakpoint.smAndDown"
+          type="number"
+          class="mx-2"
+        >
+        </v-text-field>
 
+        <v-card-title>Note</v-card-title>
+        <v-divider></v-divider>
+        <v-textarea v-model="note" rows="5" filled> </v-textarea>
+
+        <v-footer absolute class="py-4">
+          <v-btn large text color="gray" v-if="stepIndex == 0" @click="exitWizard">Annulla</v-btn>
+          <v-btn large text color="gray" v-else @click="backStep"><v-icon>mdi-chevron-left</v-icon>indietro</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn large text color="primary" @click="nextStep">Avanti</v-btn>
+        </v-footer>
+      </v-stepper-content>
+
+      <v-stepper-content :step="listaPagine.length + 1" :style="`height:${height}px`">
+        <!-- VISUALIZZA IMMAGINE -->
+        <v-card-title>Riepilogo</v-card-title>
+        <ImmagineDet
+          v-if="articoloGenerico.artClass == '$PC_SER'"
+          :drawingCommands="drawingCommands"
+          :imgWidth="350"
+          :imgHeight="getHeight - 400"
+        ></ImmagineDet>
+        <v-card-text>
+          <!-- Espone l'elenco delle risposte -->
+          <div v-for="(page, ilp) in listaPagine" :key="ilp">
+            <div v-for="(prop, pi) in getProprietaDellaPagina(page)" :key="pi">{{ prop.propLabel }} : {{ prop.propValueDecode || prop.propValue }}</div>
+          </div>
+        </v-card-text>
         <v-footer absolute class="py-4">
           <v-btn large text color="gray" @click="backStep"><v-icon>mdi-chevron-left</v-icon>indietro</v-btn>
           <v-spacer></v-spacer>
@@ -139,9 +177,12 @@ export default class RilievoFori extends Vue {
   GPROD: any = window.GPROD
   drawingCommands: string = ''
   isLoading: boolean = true
-  keyboard: boolean = false
 
+  keyboard: boolean = false
   propName_x_Keyboard: string = ''
+
+  qta = '1'
+  note = ''
 
   try_openKeyboard(e: any, propName: string) {
     // Se siamo in modalità touch
@@ -157,8 +198,12 @@ export default class RilievoFori extends Vue {
   }
 
   keyboardSave(valore: string) {
-    let p = this.articoloProperties.find(p => p.propName == this.propName_x_Keyboard) as PropertyValued
-    p.propValue = valore
+    if (this.propName_x_Keyboard == 'qta') {
+      this.qta = valore
+    } else {
+      let p = this.articoloProperties.find(p => p.propName == this.propName_x_Keyboard) as PropertyValued
+      p.propValue = valore
+    }
 
     this.keyboardAbort()
   }
@@ -169,8 +214,10 @@ export default class RilievoFori extends Vue {
   }
 
   nextStep() {
-    if (this.stepIndex == this.listaPagine.length - 1) {
-      this.getDrawingCommands()
+    if (this.stepIndex == this.listaPagine.length) {
+      if (this.articoloGenerico.artClass == '$PC_SER') {
+        this.getDrawingCommands()
+      }
     }
     this.stepIndex++
   }
@@ -187,6 +234,15 @@ export default class RilievoFori extends Vue {
     // Crea l'articolo generale
     let articoloSpec = this.record.listaArticoliSpec.find(art => art._id == this.articoloDaEditareID) as ArticoloSpecificoConfigurato
     articoloSpec.listaPropValued = this.articoloProperties
+
+    let q = new PropertyValued()
+    ;(q.propName = '_QTA'), (q.propValue = this.qta)
+    articoloSpec.listaPropValued.push(q)
+
+    let n = new PropertyValued()
+    ;(n.propName = '_NOTE'), (n.propValue = this.note)
+    articoloSpec.listaPropValued.push(n)
+
     articoloSpec.drawingCommands = this.drawingCommands
 
     // Salva il rilievo con le nuove impostazioni
